@@ -1,9 +1,11 @@
 require_relative 'boot'
 
 require 'rails/all'
+require 'deprecation'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
+Deprecation.default_deprecation_behavior = :silence
 Bundler.require(*Rails.groups)
 
 module Cur
