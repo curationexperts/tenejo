@@ -1,7 +1,11 @@
 development:
   archivist:
-    - archivist1@example.com
+    - admin@example.com
   admin:
+    - admin@example.com
+  donor:
+    - admin@example.com
+  researcher:
     - admin@example.com
 
 test:

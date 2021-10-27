@@ -14,6 +14,7 @@ gem 'sqlite3', '~> 1.3.0'
 gem 'dotenv-rails', '~> 2.2.1'
 gem 'pg', '~> 1.0'
 gem 'puma', '~> 3.11'
+gem 'okcomputer'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets

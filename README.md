@@ -36,6 +36,8 @@ Start the servers (fedora, solr & puma)
 
 Install various bits & bobs:
 ```rails hyrax:default_admin_set:create```
+```rails hyrax:workflow:load```
+```rails hyrax:universal_viewer:install```
 
 Create first user:
 ```rails cur:first_user```
