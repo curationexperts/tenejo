@@ -5,6 +5,8 @@ development:
     - admin@example.com
 
 test:
+  admin:
+    - admin@example.com
   archivist:
     - archivist1@example.com
     - archivist2@example.com
