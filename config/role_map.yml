@@ -1,6 +1,8 @@
 development:
   archivist:
     - archivist1@example.com
+  admin:
+    - admin@example.com
 
 test:
   archivist:
@@ -20,4 +22,6 @@ test:
     - leland_himself@example.com
 
 production:
+  admin:
+    - admin@example.com
   # Add roles for users here.

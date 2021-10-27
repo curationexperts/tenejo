@@ -8,6 +8,8 @@
 /.bundle
 vendor/bundle
 .env.development
+.env.test
+.env.production
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
