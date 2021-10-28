@@ -38,7 +38,6 @@ gem 'redis', '~> 4.0'
 # gem 'mini_magick', '~> 4.8'
 
 # Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -63,6 +62,9 @@ group :development do
   gem 'bixby', '~> 3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
+  gem 'capistrano-rails'
+  gem 'capistrano-sidekiq'
+  gem 'capistrano-passenger'
 end
 
 group :test do
