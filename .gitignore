@@ -8,6 +8,7 @@
 /.bundle
 vendor/bundle
 .env.development
+fits.log
 .env.test
 .env.production
 # Ignore the default SQLite database.
