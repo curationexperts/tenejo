@@ -3,6 +3,11 @@ inherit_gem:
 
 AllCops:
   TargetRubyVersion: 2.7
+  Exclude:
+    - config/**/*
+    - vendor/**/*
+    - db/**/*
+    - bin/**/*
 
 Layout/HashAlignment:
   Enabled: false
@@ -17,8 +22,8 @@ Metrics/BlockLength:
   Enabled: true
   ExcludedMethods: ['feature', 'before', 'describe', 'context', 'scenario', 'configure', 'config', 'setup', 'class_eval']
   Exclude:
-    - config/**
-    - lib/tasks/**
+    - config/**/*
+    - lib/tasks/**/*
     - 'app/controllers/catalog_controller.rb'
 
 Metrics/ClassLength:
