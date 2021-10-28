@@ -22,6 +22,7 @@ gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'mini_racer', platforms: :ruby
 
+gem "clamby"
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -53,7 +54,8 @@ gem 'jquery-rails'
 gem 'rsolr', '>= 1.0', '< 3'
 gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 gem 'riiif', '~> 2.1'
-gem 'whenever'
+gem 'whenever', group: 'production'
+gem 'honeybadger', group: 'production'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
