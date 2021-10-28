@@ -54,6 +54,8 @@ gem 'jquery-rails'
 gem 'rsolr', '>= 1.0', '< 3'
 gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 gem 'riiif', '~> 2.1'
+gem 'whenever', group: 'production'
+gem 'honeybadger', group: 'production'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
