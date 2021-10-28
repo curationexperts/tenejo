@@ -42,10 +42,18 @@ gem 'redis', '~> 4.0'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
-group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: %i[mri mingw x64_mingw]
-end
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
+
+gem 'hyrax', '3.1.0'
+
+gem 'bootstrap-sass', '~> 3.0'
+gem 'devise'
+gem 'devise-guests', '~> 0.6'
+gem 'jquery-rails'
+gem 'rsolr', '>= 1.0', '< 3'
+gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
+gem 'riiif', '~> 2.1'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
@@ -61,21 +69,11 @@ group :test do
   gem 'webdrivers'
 end
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
-
-gem 'hyrax', '3.1.0'
-
-gem 'bootstrap-sass', '~> 3.0'
-gem 'devise'
-gem 'devise-guests', '~> 0.6'
-gem 'jquery-rails'
-gem 'rsolr', '>= 1.0', '< 3'
-gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 group :development, :test do
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'fcrepo_wrapper'
   gem 'rspec-rails'
   gem 'solr_wrapper', '>= 0.3'
+  gem 'xray-rails', '~> 0.3.2'
 end
 
-gem 'riiif', '~> 2.1'
