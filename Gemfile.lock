@@ -101,6 +101,12 @@ GEM
       i18n
     bcrypt (3.1.16)
     bindex (0.8.1)
+    bixby (3.0.2)
+      rubocop (= 0.85.1)
+      rubocop-ast (~> 0.3.0)
+      rubocop-performance
+      rubocop-rails
+      rubocop-rspec
     blacklight (6.24.0)
       bootstrap-sass (~> 3.2)
       deprecation
@@ -754,23 +760,25 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.10.2)
-    rubocop (1.22.3)
+    rubocop (0.85.1)
       parallel (~> 1.10)
-      parser (>= 3.0.0.0)
+      parser (>= 2.7.0.1)
       rainbow (>= 2.2.2, < 4.0)
-      regexp_parser (>= 1.8, < 3.0)
+      regexp_parser (>= 1.7)
       rexml
-      rubocop-ast (>= 1.12.0, < 2.0)
+      rubocop-ast (>= 0.0.3)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.12.0)
-      parser (>= 3.0.1.1)
-    rubocop-rails (2.12.4)
+      unicode-display_width (>= 1.4.0, < 2.0)
+    rubocop-ast (0.3.0)
+      parser (>= 2.7.1.4)
+    rubocop-performance (1.7.1)
+      rubocop (>= 0.82.0)
+    rubocop-rails (2.6.0)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
-      rubocop (>= 1.7.0, < 2.0)
-    rubocop-rspec (2.5.0)
-      rubocop (~> 1.19)
+      rubocop (>= 0.82.0)
+    rubocop-rspec (1.41.0)
+      rubocop (>= 0.68.1)
     ruby-box (1.15.0)
       addressable
       json
@@ -884,7 +892,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8)
-    unicode-display_width (2.1.0)
+    unicode-display_width (1.8.0)
     unicode-types (1.7.0)
     valkyrie (3.0.0.pre.beta.1)
       activemodel
@@ -921,6 +929,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bixby (~> 3.0)
   bootsnap (>= 1.1.0)
   bootstrap-sass (~> 3.0)
   byebug
@@ -943,9 +952,6 @@ DEPENDENCIES
   riiif (~> 2.1)
   rsolr (>= 1.0, < 3)
   rspec-rails
-  rubocop
-  rubocop-rails
-  rubocop-rspec
   sass-rails (~> 5.0)
   sidekiq (~> 6.2)
   solr_wrapper (>= 0.3)

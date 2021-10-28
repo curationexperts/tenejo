@@ -12,7 +12,7 @@ RSpec.describe User do
         u.password_confirmation = 'passss'
       end
     end
-    it 'should have a role of admin' do
+    it 'has a role of admin' do
       expect(user.groups).to eq ['admin']
     end
   end

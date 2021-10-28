@@ -1,27 +1,55 @@
-# The behavior of RuboCop can be controlled via the .rubocop.yml
-# configuration file. It makes it possible to enable/disable
-# certain cops (checks) and to alter their behavior if they accept
-# any parameters. The file can be placed either in your home
-# directory or in some project directory.
-#
-# RuboCop will start looking for the configuration file in the directory
-# where the inspected file is and continue its way up to the root directory.
-#
-# See https://docs.rubocop.org/rubocop/configuration
-#
-AllCops:
-  NewCops: enable
-  Exclude:
-    - db/**/*
-    - bin/**/*
-    - config/**/*
-    - vendor/**/*
+inherit_gem:
+  bixby: bixby_default.yml
 
-Style/Documentation:
+AllCops:
+  TargetRubyVersion: 2.7
+
+Layout/HashAlignment:
   Enabled: false
-Metrics/ClassLength:
-  Enabled: false
-Metrics/BlockLength:
+
+
+Metrics/AbcSize:
+  Enabled: true
   Exclude:
-    - app/controllers/catalog_controller.rb
-    - spec/**/*.rb
+    - 'app/extensions/derivatives.rb'
+
+Metrics/BlockLength:
+  Enabled: true
+  ExcludedMethods: ['feature', 'before', 'describe', 'context', 'scenario', 'configure', 'config', 'setup', 'class_eval']
+  Exclude:
+    - config/**
+    - lib/tasks/**
+    - 'app/controllers/catalog_controller.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'app/uploaders/csv_manifest_validator.rb'
+    - 'app/controllers/catalog_controller.rb'
+
+Metrics/MethodLength:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+Rails/Delegate:
+  Exclude:
+    - 'app/models/csv_import.rb'
+
+RSpec/ExampleLength:
+  Enabled: true
+  Exclude:
+    - 'spec/features**/*'
+    - 'spec/system/**/*'
+    - 'spec/uploaders/csv_manifest_validator_spec.rb'
+    - 'spec/importers/modular_importer_spec.rb'
+
+Style/BlockDelimiters:
+  Exclude:
+    - 'spec/**/*'
+
+Style/EmptyMethod:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false

@@ -12,9 +12,9 @@ gem 'sidekiq', '~> 6.2'
 gem 'sqlite3', '~> 1.3.0'
 # Use Puma as the app server
 gem 'dotenv-rails', '~> 2.2.1'
+gem 'okcomputer'
 gem 'pg', '~> 1.0'
 gem 'puma', '~> 3.11'
-gem 'okcomputer'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -49,6 +49,7 @@ end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
+  gem 'bixby', '~> 3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
 end
@@ -58,19 +59,12 @@ group :test do
   gem 'capybara', '>= 2.15'
   gem 'factory_bot_rails'
   gem 'webdrivers'
-  # Easy installation and use of chromedriver to run system tests with Chrome
-  gem 'rubocop'
-  gem 'rubocop-rails'
-  gem 'rubocop-rspec'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'hyrax', '3.1.0'
-group :development, :test do
-  gem 'solr_wrapper', '>= 0.3'
-end
 
 gem 'bootstrap-sass', '~> 3.0'
 gem 'devise'
@@ -81,6 +75,7 @@ gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 group :development, :test do
   gem 'fcrepo_wrapper'
   gem 'rspec-rails'
+  gem 'solr_wrapper', '>= 0.3'
 end
 
 gem 'riiif', '~> 2.1'
