@@ -37,7 +37,6 @@ gem 'redis', '~> 4.0'
 # gem 'mini_magick', '~> 4.8'
 
 # Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -54,12 +53,16 @@ gem 'jquery-rails'
 gem 'rsolr', '>= 1.0', '< 3'
 gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 gem 'riiif', '~> 2.1'
+gem 'whenever'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'bixby', '~> 3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
+  gem 'capistrano-rails'
+  gem 'capistrano-sidekiq'
+  gem 'capistrano-passenger'
 end
 
 group :test do
