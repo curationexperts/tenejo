@@ -2,11 +2,12 @@
 
 CHARS = ('0'..'9').to_a + ('A'..'Z').to_a + ('a'..'z').to_a
 namespace :cur do
-  desc 'Install first user'
-  task first_user: :environment do
+  desc 'Create  user'
+  task :create_user,  [:email] => :environment do |t, args|
     pw = random_password
-    User.where(email: 'admin@example.com').first.destroy
-    User.create!(email: 'admin@example.com', display_name: 'Admin User', password: pw, password_confirmation: pw)
+    email = args[:email] || 'admin@example.com'
+    User.where(email: email).first&.destroy
+    User.create!(email: email, password: pw, password_confirmation: pw)
     puts "Password: #{pw}"
   end
   def random_password(length = 16)

@@ -39,10 +39,10 @@ Install various bits & bobs:
 ```rails hyrax:workflow:load```
 ```rails hyrax:universal_viewer:install```
 
-Create first user:
-```rails cur:first_user```
+Create admin user:
+```rails cur:create_user[email@example.com]```
 This task will create an initial admin user with a random password, which will be the output of this task.
-The default username is admin@example.com
+The default username is admin@example.com, but it can be parameterized as above.
 
 
 If all went well, you should have a server up and runnint at http://localhost:3000
