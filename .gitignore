@@ -6,32 +6,50 @@
 
 # Ignore bundler config.
 /.bundle
-public/uv
+bundle/*
 vendor/bundle
-public/uv
+
+# Ignore environment files (except test for CI)
+,env
 .env.development
-fits.log
-.env.test
+!.env.test
 .env.production
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
+
+# Ignore redis database saves
+**/dump.rdb
 
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+*.log
+*.tmp
+
+# Ignore coverage
+/coverage/*
 
 # Ignore uploaded files in development
 /storage/*
 !/storage/.keep
 
+# Ignore javascript artifacts
 /node_modules
 /yarn-error.log
+/public/packs
+/public/packs-test
+**/yarn-debug.log*
+.yarn-integrity
 
 /public/assets
+/public/uv
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+public/uv
