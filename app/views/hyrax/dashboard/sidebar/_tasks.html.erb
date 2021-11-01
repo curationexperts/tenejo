@@ -1,0 +1,10 @@
+<%# byebug %>
+<%# This is pretty hacky, but the only way I could find to add menu items and still pull in the Hyrax default menu items %>
+<%= render(file: File.join(Hyrax::Engine.root, 'app','views','hyrax','dashboard','sidebar','_tasks'), locals: {menu: menu}) %>
+<%# TODO: wrap roles page in dashboard layout %>
+<% if can? :manage, User %>
+  <%= menu.nav_link('roles',
+                    onclick: "dontChangeAccordion(event);") do %>
+    <span class="fa fa-id-card" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.manage_roles') %></span>
+  <% end %>
+<% end %>
