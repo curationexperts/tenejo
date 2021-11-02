@@ -75,6 +75,7 @@ group :test do
   gem 'factory_bot_rails'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
+  gem 'simplecov', require: false
   gem 'webdrivers'
 end
 
