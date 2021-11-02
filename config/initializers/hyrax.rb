@@ -109,7 +109,7 @@ Hyrax.config do |config|
   # Username for connecting to geonames
   config.geonames_username =
     ENV['GEONAMES_USERNAME'] ||
-      warn('No GeoNames credentials provided. Set `geonames_username` in Hyrax configuration.') && ''
+    warn('No GeoNames credentials provided. Set `geonames_username` in Hyrax configuration.') && ''
 
   # Should the acceptance of the licence agreement be active (checkbox), or
   # implied when the save button is pressed? Set to true for active
@@ -142,7 +142,7 @@ Hyrax.config do |config|
   config.iiif_image_server = true
 
   # If we have an external IIIF server, use it for image requests; else, use riiif
-  config.iiif_image_url_builder = lambda do |file_id, base_url, size|
+  config.iiif_image_url_builder = lambda do |file_id, base_url, size, _format|
     if ENV['IIIF_SERVER_URL'].present?
       ENV['IIIF_SERVER_URL'] + file_id.gsub('/', '%2F') + "/full/" + size + "/0/default.jpg"
     else
