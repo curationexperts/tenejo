@@ -74,12 +74,13 @@ group :test do
   gem 'capybara', '>= 2.15'
   gem 'factory_bot_rails'
   gem 'webdrivers'
+  gem 'rspec-rails'
+  gem 'rspec_junit_formatter'
 end
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'fcrepo_wrapper'
-  gem 'rspec-rails'
   gem 'solr_wrapper', '>= 0.3'
   gem 'xray-rails', '~> 0.3.2'
 end
