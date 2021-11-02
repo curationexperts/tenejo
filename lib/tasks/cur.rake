@@ -3,7 +3,7 @@
 CHARS = ('0'..'9').to_a + ('A'..'Z').to_a + ('a'..'z').to_a
 namespace :cur do
   desc 'Create  user'
-  task :create_user,  [:email] => :environment do |t, args|
+  task :create_user, [:email] => :environment do |_t, args|
     pw = random_password
     email = args[:email] || 'admin@example.com'
     User.where(email: email).first&.destroy

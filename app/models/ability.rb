@@ -8,13 +8,9 @@ class Ability
 
   # Define any customized permissions here.
   def custom_permissions
-    if current_user.admin?
-      can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role
-    end
+    can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy], Role if current_user.admin?
 
-    if current_user.admin?
-      can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy, :manage], User
-    end
+    can [:create, :show, :add_user, :remove_user, :index, :edit, :update, :destroy, :manage], User if current_user.admin?
 
     # Limits deleting objects to a the admin user
     #

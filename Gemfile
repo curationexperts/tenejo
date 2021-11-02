@@ -45,27 +45,28 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
-gem 'hyrax', '3.1.0'
 gem 'hydra-role-management', '~> 1.0', '>= 1.0.3'
+gem 'hyrax', '3.1.0'
 
 gem 'bootstrap-sass', '~> 3.0'
 gem 'devise'
 gem 'devise-guests', '~> 0.6'
+gem 'devise_invitable', '~> 2.0.0'
+gem 'honeybadger', group: 'production'
 gem 'jquery-rails'
+gem 'riiif', '~> 2.1'
 gem 'rsolr', '>= 1.0', '< 3'
 gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
-gem 'riiif', '~> 2.1'
 gem 'whenever', group: 'production'
-gem 'honeybadger', group: 'production'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'bixby', '~> 3.0'
-  gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'web-console', '>= 3.3.0'
+  gem 'capistrano-passenger'
   gem 'capistrano-rails'
   gem 'capistrano-sidekiq'
-  gem 'capistrano-passenger'
+  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'web-console', '>= 3.3.0'
 end
 
 group :test do
@@ -82,4 +83,3 @@ group :development, :test do
   gem 'solr_wrapper', '>= 0.3'
   gem 'xray-rails', '~> 0.3.2'
 end
-

@@ -208,6 +208,9 @@ GEM
       warden (~> 1.2.3)
     devise-guests (0.8.1)
       devise
+    devise_invitable (2.0.5)
+      actionmailer (>= 5.0)
+      devise (>= 4.6)
     diff-lcs (1.4.4)
     disposable (0.5.0)
       declarative (>= 0.0.9, < 1.0.0)
@@ -986,6 +989,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   devise
   devise-guests (~> 0.6)
+  devise_invitable (~> 2.0.0)
   dotenv-rails (~> 2.2.1)
   factory_bot_rails
   fcrepo_wrapper
