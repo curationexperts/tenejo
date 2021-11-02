@@ -10,5 +10,6 @@ class ApplicationController < ActionController::Base
   # Adds Hyrax behaviors into the application controller
   include Hyrax::Controller
   include Hyrax::ThemedLayoutController
+  include HttpAuthConcern
   with_themed_layout '1_column'
 end
