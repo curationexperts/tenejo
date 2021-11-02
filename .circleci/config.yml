@@ -1,0 +1,137 @@
+version: 2.1
+orbs:
+    samvera: samvera/circleci-orb@0.3.1
+jobs:
+    build:
+        parameters:
+            ruby_version:
+                type: string
+                default: 2.7.4
+            bundler_version:
+                type: string
+                default: 2.2.28
+        environment:
+          DATABASE_URL: postgresql://postgres@127.0.0.1/circle_test
+          DATABASE_NAME: circle_test
+          POSTGRES_DB: circle_test
+          DATABASE_USERNAME: postgres
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_USER: postgres
+          WORKING_PATH: /tmp
+          UPLOAD_PATH: /tmp
+          CACHE_PATH: /tmp/cache
+          FEDORA_TEST_URL: http://127.0.0.1:8080/fcrepo/rest
+          SOLR_TEST_URL: http://127.0.0.1:8985/solr/hydra-test
+          COVERAGE: 1
+        executor:
+            name: samvera/ruby_fcrepo_solr_redis_postgres
+            ruby_version: << parameters.ruby_version >>
+        working_directory: ~/project
+        parallelism: 4
+        steps:
+            - checkout
+
+            - samvera/bundle:
+                ruby_version: << parameters.ruby_version >>
+                bundler_version: << parameters.bundler_version >>
+
+            - samvera/rubocop
+
+            - run:
+                name: Get yarn version
+                command: echo $(yarn --version) >> "YARN_VERSION"
+
+            - restore_cache:
+                keys:
+                    - v1-yarn-{{ checksum "yarn.lock" }}-{{ checksum "YARN_VERSION" }}
+
+            - run: yarn
+
+            - save_cache:
+                key: v1-yarn-{{ checksum "yarn.lock" }}-{{ checksum "YARN_VERSION" }}
+                paths:
+                    - ~/project/node_modules
+
+            - samvera/install_solr_core
+
+            - run:
+                name: Install Code Climate test reporter
+                command: |
+                    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+                    chmod +x ./cc-test-reporter
+                    ./cc-test-reporter before-build
+
+            - samvera/parallel_rspec
+
+            - run:
+                name: Generate CC coverage
+                command:  ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+
+            - persist_to_workspace:
+                root: coverage
+                paths: codeclimate.*.json
+
+            - deploy:
+                command: curl -k https://coveralls.io/webhook?repo_token=${COVERALLS_REPO_TOKEN} -d "payload[build_num]=${CIRCLE_BUILD_NUM}&payload[status]=done"
+
+    coverage:
+        docker:
+            - image: circleci/ruby:2.7.4
+        working_directory: ~/project
+        parallelism: 1
+        steps:
+            - attach_workspace:
+                at: /tmp/codeclimate
+
+            - run:
+                name: Install Code Climate test reporter
+                command: |
+                    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+                    chmod +x ./cc-test-reporter
+
+            - run:
+                name: Upload Coverage
+                command: |
+                    ./cc-test-reporter sum-coverage --output='/tmp/codeclimate/summed_coverage.json' /tmp/codeclimate/codeclimate.*.json
+                    ./cc-test-reporter upload-coverage --input='/tmp/codeclimate/summed_coverage.json'
+
+    deploy-job:
+        parameters:
+            ruby_version:
+                type: string
+                default: 2.7.4
+            bundler_version:
+                type: string
+                default: 2.2.28
+        docker:
+            - image: circleci/ruby:2.7.4
+        working_directory: ~/project
+        steps:
+            - checkout
+            - samvera/bundle:
+                ruby_version: << parameters.ruby_version >>
+                bundler_version: << parameters.bundler_version >>
+            # - run:
+            #       name: Bundle Install
+            #       command: bundle check || bundle install
+            - add_ssh_keys
+            - run:
+                  name: Deploy if tests pass and branch is Main
+                  command: bundle exec cap cd deploy
+
+workflows:
+    version: 2
+    ci:
+        jobs:
+            - build:
+                name: testing
+            - coverage:
+                name: codeclimate
+                requires:
+                    - testing
+            - deploy-job:
+                requires:
+                    - testing
+                filters:
+                  branches:
+                    only: main # Only run deploy job when commit is on the main branch
