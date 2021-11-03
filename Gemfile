@@ -59,16 +59,6 @@ gem 'rsolr', '>= 1.0', '< 3'
 gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 gem 'whenever', group: 'production'
 
-group :development do
-  # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem 'bixby', '~> 3.0'
-  gem 'capistrano-passenger'
-  gem 'capistrano-rails'
-  gem 'capistrano-sidekiq'
-  gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'web-console', '>= 3.3.0'
-end
-
 group :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'
@@ -80,8 +70,14 @@ group :test do
 end
 
 group :development, :test do
+  gem 'bixby', '~> 3.0'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'capistrano-passenger'
+  gem 'capistrano-rails'
+  gem 'capistrano-sidekiq'
   gem 'fcrepo_wrapper'
+  gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'solr_wrapper', '>= 0.3'
+  gem 'web-console', '>= 3.3.0'
   gem 'xray-rails', '~> 0.3.2'
 end

@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+require 'sidekiq/web'
 Rails.application.routes.draw do
   mount Riiif::Engine => 'images', as: :riiif if Hyrax.config.iiif_image_server?
-        mount BrowseEverything::Engine => '/browse'
+  mount BrowseEverything::Engine => '/browse'
 
   mount Blacklight::Engine => '/'
-  
+
   concern :searchable, Blacklight::Routes::Searchable.new
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
@@ -29,6 +31,9 @@ Rails.application.routes.draw do
     collection do
       delete 'clear'
     end
+  end
+  authenticate :user, ->(u) { u.admin? } do
+    mount Sidekiq::Web => '/sidekiq'
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
