@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'clamby/error'
 module Cur
   ##
   # A Clamby based virus scanner

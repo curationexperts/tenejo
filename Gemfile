@@ -78,6 +78,5 @@ group :development, :test do
   gem 'fcrepo_wrapper'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'solr_wrapper', '>= 0.3'
-  gem 'web-console', '>= 3.3.0'
   gem 'xray-rails', '~> 0.3.2'
 end

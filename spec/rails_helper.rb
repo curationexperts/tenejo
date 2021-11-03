@@ -37,6 +37,11 @@ rescue ActiveRecord::PendingMigrationError => e
   exit 1
 end
 RSpec.configure do |config|
+  config.before do |_example|
+    class_double("Clamby")
+    allow(Clamby).to receive(:virus?).and_return(false)
+    allow(Clamby).to receive(:safe?).and_return(true)
+  end
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
