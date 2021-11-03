@@ -65,7 +65,8 @@ jobs:
 
             - run:
                 name: Generate CC coverage
-                command:  ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+                command: ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+
 
             - persist_to_workspace:
                 root: coverage
@@ -134,4 +135,4 @@ workflows:
                     - testing
                 filters:
                   branches:
-                    only: main # Only run deploy job when commit is on the main branch
+                    only: cci # Only run deploy job when commit is on the main branch

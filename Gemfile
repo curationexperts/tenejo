@@ -6,6 +6,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.7.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'bcrypt_pbkdf'
+gem 'ed25519'
+gem 'rails', '~> 5.2.6'
 gem 'rails', '~> 5.2.6'
 gem 'sidekiq', '~> 6.2'
 # Use sqlite3 as the database for Active Record
@@ -31,8 +34,6 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
@@ -60,12 +61,11 @@ gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 gem 'whenever', group: 'production'
 
 group :test do
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '>= 2.15'
   gem 'factory_bot_rails'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
   gem 'simplecov', require: false
+  gem 'simplecov_json_formatter'
   gem 'webdrivers'
 end
 
