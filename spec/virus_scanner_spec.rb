@@ -3,7 +3,7 @@
 require 'rails_helper'
 require './app/lib/virus_scanner'
 
-RSpec.describe Cur::VirusScanner do
+RSpec.describe Tenejo::VirusScanner do
   context "with clean file" do
     let(:goodfile) { './spec/fixtures/images/cat.jpg' }
     it "does not freak out" do
