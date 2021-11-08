@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 CHARS = ('0'..'9').to_a + ('A'..'Z').to_a + ('a'..'z').to_a
-namespace :cur do
+namespace :tenejo do
   desc 'Create  user'
   task :create_user, [:email] => :environment do |_t, args|
     pw = random_password

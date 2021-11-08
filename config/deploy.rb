@@ -3,11 +3,11 @@
 lock "~> 3.16.0"
 
 require 'capistrano/passenger'
-set :application, "cur"
-set :repo_url, "git@github.com:curationexperts/cur.git"
-set :ssh_options, keys: ["cur-cd"] if File.exist?("cur-cd")
+set :application, "tenejo"
+set :repo_url, 'https://github.com/curationexperts/tenejo'
+set :ssh_options, keys: ["tenejo-cd"] if File.exist?("tenejo-cd")
 
-set :deploy_to, '/opt/cur'
+set :deploy_to, '/opt/tenejo'
 set :rails_env, 'production'
 set :log_level, :warn
 set :bundle_env_variables, nokogiri_use_system_libraries: 1

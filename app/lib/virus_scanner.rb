@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'clamby/error'
-module Cur
+module Tenejo
   ##
   # A Clamby based virus scanner
   #
