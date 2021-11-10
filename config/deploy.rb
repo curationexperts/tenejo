@@ -45,3 +45,11 @@ namespace :sidekiq do
     end
   end
 end
+
+namespace :deploy do
+  # after :restart, 'sidekiq:restart'
+  after :starting,  'sidekiq:quiet'
+  after :updated,   'sidekiq:stop'
+  after :published, 'sidekiq:start'
+  after :failed, 'sidekiq:restart'
+end
