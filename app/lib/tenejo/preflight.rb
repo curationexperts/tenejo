@@ -54,7 +54,7 @@ module Tenejo
       all = row.map(&:first)
       dupes = all.select { |x| all.count(x) > 1 }
       raise DuplicateColumnError, "Duplicate column names detected #{dupes}, cannot process" unless dupes.empty?
-      true
+      row.length
     end
 
     def self.should_skip?(row, lineno)
@@ -72,18 +72,29 @@ module Tenejo
       (graph[:work] + graph[:file] + graph[:collection]).empty?
     end
 
+    def self.check_length(row, headerlen, lineno, graph)
+      if row.chunk.size != headerlen && !row.map(&:last).all?(nil)
+        graph[:warnings] << "The number of columns in row #{lineno} differed from the number of headers (missing quotation mark?)"
+        false
+      else
+        true
+      end
+    end
+
     def self.read_csv(input)
       begin
         csv = CSV.open(input, headers: true, return_headers: true, skip_blanks: true,
                        header_converters: [->(m) { m.downcase.tr(' ', '_').to_sym }])
         graph = init_graph
+        headerlen = 0
         csv.each do |row|
-          check_headers(row) and next if csv.lineno == 1
+          headerlen = check_headers(row) and next if csv.lineno == 1
+          next unless check_length(row, headerlen, csv.lineno, graph)
           parse_to_type(row, csv.lineno, graph)
         end
         graph[:fatal_errors] << "No data was detected" if empty_graph?(graph)
-      rescue CSV::MalformedCSVError
-        graph[:fatal_errors] << "Could not recognize this file format"
+      rescue CSV::MalformedCSVError => x
+        graph[:fatal_errors] << "Could not recognize this file format: #{x.message}"
       rescue DuplicateColumnError => x
         graph[:fatal_errors] << x.message
       ensure

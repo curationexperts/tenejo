@@ -14,7 +14,7 @@ RSpec.describe Tenejo::Preflight do
   context "a file that isn't a csv " do
     let(:graph) { described_class.read_csv("spec/fixtures/images/cat.jpg") }
     it "returns a fatal error" do
-      expect(graph[:fatal_errors]).to eq ["Could not recognize this file format"]
+      expect(graph[:fatal_errors]).to eq ["Could not recognize this file format: Invalid byte sequence in UTF-8 in line 1."]
     end
   end
   context "a file with no data" do
@@ -27,6 +27,13 @@ RSpec.describe Tenejo::Preflight do
     it "records toplevel errors" do
       expect(graph[:fatal_errors]).to eq ["No data was detected"]
       expect(graph[:warnings]).to be_empty
+    end
+  end
+
+  context "a row with a weird number of columns" do
+    let(:graph) { described_class.read_csv("spec/fixtures/missing_cols.csv")}
+    it "records a warning for that row" do
+      expect(graph[:warnings]).to eq ["The number of columns in row 2 differed from the number of headers (missing quotation mark?)"]
     end
   end
 
