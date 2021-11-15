@@ -27,11 +27,20 @@ module Tenejo
     validates_each :file do |rec, att, val|
       rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if val.present? && !File.exist?(File.join(rec.import_path, val))
     end
-    def initialize(h, lineno, import_path)
-      f = h.delete(:files)
-      h[:file] = f.last if f
+
+    def self.unpack(row, lineno, import_path)
+      row[:files].split("|~|").map do |f|
+        cp = row.dup
+        cp[:files] = f
+        PFFile.new(cp, lineno, import_path)
+      end
+    end
+
+    def initialize(row, lineno, import_path)
+      f = row.to_h.delete(:files)
+      row[:file] = f if f
       @import_path = import_path
-      super h, lineno
+      super row, lineno
     end
   end
 
@@ -158,7 +167,7 @@ module Tenejo
       when 'c', 'collection'
         output[:collection] << PFCollection.new(row.to_h, lineno)
       when 'f', 'file'
-        output[:file] << PFFile.new(row, lineno, import_path)
+        output[:file] += PFFile.unpack(row, lineno, import_path)
       when 'w', 'work'
         output[:work] << PFWork.new(row, lineno)
       else
