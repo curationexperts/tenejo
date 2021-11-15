@@ -24,8 +24,8 @@ module Tenejo
     attr_accessor(*ALL_FIELDS)
     attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
-    validates_each :file do |rec, att, val| 
-      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if (val.present? && !File.exist?(File.join(rec.import_path, val)))
+    validates_each :file do |rec, att, val|
+      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if val.present? && !File.exist?(File.join(rec.import_path, val))
     end
     def initialize(h, lineno, import_path)
       f = h.delete(:files)

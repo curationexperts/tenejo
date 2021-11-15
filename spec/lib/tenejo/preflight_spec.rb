@@ -109,7 +109,7 @@ RSpec.describe Tenejo::Preflight do
         end
       end
       expect(graph[:file].first.valid?).to be false
-      expect(graph[:file].last.valid?).to be true 
+      expect(graph[:file].last.valid?).to be true
     end
   end
   describe Tenejo::PFFile do
