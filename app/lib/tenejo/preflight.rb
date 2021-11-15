@@ -22,10 +22,15 @@ module Tenejo
     ALL_FIELDS = [:parent, :file, :resource_type].freeze
     REQUIRED_FIELDS = [:parent, :file].freeze
     attr_accessor(*ALL_FIELDS)
+    attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
-    def initialize(h, lineno)
+    validates_each :file do |rec, att, val| 
+      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if (val.present? && !File.exist?(File.join(rec.import_path, val)))
+    end
+    def initialize(h, lineno, import_path)
       f = h.delete(:files)
       h[:file] = f.last if f
+      @import_path = import_path
       super h, lineno
     end
   end
@@ -93,7 +98,7 @@ module Tenejo
       end
     end
 
-    def self.read_csv(input)
+    def self.read_csv(input, import_path)
       begin
         csv = CSV.open(input, headers: true, return_headers: true, skip_blanks: true,
                        header_converters: [->(m) { m.downcase.tr(' ', '_').to_sym }])
@@ -106,7 +111,7 @@ module Tenejo
             next
           end
           next unless check_length(row, headerlen, csv.lineno, graph)
-          parse_to_type(row, csv.lineno, graph)
+          parse_to_type(row, import_path, csv.lineno, graph)
         end
         graph[:fatal_errors] << "No data was detected" if empty_graph?(graph)
       rescue CSV::MalformedCSVError => x
@@ -147,13 +152,13 @@ module Tenejo
       graph
     end
 
-    def self.parse_to_type(row, lineno, output)
+    def self.parse_to_type(row, import_path, lineno, output)
       return output if row.to_h.values.all?(nil)
       case row[:object_type].downcase
       when 'c', 'collection'
         output[:collection] << PFCollection.new(row.to_h, lineno)
       when 'f', 'file'
-        output[:file] << PFFile.new(row, lineno)
+        output[:file] << PFFile.new(row, lineno, import_path)
       when 'w', 'work'
         output[:work] << PFWork.new(row, lineno)
       else

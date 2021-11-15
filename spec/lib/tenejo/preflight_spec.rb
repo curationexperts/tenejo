@@ -1,24 +1,31 @@
 # frozen_string_literal: true
 require './app/lib/tenejo/preflight'
 require 'spec_helper'
+require 'fileutils'
 require 'byebug'
 
 RSpec.describe Tenejo::Preflight do
+  before :all do
+    FileUtils.mkdir_p("tmp/uploads")
+  end
+  after :all do
+    FileUtils.rm_r("tmp/uploads")
+  end
   context "a file with duplicate columns" do
-    let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv") }
+    let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv", "tmp/uploads") }
 
     it "records fatal error for duplicate column " do
       expect(dupes[:fatal_errors]).to include "Duplicate column names detected [:identifier, :identifier, :deduplication_key, :deduplication_key], cannot process"
     end
   end
   context "a file that isn't a csv " do
-    let(:graph) { described_class.read_csv("spec/fixtures/images/cat.jpg") }
+    let(:graph) { described_class.read_csv("spec/fixtures/images/cat.jpg", "tmp/uploads") }
     it "returns a fatal error" do
       expect(graph[:fatal_errors]).to eq ["Could not recognize this file format: Invalid byte sequence in UTF-8 in line 1."]
     end
   end
   context "a file with no data" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/empty.csv") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/empty.csv", "tmp/uploads") }
     it "returns an empty graph" do
       [:work, :collection, :file].each do |x|
         expect(graph[x]).to be_empty
@@ -31,21 +38,21 @@ RSpec.describe Tenejo::Preflight do
   end
 
   context "a file that has unmapped header names" do
-    let(:graph) { described_class.read_csv("spec/fixtures/unmapped.csv") }
+    let(:graph) { described_class.read_csv("spec/fixtures/unmapped.csv", "tmp/uploads") }
     it "records a warning for that row" do
       expect(graph[:warnings]).to include "The column \"frankabillity\" is unknown, and will be ignored"
     end
   end
 
   context "a row with too many columns" do
-    let(:graph) { described_class.read_csv("spec/fixtures/missing_cols.csv") }
+    let(:graph) { described_class.read_csv("spec/fixtures/missing_cols.csv", "tmp/uploads") }
     it "records a warning for that row" do
       expect(graph[:warnings]).to eq ["The number of columns in row 2 differed from the number of headers (missing quotation mark?)"]
     end
   end
 
   context "a file with a bad object type" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv", "tmp/uploads") }
 
     it "records a warning for that row" do
       expect(graph[:warnings]).to eq ["Uknown object type on row 2: potato"]
@@ -53,7 +60,13 @@ RSpec.describe Tenejo::Preflight do
   end
 
   context "a well formed file" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
+
+    it "checks for missing files in IMPORT_PATH" do
+      expect(graph[:file].first.valid?).to be false
+      expect(graph[:file].first.errors[:file]).to include "Could not find file MN-02 2.png at tmp/uploads"
+    end
+
     it "records line number" do
       expect(graph[:work].first.lineno).to eq 4
       expect(graph[:collection].first.lineno).to eq 2
@@ -89,15 +102,18 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "has validation" do
-      [:work, :collection, :file].each do |x|
+      FileUtils.touch("tmp/uploads/MN-02 4.png")
+      [:work, :collection].each do |x|
         graph[x].each do |y|
           expect(y.valid?).to eq true
         end
       end
+      expect(graph[:file].first.valid?).to be false
+      expect(graph[:file].last.valid?).to be true 
     end
   end
   describe Tenejo::PFFile do
-    let(:rec) { described_class.new({}, 1) }
+    let(:rec) { described_class.new({}, 1, 'tmp/uploads') }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
       expect(rec.errors.messages).to eq file: ["can't be blank"], parent: ["can't be blank"]
