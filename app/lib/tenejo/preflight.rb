@@ -9,17 +9,20 @@ module Tenejo
     def initialize(h, lineno)
       self.lineno = lineno
       h.delete(:object_type)
-      h.each { |k, v| send("#{k}=", v) if v.present? }
+      h.each do |k, v|
+        if respond_to?("#{k}=")
+          send("#{k}=", v) if v.present?
+        end
+      end
       @children = []
     end
   end
 
   class PFFile < PreFlightObj
-    attr_accessor :parent, :file, :resource_type
-    validates_each :parent, :file do |rec, attr, val|
-      rec.errors.add attr, "is required" if val.blank?
-    end
-
+    ALL_FIELDS = [:parent, :file, :resource_type].freeze
+    REQUIRED_FIELDS = [:parent, :file].freeze
+    attr_accessor(*ALL_FIELDS)
+    validates_presence_of(*REQUIRED_FIELDS)
     def initialize(h, lineno)
       f = h.delete(:files)
       h[:file] = f.last if f
@@ -28,12 +31,13 @@ module Tenejo
   end
 
   class PFWork < PreFlightObj
-    attr_accessor :title, :identifier, :deduplication_key, :creator, :keyword, :files,
-      :visibility, :license, :parent, :rights_statement, :resource_type,
-      :abstract_or_summary, :date_created, :subject, :language
-    validates_each :title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :license, :parent do |rec, attr, val|
-      rec.errors.add attr, "is required" if val.blank?
-    end
+    ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :files,
+                  :visibility, :license, :parent, :rights_statement, :resource_type,
+                  :abstract_or_summary, :date_created, :subject, :language, :publisher, :related_url, :location, :source, :bibliographic_citation].freeze
+    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :license, :parent].freeze
+
+    attr_accessor(*ALL_FIELDS)
+    validates_presence_of(*REQUIRED_FIELDS)
     def initialize(row, lineno)
       @files = []
       super
@@ -41,20 +45,28 @@ module Tenejo
   end
 
   class PFCollection < PreFlightObj
-    attr_accessor :title, :identifier, :deduplication_key, :creator, :keyword,
-      :visibility, :license, :parent, :resource_type, :abstract_or_summary, :contributor
-    validates_each :title, :identifier, :deduplication_key, :creator, :keyword, :visibility do |rec, attr, val|
-      rec.errors.add attr, "is required" if val.blank?
-    end
+    ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword,
+                  :visibility, :license, :parent, :resource_type, :abstract_or_summary, :contributor, :publisher].freeze
+    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility].freeze
+    attr_accessor(*ALL_FIELDS)
+    validates_presence_of(*REQUIRED_FIELDS)
   end
+
   class DuplicateColumnError < RuntimeError
   end
+
   class Preflight
-    def self.check_headers(row)
+    def self.check_unknown_headers(row, graph)
+      row.to_h.keys.each do |x|
+        graph[:warnings] << "The column \"#{x}\" is unknown, and will be ignored" unless KNOWN_HEADERS.include? x
+      end
+    end
+
+    def self.check_duplicate_headers(row)
       all = row.map(&:first)
       dupes = all.select { |x| all.count(x) > 1 }
       raise DuplicateColumnError, "Duplicate column names detected #{dupes}, cannot process" unless dupes.empty?
-      true
+      row.length
     end
 
     def self.should_skip?(row, lineno)
@@ -72,18 +84,33 @@ module Tenejo
       (graph[:work] + graph[:file] + graph[:collection]).empty?
     end
 
+    def self.check_length(row, headerlen, lineno, graph)
+      if row.chunk.size != headerlen && !row.map(&:last).all?(nil)
+        graph[:warnings] << "The number of columns in row #{lineno} differed from the number of headers (missing quotation mark?)"
+        false
+      else
+        true
+      end
+    end
+
     def self.read_csv(input)
       begin
         csv = CSV.open(input, headers: true, return_headers: true, skip_blanks: true,
                        header_converters: [->(m) { m.downcase.tr(' ', '_').to_sym }])
         graph = init_graph
+        headerlen = 0
         csv.each do |row|
-          check_headers(row) and next if csv.lineno == 1
+          if csv.lineno == 1 # is header
+            headerlen = check_duplicate_headers(row)
+            check_unknown_headers(row, graph)
+            next
+          end
+          next unless check_length(row, headerlen, csv.lineno, graph)
           parse_to_type(row, csv.lineno, graph)
         end
         graph[:fatal_errors] << "No data was detected" if empty_graph?(graph)
-      rescue CSV::MalformedCSVError
-        graph[:fatal_errors] << "Could not recognize this file format"
+      rescue CSV::MalformedCSVError => x
+        graph[:fatal_errors] << "Could not recognize this file format: #{x.message}"
       rescue DuplicateColumnError => x
         graph[:fatal_errors] << x.message
       ensure
@@ -135,4 +162,5 @@ module Tenejo
       output
     end
   end
+  KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
 end

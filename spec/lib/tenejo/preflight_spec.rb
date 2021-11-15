@@ -14,7 +14,7 @@ RSpec.describe Tenejo::Preflight do
   context "a file that isn't a csv " do
     let(:graph) { described_class.read_csv("spec/fixtures/images/cat.jpg") }
     it "returns a fatal error" do
-      expect(graph[:fatal_errors]).to eq ["Could not recognize this file format"]
+      expect(graph[:fatal_errors]).to eq ["Could not recognize this file format: Invalid byte sequence in UTF-8 in line 1."]
     end
   end
   context "a file with no data" do
@@ -27,6 +27,20 @@ RSpec.describe Tenejo::Preflight do
     it "records toplevel errors" do
       expect(graph[:fatal_errors]).to eq ["No data was detected"]
       expect(graph[:warnings]).to be_empty
+    end
+  end
+
+  context "a file that has unmapped header names" do
+    let(:graph) { described_class.read_csv("spec/fixtures/unmapped.csv") }
+    it "records a warning for that row" do
+      expect(graph[:warnings]).to include "The column \"frankabillity\" is unknown, and will be ignored"
+    end
+  end
+
+  context "a row with too many columns" do
+    let(:graph) { described_class.read_csv("spec/fixtures/missing_cols.csv") }
+    it "records a warning for that row" do
+      expect(graph[:warnings]).to eq ["The number of columns in row 2 differed from the number of headers (missing quotation mark?)"]
     end
   end
 
@@ -86,26 +100,26 @@ RSpec.describe Tenejo::Preflight do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq file: ["is required"], parent: ["is required"]
+      expect(rec.errors.messages).to eq file: ["can't be blank"], parent: ["can't be blank"]
     end
   end
   describe Tenejo::PFWork do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq creator: ["is required"],
-        deduplication_key: ["is required"], identifier: ["is required"],
-        keyword: ["is required"], license: ["is required"],
-        parent: ["is required"], title: ["is required"], visibility: ["is required"]
+      expect(rec.errors.messages).to eq creator: ["can't be blank"],
+        deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
+        keyword: ["can't be blank"], license: ["can't be blank"],
+        parent: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
     end
   end
   describe Tenejo::PFCollection do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq creator: ["is required"],
-        deduplication_key: ["is required"], identifier: ["is required"],
-        keyword: ["is required"], title: ["is required"], visibility: ["is required"]
+      expect(rec.errors.messages).to eq creator: ["can't be blank"],
+        deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
+        keyword: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
     end
   end
 end
