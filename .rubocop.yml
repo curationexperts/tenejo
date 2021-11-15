@@ -42,7 +42,7 @@ Rails/Delegate:
     - 'app/models/csv_import.rb'
 
 RSpec/ExampleLength:
-  Enabled: true
+  Enabled: false
   Exclude:
     - 'spec/features**/*'
     - 'spec/system/**/*'
