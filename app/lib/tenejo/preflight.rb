@@ -2,6 +2,7 @@
 require 'csv'
 require 'active_model'
 require 'active_support/core_ext/enumerable'
+
 module Tenejo
   class PreFlightObj
     include ActiveModel::Validations
@@ -59,9 +60,8 @@ module Tenejo
   end
 
   class PFCollection < PreFlightObj
-    ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword,
-                  :visibility, :license, :parent, :resource_type, :abstract_or_summary, :contributor, :publisher].freeze
-    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility].freeze
+    ALL_FIELDS = (Collection.terms + [:deduplication_key, :visibility, :parent]).uniq.freeze
+    REQUIRED_FIELDS = (Collection.required_terms + [:identifier, :deduplication_key, :visibility, :creator, :keyword]).uniq.freeze
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
   end
