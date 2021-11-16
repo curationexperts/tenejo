@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-require './app/lib/tenejo/preflight'
-require 'spec_helper'
+require 'rails_helper'
 require 'fileutils'
-require 'byebug'
 
 RSpec.describe Tenejo::Preflight do
   before :all do

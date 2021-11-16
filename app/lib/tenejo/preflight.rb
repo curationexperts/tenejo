@@ -2,6 +2,7 @@
 require 'csv'
 require 'active_model'
 require 'active_support/core_ext/enumerable'
+
 module Tenejo
   class PreFlightObj
     include ActiveModel::Validations
@@ -54,6 +55,7 @@ module Tenejo
                   :visibility, :license, :parent, :resource_type, :abstract_or_summary, :contributor, :publisher].freeze
     REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility].freeze
     attr_accessor(*ALL_FIELDS)
+    attr_accessor(*::Collection.terms)
     validates_presence_of(*REQUIRED_FIELDS)
   end
 

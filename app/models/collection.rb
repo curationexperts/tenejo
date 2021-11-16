@@ -6,4 +6,16 @@ class Collection < ActiveFedora::Base
   # You can replace these metadata if they're not suitable
   include Hyrax::BasicMetadata
   self.indexer = Hyrax::CollectionWithBasicMetadataIndexer
+
+  def self.terms
+    @metadata ||= properties.keys.map(&:to_sym)
+  end
+
+  def self.required_terms
+    @required_metadata ||= Hyrax::Forms::CollectionForm.required_fields
+  end
+
+  def self.editable_terms
+    @editable_metadata ||= Hyrax::Forms::CollectionForm.terms
+  end
 end
