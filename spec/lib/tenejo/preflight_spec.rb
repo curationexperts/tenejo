@@ -128,6 +128,14 @@ RSpec.describe Tenejo::Preflight do
         keyword: ["can't be blank"], license: ["can't be blank"],
         parent: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
     end
+
+    it "can unpack" do
+      p = Tenejo::PFFile.unpack({ files: "a|~|b|~|c", parent: 'p' }, 2, "tmp/uploads")
+      expect(p).to be_an Array
+      expect(p.size).to eq 3
+      expect(p.first.file).to eq "a"
+      expect(p.last.file).to eq "c"
+    end
   end
   describe Tenejo::PFCollection do
     let(:rec) { described_class.new({}, 1) }
