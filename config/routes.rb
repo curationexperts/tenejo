@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 require 'sidekiq/web'
 Rails.application.routes.draw do
+  namespace :tenejo do
+    get 'preflight/new'
+    get 'preflight/show'
+    post 'preflight/upload'
+  end
+
   mount Riiif::Engine => 'images', as: :riiif if Hyrax.config.iiif_image_server?
   mount BrowseEverything::Engine => '/browse'
 
