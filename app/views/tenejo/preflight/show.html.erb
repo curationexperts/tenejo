@@ -1,0 +1,133 @@
+<h1>PREFLIGHT</h1>  <%= link_to 'Do Another', tenejo_preflight_new_path, class: 'btn btn-primary btn-large' %>
+
+<h2>File</h2>
+<h4><%= @original_file %></h4>
+<br/>
+
+<h2>Analysis</h2>
+<% unless @errors.blank? %>
+  <div class="well well-sm">
+    <h4 class="bg-danger"">Errors</h4>
+    <ul>
+      <% @errors.each do |error| %>
+        <li><%= error %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% unless @warnings.blank? %>
+  <div class="well well-sm">
+    <h4 class="bg-warning">Warnings</h4>
+    <ul>
+      <% @warnings.each do |warning| %>
+        <li><%= warning %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% unless @collections.blank? %>
+  <div class="well well-sm">
+    <h4 class="bg-info">Collections</h4>
+    <table>
+      <colgroup>
+        <col style="width: 5rem;">
+        <col style="width: 10rem;">
+        <col style="width: 15rem;">
+        <col>
+      </colgroup>
+      <thead><tr>
+        <th>Row</th>
+        <th>Visibility</th>
+        <th>Identifier</th>
+        <th>Title</th>
+      </tr></thead>
+      <tbody>
+        <% @collections.each do |item| %>
+          <tr>
+            <td><%= item.lineno %></td>
+            <td><%= item.visibility %></td>
+            <td><%= item.identifier %></td>
+            <td><%= item.title %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% unless @works.blank? %>
+  <div class="well well-sm">
+    <h4 class="bg-info">Works</h4>
+    <table>
+      <colgroup>
+        <col style="width: 5rem;">
+        <col style="width: 10rem;">
+        <col style="width: 15rem;">
+        <col>
+      </colgroup>
+      <thead><tr>
+        <th>Row</th>
+        <th>Visibility</th>
+        <th>Identifier</th>
+        <th>Title</th>
+      </tr></thead>
+      <tbody>
+      <% @works.each do |item| %>
+        <tr>
+          <td><%= item.lineno %></td>
+          <td><%= item.visibility %></td>
+          <td><%= item.identifier %></td>
+          <td><%= item.title %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% unless @files.blank? %>
+  <div class="well well-sm">
+    <h4 class="bg-info">Files</h4>
+    <table>
+      <colgroup>
+        <col style="width: 5rem;">
+        <col style="width: 10rem;">
+        <col style="width: 15rem;">
+        <col>
+      </colgroup>
+      <thead><tr>
+        <th>Row</th>
+        <th>Parent</th>
+        <th>Path</th>
+        <th>file</th>
+      </tr></thead>
+      <tbody>
+      <% @files.each do |item| %>
+        <tr>
+          <td><%= item.lineno %></td>
+          <td><%= item.parent %></td>
+          <td><%= item.import_path %></td>
+          <td><%= item.file %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+
+<p>
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#rawPreflight" aria-expanded="false" aria-controls="rawPreflight">
+    Show raw preflight
+  </button>
+</p>
+<div class="collapse" id="rawPreflight">
+  <div class="card card-body">
+    <p><%= @preflight_graph %></p>
+  </div>
+</div>
+
+<%# put a space at the bottom of the page because the footer was overlapping the bottom content %>
+<p style="margin-bottom: 6em">&nbsp;</p>
