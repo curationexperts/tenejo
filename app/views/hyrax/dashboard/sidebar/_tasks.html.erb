@@ -8,3 +8,7 @@
     <span class="fa fa-id-card" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('hyrax.admin.sidebar.manage_roles') %></span>
   <% end %>
 <% end %>
+<%= menu.nav_link('/tenejo/preflight/new',
+                  onclick: "dontChangeAccordion(event);") do %>
+  <span class="fa fa-paper-plane" aria-hidden="true"></span> <span class="sidebar-action-text"><%= t('tenejo.admin.sidebar.preflight') %></span>
+<% end %>
