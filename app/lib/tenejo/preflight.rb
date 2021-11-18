@@ -7,6 +7,10 @@ module Tenejo
   class PreFlightObj
     include ActiveModel::Validations
     attr_accessor :lineno, :children
+    def warnings
+      @warnings ||= Hash.new { |h, k| h[k] = [] }
+    end
+
     def initialize(h, lineno)
       self.lineno = lineno
       h.delete(:object_type)
@@ -27,6 +31,11 @@ module Tenejo
     validates_presence_of(*REQUIRED_FIELDS)
     validates_each :file do |rec, att, val|
       rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if val.present? && !File.exist?(File.join(rec.import_path, val))
+    end
+    validates_each :resource_type do |rec, att, val|
+      if val.present?
+        rec.errors.add(att, "Resource type #{val} is not recognized and will be left blank.") unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
+      end
     end
 
     def self.unpack(row, lineno, import_path)
@@ -49,13 +58,28 @@ module Tenejo
     ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :files,
                   :visibility, :license, :parent, :rights_statement, :resource_type,
                   :abstract_or_summary, :date_created, :subject, :language, :publisher, :related_url, :location, :source, :bibliographic_citation].freeze
-    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :license, :parent].freeze
+    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :parent].freeze
 
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
     def initialize(row, lineno)
       @files = []
       super
+      check_license
+      check_rights
+    end
+
+    def check_license
+      return if license.blank?
+      return if LICENSES["terms"].map { |x| x['term'] }.include?(license)
+      warnings[:license] << "License is not recognized and will be left blank"
+      @license = ""
+    end
+
+    def check_rights
+      return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement)
+      warnings[:rights_statement] << "Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
+      @rights_statement = "Copyright Undetermined"
     end
   end
 
@@ -177,4 +201,7 @@ module Tenejo
     end
   end
   KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
+  LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
+  RESOURCE_TYPES = YAML.safe_load(File.open(Rails.root.join("config/authorities/resource_types.yml")))
+  RIGHTS_STATEMENTS = YAML.safe_load(File.open(Rails.root.join("config/authorities/rights_statements.yml")))
 end
