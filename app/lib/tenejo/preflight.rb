@@ -33,7 +33,9 @@ module Tenejo
       rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if val.present? && !File.exist?(File.join(rec.import_path, val))
     end
     validates_each :resource_type do |rec, att, val|
-      rec.errors.add(att, "Unknown resource type \"#{val}\"") unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include? val
+      if val.present?
+        rec.errors.add(att, "Resource type #{val} is not recognized and will be left blank.") unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
+      end
     end
 
     def self.unpack(row, lineno, import_path)
@@ -56,7 +58,7 @@ module Tenejo
     ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :files,
                   :visibility, :license, :parent, :rights_statement, :resource_type,
                   :abstract_or_summary, :date_created, :subject, :language, :publisher, :related_url, :location, :source, :bibliographic_citation].freeze
-    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :license, :parent].freeze
+    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :parent].freeze
 
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
@@ -68,14 +70,15 @@ module Tenejo
     end
 
     def check_license
+      return if license.blank?
       return if LICENSES["terms"].map { |x| x['term'] }.include?(license)
-      warnings[:license] << "Invalid licence, license will be set to 'Not Determined'"
-      @license = "Not determined"
+      warnings[:license] << "License is not recognized and will be left blank"
+      @license = ""
     end
 
     def check_rights
       return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement)
-      warnings[:rights_statement] << "Invalid rights statement, rights will be set to \"Copyright Undetermined\""
+      warnings[:rights_statement] << "Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
       @rights_statement = "Copyright Undetermined"
     end
   end
