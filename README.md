@@ -17,7 +17,7 @@ Things you may want to cover:
 
 Configure .env.development file, something like this:
 ```
-PROJECT_NAME=cur
+PROJECT_NAME=tenejo
 DATABASE_USERNAME=db_user
 DATABASE_PASSWORD=<db_user password>
 DATABASE_POOL_SIZE=25
