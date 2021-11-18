@@ -7,6 +7,9 @@ module Tenejo
   class PreFlightObj
     include ActiveModel::Validations
     attr_accessor :lineno, :children
+    def warnings
+      @warnings ||= Hash.new{|h,k| h[k] = []}
+    end
     def initialize(h, lineno)
       self.lineno = lineno
       h.delete(:object_type)
@@ -56,7 +59,12 @@ module Tenejo
     def initialize(row, lineno)
       @files = []
       super
+      check_license
     end
+    def check_license
+      warnings[:license] << "Invalid licence, license will be set to 'Not Determined'" unless LICENSES["terms"].map{|x| x['term']}.include? license
+    end
+
   end
 
   class PFCollection < PreFlightObj
@@ -177,4 +185,5 @@ module Tenejo
     end
   end
   KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
+  LICENSES = YAML.load(File.open(Rails.root.join("config/authorities/licenses.yml")))
 end

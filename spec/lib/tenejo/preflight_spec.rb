@@ -127,6 +127,11 @@ RSpec.describe Tenejo::Preflight do
         parent: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
     end
 
+    it "restricts license" do
+      expect(rec.valid?).to_not eq true
+      expect(rec.warnings[:license]).to eq ["Invalid licence, license will be set to 'Not Determined'"]
+    end
+
     it "can unpack" do
       p = Tenejo::PFFile.unpack({ files: "a|~|b|~|c", parent: 'p' }, 2, "tmp/uploads")
       expect(p).to be_an Array
