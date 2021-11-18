@@ -12,6 +12,9 @@ AllCops:
 Layout/HashAlignment:
   Enabled: false
 
+Rails/FilePath:
+  Enabled: false
+
 
 Metrics/AbcSize:
   Enabled: true

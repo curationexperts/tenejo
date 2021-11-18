@@ -114,7 +114,13 @@ RSpec.describe Tenejo::Preflight do
     let(:rec) { described_class.new({}, 1, 'tmp/uploads') }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq file: ["can't be blank"], parent: ["can't be blank"]
+      expect(rec.errors[:resource_type]).to eq ["Unknown resource type \"\""]
+    end
+
+    it "restricts resource type" do
+      rec.resource_type = "foo"
+      expect(rec.valid?).not_to eq true
+      expect(rec.errors[:resource_type]).to eq ["Unknown resource type \"foo\""]
     end
   end
   describe Tenejo::PFWork do
@@ -123,13 +129,18 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.valid?).not_to eq true
       expect(rec.errors.messages).to eq creator: ["can't be blank"],
         deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
-        keyword: ["can't be blank"], license: ["can't be blank"],
+        keyword: ["can't be blank"],
         parent: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
     end
 
     it "restricts license" do
-      expect(rec.valid?).to_not eq true
+      expect(rec.valid?).not_to eq true
       expect(rec.warnings[:license]).to eq ["Invalid licence, license will be set to 'Not Determined'"]
+      expect(rec.license).to eq "Not determined"
+    end
+    it "restricts rights statement" do
+      expect(rec.valid?).not_to eq true
+      expect(rec.warnings[:rights_statement]).to eq ["Invalid rights statement, rights will be set to \"Copyright Undetermined\""]
     end
 
     it "can unpack" do

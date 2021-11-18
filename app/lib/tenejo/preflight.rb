@@ -8,8 +8,9 @@ module Tenejo
     include ActiveModel::Validations
     attr_accessor :lineno, :children
     def warnings
-      @warnings ||= Hash.new{|h,k| h[k] = []}
+      @warnings ||= Hash.new { |h, k| h[k] = [] }
     end
+
     def initialize(h, lineno)
       self.lineno = lineno
       h.delete(:object_type)
@@ -30,6 +31,9 @@ module Tenejo
     validates_presence_of(*REQUIRED_FIELDS)
     validates_each :file do |rec, att, val|
       rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if val.present? && !File.exist?(File.join(rec.import_path, val))
+    end
+    validates_each :resource_type do |rec, att, val|
+      rec.errors.add(att, "Unknown resource type \"#{val}\"") unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include? val
     end
 
     def self.unpack(row, lineno, import_path)
@@ -60,11 +64,20 @@ module Tenejo
       @files = []
       super
       check_license
-    end
-    def check_license
-      warnings[:license] << "Invalid licence, license will be set to 'Not Determined'" unless LICENSES["terms"].map{|x| x['term']}.include? license
+      check_rights
     end
 
+    def check_license
+      return if LICENSES["terms"].map { |x| x['term'] }.include?(license)
+      warnings[:license] << "Invalid licence, license will be set to 'Not Determined'"
+      @license = "Not determined"
+    end
+
+    def check_rights
+      return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement)
+      warnings[:rights_statement] << "Invalid rights statement, rights will be set to \"Copyright Undetermined\""
+      @rights_statement = "Copyright Undetermined"
+    end
   end
 
   class PFCollection < PreFlightObj
@@ -185,5 +198,7 @@ module Tenejo
     end
   end
   KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
-  LICENSES = YAML.load(File.open(Rails.root.join("config/authorities/licenses.yml")))
+  LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
+  RESOURCE_TYPES = YAML.safe_load(File.open(Rails.root.join("config/authorities/resource_types.yml")))
+  RIGHTS_STATEMENTS = YAML.safe_load(File.open(Rails.root.join("config/authorities/rights_statements.yml")))
 end
