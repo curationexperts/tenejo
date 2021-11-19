@@ -3,7 +3,6 @@
 module Extensions
   module MenuPresenter
     def self.included(k)
-      Rails.logger.error("INCLUDED IN #{k}")
       k.class_eval do
         # @return [Boolean] true if the current controller happens to be one of the controllers that deals
         # with batch operations  This is used to keep the parent section on the sidebar open.

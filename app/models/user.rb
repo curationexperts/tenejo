@@ -15,8 +15,13 @@ class User < ApplicationRecord
   include Blacklight::User
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :invitable, :database_authenticatable, :registerable,
+  devise :invitable, :database_authenticatable,
          :recoverable, :rememberable, :validatable
+  begin
+    devise :registerable if Flipflop.self_register? # this will initially fail, as the model will be loaded during migrations, before the features table exists.
+  rescue ActiveRecord::StatementInvalid
+    Rails.logger.warn("AR failed reading flipflop, if you see this more than once, investigate.")
+  end
 
   # Method added by Blacklight; Blacklight uses #to_s on your
   # user class to get a user-displayable login/identifier for
