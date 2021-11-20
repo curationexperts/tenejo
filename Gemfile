@@ -60,6 +60,7 @@ gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 gem 'whenever', group: 'production'
 
 group :test do
+  gem 'capybara'
   gem 'factory_bot_rails'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
