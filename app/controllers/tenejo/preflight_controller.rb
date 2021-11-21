@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class Tenejo::PreflightController < ApplicationController
+  with_themed_layout 'dashboard'
+
   def new
   end
 

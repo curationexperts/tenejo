@@ -24,12 +24,12 @@ RSpec.describe 'dashboard' do
       visit('dashboard')
     end
 
-    it 'has a "Repository Contents" section' do
-      expect(page).to have_selector('#content-wrapper div.sidebar nav ul li', text: /Repository Contents/i)
+    it 'has a user profile section' do
+      expect(page).to have_selector('#user-profile')
     end
 
-    it 'restricts admin-only sections' do
-      expect(page).not_to have_selector('#content-wrapper div.sidebar nav ul li', text: /Tasks/i)
+    it 'restricts admin-only menus' do
+      expect(page).to have_no_selector('#dashboard-sidebar-jobs')
     end
   end
 
@@ -39,13 +39,12 @@ RSpec.describe 'dashboard' do
       visit('dashboard')
     end
 
-    it 'displays admin-only sections' do
-      expect(page).to have_selector('#content-wrapper div.sidebar nav ul li', text: 'Tasks')
+    it 'displays a jobs menu' do
+      expect(page).to have_selector('#dashboard-sidebar-jobs')
     end
 
-    it 'displays a jobs menu' do
-      pending 'needs job controller implementation'
-      expect(page).to have_selector('#sidebar_jobs_menu')
+    it 'has a sidekiq link' do
+      expect(page).to have_link(href: sidekiq_dashboard_path)
     end
   end
 end

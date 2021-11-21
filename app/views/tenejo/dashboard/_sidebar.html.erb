@@ -1,0 +1,13 @@
+<% menu = Hyrax::MenuPresenter.new(self) %>
+<div class="sidebar-toggle"><span class="fa fa-chevron-circle-right"></span></div>
+<%= render 'tenejo/dashboard/sidebar/user_profile' %>
+
+<nav aria-label="sidebar-nav">
+  <ul class="nav nav-pills nav-stacked">
+    <%= render 'hyrax/dashboard/sidebar/repository_content', menu: menu %>
+    <%= render 'tenejo/dashboard/sidebar/jobs', menu: menu %>
+    <%= render 'hyrax/dashboard/sidebar/tasks', menu: menu %>
+    <%= render 'hyrax/dashboard/sidebar/configuration', menu: menu %>
+    <%= render 'hyrax/dashboard/sidebar/activity', menu: menu %>
+  </ul>
+</nav>

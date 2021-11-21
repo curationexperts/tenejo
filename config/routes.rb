@@ -7,6 +7,12 @@ Rails.application.routes.draw do
     post 'preflight/upload'
   end
 
+  resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
+    collection do
+      get 'sidekiq'
+    end
+  end
+
   mount Riiif::Engine => 'images', as: :riiif if Hyrax.config.iiif_image_server?
   mount BrowseEverything::Engine => '/browse'
 
