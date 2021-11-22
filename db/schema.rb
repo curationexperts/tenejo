@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_02_024808) do
+ActiveRecord::Schema.define(version: 2021_11_21_220014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,6 +158,23 @@ ActiveRecord::Schema.define(version: 2021_11_02_024808) do
     t.datetime "updated_at", null: false
     t.index ["uploaded_file_id"], name: "index_job_io_wrappers_on_uploaded_file_id"
     t.index ["user_id"], name: "index_job_io_wrappers_on_user_id"
+  end
+
+  create_table "jobs", force: :cascade do |t|
+    t.string "type"
+    t.string "label"
+    t.bigint "user_id"
+    t.string "status"
+    t.datetime "completed_at"
+    t.integer "collections"
+    t.integer "works"
+    t.integer "files"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completed_at"], name: "index_jobs_on_completed_at"
+    t.index ["status"], name: "index_jobs_on_status"
+    t.index ["type"], name: "index_jobs_on_type"
+    t.index ["user_id"], name: "index_jobs_on_user_id"
   end
 
   create_table "mailboxer_conversation_opt_outs", id: :serial, force: :cascade do |t|
@@ -578,6 +595,7 @@ ActiveRecord::Schema.define(version: 2021_11_02_024808) do
 
   add_foreign_key "collection_type_participants", "hyrax_collection_types"
   add_foreign_key "curation_concerns_operations", "users"
+  add_foreign_key "jobs", "users"
   add_foreign_key "mailboxer_conversation_opt_outs", "mailboxer_conversations", column: "conversation_id", name: "mb_opt_outs_on_conversations_id"
   add_foreign_key "mailboxer_notifications", "mailboxer_conversations", column: "conversation_id", name: "notifications_on_conversation_id"
   add_foreign_key "mailboxer_receipts", "mailboxer_notifications", column: "notification_id", name: "receipts_on_notification_id"

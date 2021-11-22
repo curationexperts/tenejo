@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'sidekiq/web'
 Rails.application.routes.draw do
+  resources :jobs
   namespace :tenejo do
     get 'preflight/new'
     get 'preflight/show'

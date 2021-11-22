@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @job.type %>
+</p>
+
+<p>
+  <strong>Label:</strong>
+  <%= @job.label %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @job.user %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @job.status %>
+</p>
+
+<p>
+  <strong>Completed at:</strong>
+  <%= @job.completed_at %>
+</p>
+
+<p>
+  <strong>Collections:</strong>
+  <%= @job.collections %>
+</p>
+
+<p>
+  <strong>Works:</strong>
+  <%= @job.works %>
+</p>
+
+<p>
+  <strong>Files:</strong>
+  <%= @job.files %>
+</p>
+
+<%= link_to 'Edit', edit_job_path(@job) %> |
+<%= link_to 'Back', jobs_path %>
