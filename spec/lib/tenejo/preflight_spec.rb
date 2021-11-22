@@ -57,6 +57,14 @@ RSpec.describe Tenejo::Preflight do
     end
   end
 
+  context " a file with header in it" do
+    it "understands bad caps" do
+      expect(described_class.map_header("KeY wOrD")).to eq :keyword
+      expect(described_class.map_header("frank ability")).to eq "frank ability"
+      expect(described_class.map_header("RIGHTS_STATEMENT")).to eq :rights_statement
+      expect(described_class.map_header("Rights Statement ")).to eq :rights_statement
+    end
+  end
   context "a well formed file" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
 
