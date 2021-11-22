@@ -1,10 +1,17 @@
 # frozen_string_literal: true
 require 'sidekiq/web'
 Rails.application.routes.draw do
+  resources :jobs
   namespace :tenejo do
     get 'preflight/new'
     get 'preflight/show'
     post 'preflight/upload'
+  end
+
+  resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
+    collection do
+      get 'sidekiq'
+    end
   end
 
   mount Riiif::Engine => 'images', as: :riiif if Hyrax.config.iiif_image_server?

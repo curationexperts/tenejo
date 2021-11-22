@@ -3,4 +3,5 @@ en:
   tenejo:
     admin:
       sidebar:
+        jobs: Jobs
         preflight: Preflight

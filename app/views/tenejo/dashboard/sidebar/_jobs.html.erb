@@ -1,0 +1,12 @@
+<% if can? :read, :admin_dashboard %>
+  <li class='h5' id='dashboard-sidebar-jobs'><%= t('tenejo.admin.sidebar.jobs') %>
+    <%= menu.nav_link('/tenejo/preflight/new',
+                      onclick: "dontChangeAccordion(event);") do %>
+      <span class="fa fa-paper-plane" aria-hidden="true"></span><span class="sidebar-action-text"><%= t('tenejo.admin.sidebar.preflight') %></span>
+    <% end %>
+    <%= menu.nav_link('/dashboard/sidekiq',
+                      onclick: "dontChangeAccordion(event);") do %>
+      <span class="fa fa-hourglass-half" aria-hidden="true"></span><span class="sidebar-action-text">Sidekiq</span>
+    <% end %>
+  </li>
+<% end %>

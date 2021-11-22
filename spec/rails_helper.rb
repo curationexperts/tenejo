@@ -8,6 +8,7 @@ require File.expand_path('../config/environment', __dir__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+require 'capybara/rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -32,12 +33,21 @@ rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+
+Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+
 RSpec.configure do |config|
+  # Enable sign_in and sign_out functionality in specs
+  config.include Devise::Test::IntegrationHelpers, type: :system
+  config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Stub out anti-virus checks
   config.before do |_example|
     class_double("Clamby")
     allow(Clamby).to receive(:virus?).and_return(false)
     allow(Clamby).to receive(:safe?).and_return(true)
   end
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
