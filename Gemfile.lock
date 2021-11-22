@@ -1020,7 +1020,6 @@ DEPENDENCIES
   rspec-rails
   rspec_junit_formatter
   sass-rails (~> 5.0)
-  selenium-webdriver
   sidekiq (~> 6.2)
   simplecov
   simplecov_json_formatter
