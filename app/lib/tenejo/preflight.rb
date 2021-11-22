@@ -131,14 +131,19 @@ module Tenejo
       end
     end
 
+    def self.map_header(m)
+      squashed = m.downcase.gsub(/[^0-9A-Za-z]/, '')
+      KNOWN_HEADERS.find { |x| x.to_s.gsub(/[^0-9A-Za-z]/, '') == squashed } || m
+    end
+
     def self.read_csv(input, import_path)
       begin
         csv = CSV.open(input, headers: true, return_headers: true, skip_blanks: true,
-                       header_converters: [->(m) { m.downcase.tr(' ', '_').to_sym }])
+                       header_converters: [->(m) { map_header(m) }])
         graph = init_graph
         headerlen = 0
         csv.each do |row|
-          if csv.lineno == 1 # is header
+          if csv.lineno == 1 # is header, headers are already transformed by the above
             headerlen = check_duplicate_headers(row)
             check_unknown_headers(row, graph)
             next
