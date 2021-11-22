@@ -8,5 +8,4 @@ ActiveSupport::Reloader.to_prepare do
   Hyrax::FileSetDerivativesService.include(Extensions::PtiffDerivative)
   Hydra::Derivatives::Processors::Image.include(Extensions::ImageProcessor)
   Hyrax::DerivativePath.include(Extensions::DerivativePath)
-  Flipflop::StrategiesController.include(Extensions::Flipflop)
 end
