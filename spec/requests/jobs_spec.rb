@@ -32,11 +32,20 @@ RSpec.describe "/jobs", type: :request do
 
   let(:user) { User.create(email: 'test@example.com', password: '123456') }
 
+  before do
+    sign_in user
+  end
+
   describe "GET /index" do
     it "renders a successful response" do
       Job.create! valid_attributes
       get jobs_url
       expect(response).to be_successful
+    end
+
+    it 'displays with the dashboard sidebar & layout' do
+      get jobs_url
+      expect(response).to render_template('layouts/hyrax/dashboard')
     end
   end
 
@@ -66,14 +75,12 @@ RSpec.describe "/jobs", type: :request do
   describe "POST /create" do
     context "with valid parameters" do
       it "creates a new Job" do
-        sign_in user
         expect {
           post jobs_url, params: { job: valid_attributes }
         }.to change(Job, :count).by(1)
       end
 
       it "redirects to the created job" do
-        sign_in user
         post jobs_url, params: { job: valid_attributes }
         expect(response).to redirect_to(job_url(Job.last))
       end

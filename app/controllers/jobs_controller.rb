@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class JobsController < ApplicationController
   before_action :set_job, only: %i[show edit update destroy]
+  with_themed_layout 'dashboard'
 
   # GET /jobs or /jobs.json
   def index

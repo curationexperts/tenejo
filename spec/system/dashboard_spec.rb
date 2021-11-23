@@ -46,5 +46,11 @@ RSpec.describe 'dashboard' do
     it 'has a sidekiq link' do
       expect(page).to have_link(href: sidekiq_dashboard_path)
     end
+
+    it 'has a link to job statuses' do
+      # NOTE: jobs_path yields `/jobs` here,
+      # but includes the locale when rendered: `/jobs?locale=en`
+      expect(page).to have_link(href: "#{jobs_path}?locale=en")
+    end
   end
 end
