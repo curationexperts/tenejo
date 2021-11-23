@@ -4,6 +4,10 @@
                       onclick: "dontChangeAccordion(event);") do %>
       <span class="fa fa-paper-plane" aria-hidden="true"></span><span class="sidebar-action-text"><%= t('tenejo.admin.sidebar.preflight') %></span>
     <% end %>
+    <%= menu.nav_link(jobs_path,
+                      onclick: "dontChangeAccordion(event);") do %>
+      <span class="fa fa-cogs" aria-hidden="true"></span><span class="sidebar-action-text"><%= t('tenejo.admin.sidebar.jobs') %></span>
+    <% end %>
     <%= menu.nav_link('/dashboard/sidekiq',
                       onclick: "dontChangeAccordion(event);") do %>
       <span class="fa fa-hourglass-half" aria-hidden="true"></span><span class="sidebar-action-text">Sidekiq</span>
