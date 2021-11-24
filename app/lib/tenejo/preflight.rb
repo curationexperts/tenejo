@@ -20,6 +20,7 @@ module Tenejo
         end
       end
       @children = []
+      @lineno = lineno
     end
   end
 
@@ -34,7 +35,7 @@ module Tenejo
     end
     validates_each :resource_type do |rec, att, val|
       if val.present?
-        rec.errors.add(att, "Resource type #{val} is not recognized and will be left blank.") unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
+        rec.errors.add(att, "Resource type \"#{val}\" on line #{rec.lineno} is not recognized and will be left blank.") unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
       end
     end
 
@@ -72,13 +73,13 @@ module Tenejo
     def check_license
       return if license.blank?
       return if LICENSES["terms"].map { |x| x['term'] }.include?(license)
-      warnings[:license] << "License is not recognized and will be left blank"
+      warnings[:license] << "License on line #{@lineno} is not recognized and will be left blank"
       @license = ""
     end
 
     def check_rights
       return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement)
-      warnings[:rights_statement] << "Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
+      warnings[:rights_statement] << "Rights Statement on line #{@lineno} not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
       @rights_statement = "Copyright Undetermined"
     end
   end
