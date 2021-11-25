@@ -47,10 +47,16 @@ RSpec.describe 'dashboard' do
       expect(page).to have_link(href: sidekiq_dashboard_path)
     end
 
+    # We need an engine routing test because Hrax namespaced controllers
+    # don't access tenejo routes as expected
+    it 'allows Hyrax controllers to access tenejo paths' do
+      sign_in admin
+      expect { visit('dashboard/my/works') }.not_to raise_exception
+      expect(page).to have_link('dashboard-sidebar-job-status')
+    end
+
     it 'has a link to job statuses' do
-      # NOTE: jobs_path yields `/jobs` here,
-      # but includes the locale when rendered: `/jobs?locale=en`
-      expect(page).to have_link(href: "#{jobs_path}?locale=en")
+      expect(page).to have_link(href: '/jobs')
     end
   end
 end
