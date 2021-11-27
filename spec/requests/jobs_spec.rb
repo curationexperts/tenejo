@@ -18,7 +18,7 @@ RSpec.describe "/jobs", type: :request do
   # adjust the attributes here as well.
   let(:valid_attributes) {
     { type: nil,
-      user: user,
+      user: admin,
       label: "Label",
       status: "Status",
       collections: 2,
@@ -30,10 +30,10 @@ RSpec.describe "/jobs", type: :request do
     skip("Add a hash of attributes invalid for your model")
   }
 
-  let(:user) { User.create(email: 'test@example.com', password: '123456') }
+  let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
 
   before do
-    sign_in user
+    sign_in admin
   end
 
   describe "GET /index" do

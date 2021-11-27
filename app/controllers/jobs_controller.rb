@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 class JobsController < ApplicationController
   before_action :set_job, only: %i[show edit update destroy]
+  before_action :authenticate_user!
+  before_action :ensure_admin!
   with_themed_layout 'dashboard'
 
   # GET /jobs or /jobs.json
@@ -61,6 +63,10 @@ class JobsController < ApplicationController
   end
 
   private
+
+  def ensure_admin!
+    authorize! :read, :admin_dashboard
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_job
