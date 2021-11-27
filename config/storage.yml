@@ -1,10 +1,14 @@
 test:
   service: Disk
+  root: <%= Rails.root.join("tmp/test/storage") %>
+
+development_disk:
+  service: Disk
   root: <%= Rails.root.join("tmp/storage") %>
 
-local:
+production_disk:
   service: Disk
-  root: <%= Rails.root.join("storage") %>
+  root: '/opt/data/storage'
 
 # Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
