@@ -2,6 +2,7 @@
 require 'sidekiq/web'
 Rails.application.routes.draw do
   resources :jobs
+  resources :preflights, only: [:index, :new, :create, :show]
   namespace :tenejo do
     get 'preflight/new'
     get 'preflight/show'

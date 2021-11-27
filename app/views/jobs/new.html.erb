@@ -1,5 +1,11 @@
 <h1>New Job</h1>
 
-<%= render 'form', job: @job %>
+<p>Please choose a job type:</p>
+
+<ul>
+  <% Job.subclasses.each do |job_type| %>
+    <li><%= link_to "New #{job_type.name}", "/#{job_type.name.downcase.pluralize}/new" %></li>
+  <% end %>
+</ul>
 
 <%= link_to 'Back', jobs_path %>
