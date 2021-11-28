@@ -2,26 +2,26 @@
 
 <h1>Jobs</h1>
 
-<table>
+<table id=jobs-index>
   <thead>
     <tr>
+      <th>ID</th>
       <th>Type</th>
-      <th>Label</th>
       <th>User</th>
       <th>Status</th>
       <th>Completed at</th>
       <th>Collections</th>
       <th>Works</th>
       <th>Files</th>
-      <th colspan="3"></th>
+      <th colspan="3">Actions</th>
     </tr>
   </thead>
 
   <tbody>
     <% @jobs.each do |job| %>
       <tr>
+        <td><%= link_to job.id, job %></td>
         <td><%= job.type %></td>
-        <td><%= job.label %></td>
         <td><%= job.user %></td>
         <td><%= job.status %></td>
         <td><%= job.completed_at %></td>
@@ -29,8 +29,8 @@
         <td><%= job.works %></td>
         <td><%= job.files %></td>
         <td><%= link_to 'Show', job %></td>
-        <td><%= link_to 'Edit', edit_job_path(job) %></td>
-        <td><%= link_to 'Destroy', job, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%# link_to 'Edit', edit_job_path(job) %></td>
+        <td><%# link_to 'Destroy', job, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

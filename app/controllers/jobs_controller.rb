@@ -7,7 +7,7 @@ class JobsController < ApplicationController
 
   # GET /jobs or /jobs.json
   def index
-    @jobs = Job.all
+    @jobs = Job.order(id: :desc)
   end
 
   # GET /jobs/1 or /jobs/1.json
