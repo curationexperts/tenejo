@@ -18,7 +18,7 @@ RSpec.describe "/jobs", type: :request do
   # adjust the attributes here as well.
   let(:valid_attributes) {
     { type: nil,
-      user: user,
+      user: admin,
       label: "Label",
       status: "Status",
       collections: 2,
@@ -30,13 +30,29 @@ RSpec.describe "/jobs", type: :request do
     skip("Add a hash of attributes invalid for your model")
   }
 
-  let(:user) { User.create(email: 'test@example.com', password: '123456') }
+  let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
+
+  before do
+    sign_in admin
+  end
 
   describe "GET /index" do
     it "renders a successful response" do
       Job.create! valid_attributes
       get jobs_url
       expect(response).to be_successful
+    end
+
+    it 'displays with the dashboard sidebar & layout' do
+      get jobs_url
+      expect(response).to render_template('layouts/hyrax/dashboard')
+    end
+
+    it 'displays jobs sorted by ID in descending order' do
+      3.times { Job.create! valid_attributes }
+      list = JobsController.new.index
+      expect(list.first.id).to eq Job.last.id
+      expect(list.last.id).to eq Job.first.id
     end
   end
 
@@ -66,14 +82,12 @@ RSpec.describe "/jobs", type: :request do
   describe "POST /create" do
     context "with valid parameters" do
       it "creates a new Job" do
-        sign_in user
         expect {
           post jobs_url, params: { job: valid_attributes }
         }.to change(Job, :count).by(1)
       end
 
       it "redirects to the created job" do
-        sign_in user
         post jobs_url, params: { job: valid_attributes }
         expect(response).to redirect_to(job_url(Job.last))
       end
