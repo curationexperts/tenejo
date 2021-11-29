@@ -93,7 +93,7 @@ module Tenejo
   class DuplicateColumnError < RuntimeError
   end
 
-  class Preflight
+  class Preflight # rubocop:disable Metrics/ClassLength
     def self.check_unknown_headers(row, graph)
       row.to_h.keys.each do |x|
         graph[:warnings] << "The column \"#{x}\" is unknown, and will be ignored" unless KNOWN_HEADERS.include? x
@@ -136,9 +136,18 @@ module Tenejo
       KNOWN_HEADERS.find { |x| x.to_s.gsub(/[^0-9A-Za-z]/, '') == squashed } || m
     end
 
-    def self.read_csv(input, import_path)
+    def self.read_csv(filename, import_path = DEFAULT_UPLOAD_PATH)
+      stream = File.open(filename)
       begin
-        csv = CSV.open(input, headers: true, return_headers: true, skip_blanks: true,
+        process_csv(stream, import_path)
+      ensure
+        stream.close
+      end
+    end
+
+    def self.process_csv(input, import_path = DEFAULT_UPLOAD_PATH)
+      begin
+        csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
                        header_converters: [->(m) { map_header(m) }])
         graph = init_graph
         headerlen = 0
@@ -205,8 +214,10 @@ module Tenejo
       output
     end
   end
+
   KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
   LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
   RESOURCE_TYPES = YAML.safe_load(File.open(Rails.root.join("config/authorities/resource_types.yml")))
   RIGHTS_STATEMENTS = YAML.safe_load(File.open(Rails.root.join("config/authorities/rights_statements.yml")))
+  DEFAULT_UPLOAD_PATH = ENV.fetch('UPLOAD_PATH', Rails.root.join('tmp', 'uploads'))
 end
