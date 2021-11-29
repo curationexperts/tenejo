@@ -3,11 +3,6 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
   resources :jobs
   resources :preflights, only: [:index, :new, :create, :show]
-  namespace :tenejo do
-    get 'preflight/new'
-    get 'preflight/show'
-    post 'preflight/upload'
-  end
 
   resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
     collection do
