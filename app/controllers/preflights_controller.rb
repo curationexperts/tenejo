@@ -10,8 +10,13 @@ class PreflightsController < JobsController
     @job = Preflight.new
   end
 
+  def show
+    @preflight_graph = Tenejo::Preflight.process_csv(@job.manifest.download)
+  end
+
   def create
     @job = Preflight.new(job_params.merge({ user: current_user }))
+    run_preflight(@job) if @job.validate
 
     respond_to do |format|
       if @job.save
@@ -27,5 +32,17 @@ class PreflightsController < JobsController
   # Only allow a list of trusted parameters through.
   def job_params
     params.require(:preflight).permit(:manifest)
+  end
+
+  private
+
+  def run_preflight(job)
+    manifest = job_params[:manifest].tempfile.path
+    preflight_graph = Tenejo::Preflight.read_csv(manifest)
+    job.collections = preflight_graph[:collection].count
+    job.works = preflight_graph[:work].count
+    job.files = preflight_graph[:file].count
+    job.completed_at = Time.current
+    job.status = :completed
   end
 end

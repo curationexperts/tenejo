@@ -25,8 +25,23 @@ RSpec.describe "/preflights", type: :request do
     end
   end
 
+  describe "GET /show" do
+    let(:valid_attributes) { { user: admin, manifest: tempfile } }
+    let(:tempfile) { fixture_file_upload('csv/fancy.csv') }
+
+    it "displays job summary and preflight info" do
+      post preflights_path, params: { preflight: valid_attributes }
+      get preflight_path Job.last
+      expect(response).to render_template('preflights/show')
+      expect(response.body).to match(/preflight-warnings/)
+      expect(response.body).to match(/Could not find parent work &quot;NONEXISTENT&quot;/)
+    end
+  end
+
   describe "POST /create" do
     let(:valid_attributes) { { user: admin, manifest: tempfile } }
+    let(:tempfile) { fixture_file_upload('csv/fancy.csv') }
+
     context "with valid parameters" do
       it "creates a new Preflight job" do
         expect {
@@ -38,6 +53,16 @@ RSpec.describe "/preflights", type: :request do
         post preflights_path, params: { preflight: valid_attributes }
         expect(response).to redirect_to(preflight_url(Job.last))
       end
+
+      it "sets the collections, works, and jobs count", :aggregate_failures do
+        post preflights_path, params: { preflight: valid_attributes }
+        created_job = Job.last
+        expect(created_job.status).to eq 'completed'
+        expect(created_job.completed_at).to be_within(1.second).of Time.current
+        expect(created_job.collections).to eq 2
+        expect(created_job.works).to eq 4
+        expect(created_job.files).to eq 4
+      end
     end
 
     context "with invalid parameters" do
@@ -48,7 +73,7 @@ RSpec.describe "/preflights", type: :request do
         }.to change(Job, :count).by(0)
       end
 
-      it "renders a successful response (i.e. to display the 'new' template)" do
+      it "(re)renders the 'new' template)" do
         post preflights_path, params: { preflight: invalid_attributes }
         expect(response).to be_unprocessable
         expect(response).to render_template('preflights/new')
