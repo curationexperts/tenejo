@@ -16,9 +16,7 @@ class Theme < ApplicationRecord
   end
 
   def self.current_theme
-    @current_theme ||= Theme.find_or_create_by(id: 1) do |theme|
-      theme.merge_defaults
-    end
+    @current_theme ||= Theme.find_or_create_by(id: 1, &:merge_defaults)
   end
 
   def reset_to_defaults
