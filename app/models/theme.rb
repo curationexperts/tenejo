@@ -11,20 +11,19 @@ class Theme < ApplicationRecord
 
   after_initialize :merge_defaults
 
-  def merge_defaults
-    self.attributes = attributes.compact.reverse_merge(DEFAULTS)
-  end
-
   def self.current_theme
-    @current_theme ||=
-      begin
-        Theme.find(1)
-      rescue
-        Theme.create(id: 1)
-      end
+    @current_theme ||= Theme.find_or_create_by(id: 1) do |theme|
+      merge_defaults
+    end
   end
 
   def reset_to_defaults
     self.attributes = attributes.merge(DEFAULTS)
+  end
+
+  private
+
+  def merge_defaults
+    self.attributes = attributes.compact.reverse_merge(DEFAULTS)
   end
 end
