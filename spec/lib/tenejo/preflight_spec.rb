@@ -123,12 +123,13 @@ RSpec.describe Tenejo::Preflight do
     it "is ok when blank" do
       expect(rec.valid?).not_to eq true
       expect(rec.errors[:resource_type]).to be_empty
+      expect(rec.warnings[:resource_type]).to be_empty
     end
 
     it "restricts resource type" do
       rec.resource_type = "foo"
-      expect(rec.valid?).not_to eq true
-      expect(rec.errors[:resource_type]).to eq ["Resource type \"foo\" on line 1 is not recognized and will be left blank."]
+      expect(rec.valid?).to eq false # there are other errors in the example
+      expect(rec.warnings[:resource_type]).to eq ["Resource type \"foo\" on line 1 is not recognized and will be left blank."]
     end
   end
   describe Tenejo::PFWork do
