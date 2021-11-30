@@ -36,8 +36,8 @@ RSpec.describe "/themes", type: :request do
         # ensure we're not in a flaky state from other tests
         theme.reset_to_defaults
         theme.save!
-        theme.reload
         patch theme_url(theme), params: { theme: new_attributes, format: 'html' }
+        theme.reload
         expect(theme.site_title).to eq 'Updated'
         expect(theme.background_color).to eq '#F5F5F5'
       end
