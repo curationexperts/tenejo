@@ -1,0 +1,62 @@
+<%# Include the original Hyrax version of this partial to pull in Hyrax dynamic styles %>
+<%= render(file: File.join(Hyrax::Engine.root, 'app','views','shared','_appearance_styles')) %>
+
+<%# Styling for tenejo themed pages %>
+<%# TODO: break out static settings into app/assets/stylesheets/themes.scss %>
+
+<%# Font expierment %>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Truculenta&display=swap" rel="stylesheet">
+
+<% theme = Theme.current_theme %>
+<style>
+    #homepage-preview {
+        font-family: 'Truculenta', sans-serif;
+        color: <%= theme.primary_text_color %>
+    }
+
+    .preview-header {
+        background-color: <%= theme.primary_color %>;
+        color: <%= theme.accent_text_color %>;
+    }
+
+    .preview-body {
+        background-color: <%= theme.background_color %>;
+    }
+
+    .preview-footer {
+        background-color: <%= theme.primary_color %>;
+        color: <%= theme.accent_text_color %>;
+    }
+
+    .preview-navbar-header {
+        width: 100%;
+        height: 2em;
+        background-color: <%= theme.accent_color %>
+    }
+
+    .preview-site-title {
+        margin-top: -1em;
+        text-align: center;
+        font-size: 130%;
+        margin-bottom: 1.25em
+
+    }
+    .preview-navbar-header ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        float: left;
+    }
+
+    .preview-navbar-header ul li {
+        float: left;
+        padding: .5em;
+    }
+
+    .preview-navbar-search {
+        float: right;
+    }
+</style>
