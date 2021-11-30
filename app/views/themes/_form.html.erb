@@ -1,0 +1,48 @@
+<%= form_with(model: theme, local: true) do |form| %>
+  <% if theme.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(theme.errors.count, "error") %> prohibited this theme from being saved:</h2>
+
+      <ul>
+      <% theme.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :site_title %>
+    <%= form.text_field :site_title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :primary_color %>
+    <%= form.color_field :primary_color %>
+  </div>
+
+  <div class="field">
+    <%= form.label :accent_color %>
+    <%= form.color_field :accent_color %>
+  </div>
+
+  <div class="field">
+    <%= form.label :primary_text_color %>
+    <%= form.text_field :primary_text_color %>
+  </div>
+
+  <div class="field">
+    <%= form.label :accent_text_color %>
+    <%= form.text_field :accent_text_color %>
+  </div>
+
+  <div class="field">
+    <%= form.label :background_color %>
+    <%= form.text_field :background_color %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Save Changes', name: 'save', class: 'btn btn-primary' %>
+    <%= form.submit 'Reset to Defaults', name: 'reset', class: 'btn btn-default' %>
+  </div>
+<% end %>

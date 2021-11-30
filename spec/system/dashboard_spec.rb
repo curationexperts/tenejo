@@ -58,5 +58,9 @@ RSpec.describe 'dashboard' do
     it 'has a link to job statuses' do
       expect(page).to have_link(href: '/jobs')
     end
+
+    it 'has a link to the branding dashboard' do
+      expect(page).to have_link('dashboard-sidebar-theme', href: edit_theme_path)
+    end
   end
 end
