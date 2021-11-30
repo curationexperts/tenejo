@@ -3,14 +3,7 @@ require 'rails_helper'
 
 RSpec.describe "themes/edit", type: :view do
   before do
-    @theme = assign(:theme, Theme.create!(
-      site_title: "MyString",
-      primary_color: "MyString",
-      accent_color: "MyString",
-      primary_text_color: "MyString",
-      accent_text_color: "MyString",
-      background_color: "MyString"
-    ))
+    @theme = assign(:theme, Theme.current_theme)
   end
 
   it "renders the edit theme form" do

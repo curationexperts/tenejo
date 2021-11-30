@@ -141,6 +141,21 @@ RSpec.describe Tenejo::Preflight do
         keyword: ["can't be blank"],
         parent: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
     end
+    it "transforms visibility" do
+      rec = described_class.new({ visibility: 'Public' }, 1)
+      expect(rec.visibility).to eq :open
+      rec = described_class.new({ visibility: 'Authenticated' }, 1)
+      expect(rec.visibility).to eq :registered
+      rec = described_class.new({ visibility: 'PrIvAte' }, 1)
+      expect(rec.visibility).to eq :restricted
+    end
+    it "validates visibility" do
+      rec = described_class.new({ visibility: 'spoon' }, 1)
+      expect(rec.visibility).to eq 'spoon'
+      expect(rec.valid?).not_to eq true
+      expect(rec.errors[:visibility]).to eq ["Unknown visibility \"spoon\" on line 1"]
+    end
+
     it "is ok to be blank" do
       rec.license = ''
       expect(rec.valid?).not_to eq true
