@@ -62,11 +62,30 @@ module Tenejo
 
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
+
+    validates_each :visibility, allow_blank: true, allow_nil: true do |rec, attr, val|
+      rec.errors.add(attr, "Unknown visibility \"#{val}\" on line #{rec.lineno}") unless [:open, :registered, :restricted].include?(val.to_sym)
+    end
+    def transform_visibility
+      return if visibility.nil?
+      case visibility.downcase
+      when 'public'
+        :open
+      when 'authenticated'
+        :registered
+      when 'private'
+        :restricted
+      else
+        visibility
+      end
+    end
+
     def initialize(row, lineno)
       @files = []
       super
       check_license
       check_rights
+      @visibility = transform_visibility
     end
 
     def check_license
@@ -148,7 +167,7 @@ module Tenejo
     def self.process_csv(input, import_path = DEFAULT_UPLOAD_PATH)
       begin
         csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
-                       header_converters: [->(m) { map_header(m) }])
+                      header_converters: [->(m) { map_header(m) }])
         graph = init_graph
         headerlen = 0
         csv.each do |row|
