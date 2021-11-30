@@ -13,27 +13,30 @@
 <style>
     #homepage-preview {
         font-family: 'Truculenta', sans-serif;
-        color: <%= theme.primary_text_color %>
+        color: <%= theme&.primary_text_color %>
     }
 
     .preview-header {
-        background-color: <%= theme.primary_color %>;
-        color: <%= theme.accent_text_color %>;
+        background-color: <%= theme&.primary_color %>;
+        color: <%= theme&.accent_text_color %>;
     }
 
     .preview-body {
-        background-color: <%= theme.background_color %>;
+        background-color: <%= theme&.background_color %>;
     }
 
     .preview-footer {
-        background-color: <%= theme.primary_color %>;
-        color: <%= theme.accent_text_color %>;
+        background-color: <%= theme&.primary_color %>;
+        color: <%= theme&.accent_text_color %>;
     }
 
+    .preview-logo {
+        background-image: url("<%= url_for(theme&.logo) if theme&.logo&.attached? %>");
+    }
     .preview-navbar-header {
         width: 100%;
         height: 2em;
-        background-color: <%= theme.accent_color %>
+        background-color: <%= theme&.accent_color %>
     }
 
     .preview-site-title {

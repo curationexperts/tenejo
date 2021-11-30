@@ -41,8 +41,9 @@ class ThemesController < ApplicationController
   # PATCH/PUT /themes/1 or /themes/1.json
   def update
     params[:theme] = Theme::DEFAULTS if params[:reset]
+    theme.logo.attach(params[:theme][:logo]) if params[:theme][:logo]
     if @theme.update(theme_params)
-      redirect_to edit_theme_path, notice: "Theme was successfully updated."
+      redirect_to edit_theme_path
     else
       render edit_theme_path, status: :unprocessable_entity
     end
@@ -67,7 +68,7 @@ class ThemesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def theme_params
-    params.require(:theme).permit(Theme::DEFAULTS.keys)
+    params.require(:theme).permit(Theme::DEFAULTS.keys << :logo)
   end
 
   # Restrict theme access to admins
