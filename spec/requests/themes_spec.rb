@@ -37,9 +37,9 @@ RSpec.describe "/themes", type: :request do
         theme.reset_to_defaults
         theme.save!
         patch theme_url(theme), params: { theme: new_attributes, format: 'html' }
-        theme.reload
-        expect(theme.site_title).to eq 'Updated'
-        expect(theme.background_color).to eq '#F5F5F5'
+        Theme.current_theme.reload
+        expect(Theme.current_theme.site_title).to eq 'Updated'
+        expect(Theme.current_theme.background_color).to eq '#F5F5F5'
       end
 
       it "redirects to the theme" do
