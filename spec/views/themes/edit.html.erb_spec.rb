@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe "themes/edit", type: :view do
   before do
-    @theme = assign(:theme, Theme.new(
+    @theme = assign(:theme, Theme.create(
       site_title: "MyString",
       primary_color: "MyString",
       accent_color: "MyString",
