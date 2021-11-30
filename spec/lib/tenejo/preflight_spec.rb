@@ -123,12 +123,13 @@ RSpec.describe Tenejo::Preflight do
     it "is ok when blank" do
       expect(rec.valid?).not_to eq true
       expect(rec.errors[:resource_type]).to be_empty
+      expect(rec.warnings[:resource_type]).to be_empty
     end
 
     it "restricts resource type" do
       rec.resource_type = "foo"
-      expect(rec.valid?).not_to eq true
-      expect(rec.errors[:resource_type]).to eq ["Resource type foo is not recognized and will be left blank."]
+      expect(rec.valid?).to eq false # there are other errors in the example
+      expect(rec.warnings[:resource_type]).to eq ["Resource type \"foo\" on line 1 is not recognized and will be left blank."]
     end
   end
   describe Tenejo::PFWork do
@@ -149,12 +150,12 @@ RSpec.describe Tenejo::Preflight do
 
     it "restricts license" do
       rec = described_class.new({ license: 'foo' }, 1)
-      expect(rec.warnings[:license]).to eq ["License is not recognized and will be left blank"]
+      expect(rec.warnings[:license]).to eq ["License on line 1 is not recognized and will be left blank"]
       expect(rec.license).to eq ""
     end
     it "restricts rights statement" do
       expect(rec.valid?).not_to eq true
-      expect(rec.warnings[:rights_statement]).to eq ["Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"]
+      expect(rec.warnings[:rights_statement]).to eq ["Rights Statement on line 1 not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"]
       expect(rec.rights_statement).to eq "Copyright Undetermined"
     end
 

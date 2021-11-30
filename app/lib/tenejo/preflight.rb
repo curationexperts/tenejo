@@ -20,6 +20,7 @@ module Tenejo
         end
       end
       @children = []
+      @lineno = lineno
     end
   end
 
@@ -29,13 +30,11 @@ module Tenejo
     attr_accessor(*ALL_FIELDS)
     attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
-    validates_each :file do |rec, att, val|
-      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") if val.present? && !File.exist?(File.join(rec.import_path, val))
+    validates_each :file, allow_blank: true, allow_nil: true do |rec, att, val|
+      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") unless File.exist?(File.join(rec.import_path, val))
     end
-    validates_each :resource_type do |rec, att, val|
-      if val.present?
-        rec.errors.add(att, "Resource type #{val} is not recognized and will be left blank.") unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
-      end
+    validates_each :resource_type, allow_blank: true, allow_nil: true do |rec, _att, val|
+      rec.warnings[:resource_type] << "Resource type \"#{val}\" on line #{rec.lineno} is not recognized and will be left blank." unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
     end
 
     def self.unpack(row, lineno, import_path)
@@ -72,13 +71,13 @@ module Tenejo
     def check_license
       return if license.blank?
       return if LICENSES["terms"].map { |x| x['term'] }.include?(license)
-      warnings[:license] << "License is not recognized and will be left blank"
+      warnings[:license] << "License on line #{@lineno} is not recognized and will be left blank"
       @license = ""
     end
 
     def check_rights
       return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement)
-      warnings[:rights_statement] << "Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
+      warnings[:rights_statement] << "Rights Statement on line #{@lineno} not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
       @rights_statement = "Copyright Undetermined"
     end
   end
@@ -148,7 +147,7 @@ module Tenejo
     def self.process_csv(input, import_path = DEFAULT_UPLOAD_PATH)
       begin
         csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
-                       header_converters: [->(m) { map_header(m) }])
+                      header_converters: [->(m) { map_header(m) }])
         graph = init_graph
         headerlen = 0
         csv.each do |row|
