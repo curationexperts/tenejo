@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-    samvera: samvera/circleci-orb@0.3.1
+    samvera: samvera/circleci-orb@0.3.2
 jobs:
     build:
         parameters:
@@ -10,6 +10,9 @@ jobs:
             bundler_version:
                 type: string
                 default: 2.2.29
+            postgres_version:
+                type: string
+                default: 13.5-alpine3.15
         environment:
           DATABASE_URL: postgresql://postgres@127.0.0.1/circle_test
           DATABASE_NAME: circle_test
