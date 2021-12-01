@@ -12,7 +12,7 @@ jobs:
                 default: 2.2.29
             postgres_version:
                 type: string
-                default: 13.5-postgis-ram
+                default: 9.6.2-alpine
             solr_version:
                 type: string
                 default: 7-alpine
