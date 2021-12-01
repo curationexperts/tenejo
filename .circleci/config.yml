@@ -15,6 +15,7 @@ jobs:
                 default: 13.5-alpine3.15
         environment:
           DATABASE_URL: postgresql://postgres@127.0.0.1/circle_test
+          SOLR_OPTS: -Dconfigset.upload.enabled=false
           DATABASE_NAME: circle_test
           POSTGRES_DB: circle_test
           DATABASE_USERNAME: postgres
