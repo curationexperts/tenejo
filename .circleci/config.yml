@@ -13,6 +13,9 @@ jobs:
             postgres_version:
                 type: string
                 default: 13.5-alpine3.15
+            solr_version:
+                type: string
+                default: 7-alpine
         environment:
           DATABASE_URL: postgresql://postgres@127.0.0.1/circle_test
           SOLR_OPTS: -Dconfigset.upload.enabled=false
