@@ -17,6 +17,11 @@
   </div>
 
   <div class="field">
+    <%= form.label 'Change Logo' %>
+    <%= form.file_field :logo %>
+  </div>
+
+  <div class="field">
     <%= form.label :primary_color %>
     <%= form.color_field :primary_color %>
   </div>
