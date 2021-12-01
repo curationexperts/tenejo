@@ -50,6 +50,9 @@ RSpec.configure do |config|
     allow(Clamby).to receive(:safe?).and_return(true)
   end
 
+  # Ensure a default Theme exists for all tests
+  config.before(:suite) { Theme.where(id: 1).first_or_create! }
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.include Devise::Test::ControllerHelpers, type: :controller
