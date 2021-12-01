@@ -31,7 +31,7 @@
     }
 
     .preview-logo {
-        background-image: url("<%= url_for(theme&.logo) if theme&.logo&.attached? %>");
+        background-image: url("<%= Rails.application.routes.url_helpers.rails_blob_path(theme&.logo, {only_path: true}) if theme&.logo&.attached? %>");
     }
     .preview-navbar-header {
         width: 100%;
