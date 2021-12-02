@@ -29,14 +29,9 @@ append :linked_files, ".env.production"
 append :linked_files, "config/secrets.yml"
 
 namespace :sidekiq do
-  task :stop do
+  task :quiet do
     on roles(:app) do
-      execute :sudo, :systemctl, :stop, :sidekiq
-    end
-  end
-  task :start do
-    on roles(:app) do
-      execute :sudo, :systemctl, :start, :sidekiq
+      puts capture("pgrep -f 'sidekiq' | xargs kill -TSTP")
     end
   end
   task :restart do
@@ -45,3 +40,7 @@ namespace :sidekiq do
     end
   end
 end
+
+after 'deploy:starting', 'sidekiq:quiet'
+after 'deploy:reverted', 'sidekiq:restart'
+after 'deploy:published', 'sidekiq:restart'

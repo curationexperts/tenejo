@@ -75,7 +75,6 @@ group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'capistrano-passenger'
   gem 'capistrano-rails'
-  gem 'capistrano-sidekiq'
   gem 'fcrepo_wrapper'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'solr_wrapper', '>= 0.3'
