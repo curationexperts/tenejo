@@ -2,6 +2,7 @@
 # require './app/lib/tenejo/csv_importer'
 require 'rails_helper'
 
+# rubocop:disable RSpec/InstanceVariable
 RSpec.describe Tenejo::CsvImporter do
   before :context do
     graph = Tenejo::Preflight.read_csv(File.open("./spec/fixtures/csv/fancy.csv"))
