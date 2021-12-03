@@ -9,9 +9,6 @@ AllCops:
     - db/**/*
     - bin/**/*
 
-RSpec/InstanceVariable:
-  Enabled: false
-
 Layout/HashAlignment:
   Enabled: false
 

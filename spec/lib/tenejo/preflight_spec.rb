@@ -2,6 +2,7 @@
 require 'rails_helper'
 require 'fileutils'
 
+# rubocop:disable RSpec/InstanceVariable
 RSpec.describe Tenejo::Preflight do
   before :all do
     FileUtils.mkdir_p("tmp/uploads")
