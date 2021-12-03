@@ -30,6 +30,6 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'saves titles' do
-    expect(Collection.where(title: 'Collection No. 2').count).to be >= 1
+    expect(Collection.where(title: 'The testing collection').count).to be >= 1
   end
 end
