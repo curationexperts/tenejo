@@ -43,14 +43,14 @@ module Tenejo
 
       graph[:collection].each do |collection_params|
         begin
-          collection = Collection.find(collection_params[:identifier])
+          collection = Collection.find(collection_params.identifier)
         rescue ActiveFedora::ObjectNotFoundError
-          collection = Collection.new(id: collection_params[:identifier], collection_type_gid: default_collection_type.gid)
+          collection = Collection.new(id: collection_params.identifier, collection_type_gid: default_collection_type.gid)
         end
-        collection.title = collection_params[:title]
-        collection.description = collection_params[:description]
+        collection.title = [collection_params.title]
+        collection.description = collection_params.description # is description really a column?
         collection.date_modified = collection.date_uploaded = Time.current
-        collection.save
+        collection.save!
       end
     end
   end
