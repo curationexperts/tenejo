@@ -20,4 +20,12 @@ RSpec.describe Job, type: :model do
     job.reload
     expect(job.user).to eq user
   end
+
+  it 'has an optional parent_job' do
+    job1 = described_class.new(user: user)
+    job2 = described_class.new(user: user)
+    job2.parent_job = job1
+    job2.save!
+    expect(job1.child_jobs).to include job2
+  end
 end
