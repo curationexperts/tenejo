@@ -26,10 +26,6 @@ RSpec.describe "/jobs", type: :request do
       files: 4 }
   }
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
-
   let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
 
   before do
@@ -68,96 +64,6 @@ RSpec.describe "/jobs", type: :request do
     it "renders a successful response" do
       get new_job_url
       expect(response).to be_successful
-    end
-  end
-
-  describe "GET /edit" do
-    it "render a successful response" do
-      job = Job.create! valid_attributes
-      get edit_job_url(job)
-      expect(response).to be_successful
-    end
-  end
-
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Job" do
-        expect {
-          post jobs_url, params: { job: valid_attributes }
-        }.to change(Job, :count).by(1)
-      end
-
-      it "redirects to the created job" do
-        post jobs_url, params: { job: valid_attributes }
-        expect(response).to redirect_to(job_url(Job.last))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "does not create a new Job" do
-        expect {
-          post jobs_url, params: { job: invalid_attributes }
-        }.to change(Job, :count).by(0)
-      end
-
-      it "renders a successful response (i.e. to display the 'new' template)" do
-        post jobs_url, params: { job: invalid_attributes }
-        expect(response).to be_successful
-      end
-    end
-  end
-
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        { type: nil,
-          label: "Label",
-          status: "Completed",
-          completed_at: completion_time,
-          collections: 7,
-          works: 11,
-          files: 17 }
-      }
-      let(:completion_time) { Time.current.round }
-
-      it "updates the requested job" do
-        job = Job.create! valid_attributes
-        patch job_url(job), params: { job: new_attributes }
-        job.reload
-        expect(job.completed_at).to eq completion_time
-        expect(job.status).to eq 'Completed'
-        expect(job.files).to eq 17
-      end
-
-      it "redirects to the job" do
-        job = Job.create! valid_attributes
-        patch job_url(job), params: { job: new_attributes }
-        job.reload
-        expect(response).to redirect_to(job_url(job))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "renders a successful response (i.e. to display the 'edit' template)" do
-        job = Job.create! valid_attributes
-        patch job_url(job), params: { job: invalid_attributes }
-        expect(response).to be_successful
-      end
-    end
-  end
-
-  describe "DELETE /destroy" do
-    it "destroys the requested job" do
-      job = Job.create! valid_attributes
-      expect {
-        delete job_url(job)
-      }.to change(Job, :count).by(-1)
-    end
-
-    it "redirects to the jobs list" do
-      job = Job.create! valid_attributes
-      delete job_url(job)
-      expect(response).to redirect_to(jobs_url)
     end
   end
 end

@@ -2,7 +2,7 @@
 require 'sidekiq/web'
 Rails.application.routes.draw do
   resource :theme, only: [:edit, :update]
-  resources :jobs
+  resources :jobs,       only: [:index, :new, :show]
   resources :preflights, only: [:index, :new, :create, :show]
 
   resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
