@@ -1,7 +1,5 @@
 # frozen_string_literal: true
-require 'tenejo/preflight'
-require 'tenejo/csv_importer'
-class IngestJob < ApplicationJob
+class BatchImportJob < ApplicationJob
   queue_as :default
 
   def perform(filename)

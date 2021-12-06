@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-RSpec.describe IngestJob, type: :job do
+RSpec.describe BatchImportJob, type: :job do
   describe "#perform_later" do
     it "queues" do
       ActiveJob::Base.queue_adapter = :test
