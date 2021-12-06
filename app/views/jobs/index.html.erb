@@ -1,6 +1,7 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Jobs</h1>
+<%= link_to 'New Job', new_job_path, class: 'btn btn-primary' %>
 
 <table id=jobs-index>
   <thead>
@@ -35,7 +36,3 @@
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New Job', new_job_path %>

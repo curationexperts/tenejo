@@ -13,7 +13,7 @@
 
 <div id="preflight-manifest"><p>
   <strong>File:</strong>
-  <% if @job&.manifest&.filename %>
+  <% if @job&.manifest&.attached? %>
     <%= link_to(@job.manifest.filename, rails_blob_path(@job.manifest, disposition: 'attachment')) %>
   <% else %>
     --
@@ -50,7 +50,17 @@
   <%= @job&.files || '--' %>
 </p></div>
 
-<%= link_to 'Back', jobs_path %>
+<%= link_to 'Back', jobs_path, class: 'btn btn-default' %>
+
+<%# IMPORT SUBMISSION FORM %>
+<% if @preflight_graph[:fatal_errors]&.empty? %>
+  <%= form_with(model: Import, local: true) do |form| %>
+    <%= form.hidden_field :parent_job_id, value: @job.id %>
+    <div class="actions">
+      <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+<% end %>
 
 <h2>Analysis</h2>
 
@@ -173,7 +183,7 @@
 
 <%# RAW GRAPH %>
 <p>
-  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#rawPreflight" aria-expanded="false" aria-controls="rawPreflight">
+  <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#rawPreflight" aria-expanded="false" aria-controls="rawPreflight">
     Show raw preflight
   </button>
 </p>

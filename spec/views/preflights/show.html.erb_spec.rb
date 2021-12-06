@@ -7,6 +7,7 @@ RSpec.describe "preflights/show", type: :view do
   let(:completion_time) { Time.current.round }
   let(:job) {
     Preflight.new(
+      id: 8_675_309,
       user: user,
       manifest: tempfile,
       status: :completed,
@@ -29,6 +30,24 @@ RSpec.describe "preflights/show", type: :view do
     expect(rendered).to have_selector('#preflight-works', text: '13')
     expect(rendered).to have_selector('#preflight-files', text: '17')
     expect(rendered).to have_link(text: 'empty.csv')
+  end
+
+  context "provides a 'Start Import' button" do
+    it "with a valid Preflight ID", :aggregate_failures do
+      @job = job
+      @preflight_graph = { fatal_errors: [] }
+      render
+      expect(rendered).to have_button('Start Import', type: 'submit')
+      assert_select 'input[id="import_parent_job_id"][value="8675309"]'
+      assert_select 'form[action=?][method=?]', imports_path, 'post'
+    end
+
+    it "except when there are preflight errors" do
+      @job = job
+      @preflight_graph = { fatal_errors: ["No data was detected"] }
+      render
+      expect(rendered).to have_no_button('Start Import', type: 'submit')
+    end
   end
 
   it "handles missing attributes gracefully" do
