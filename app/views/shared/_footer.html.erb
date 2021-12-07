@@ -1,14 +1,15 @@
 <footer class="navbar navbar-inverse site-footer">
   <div class="container-fluid">
     <div class="navbar-text text-left">
-      <span> &copy; <%= Date.today.year %> Data Curation Experts, LLC </span>
-      <br> Tenejo
-      <div class="version">
-        ENV: <%= Rails.env %>
-        <br>SHA: <%= GIT_SHA %>
-        <br>Branch: <%= BRANCH %>
-        <br>Updated: <%= LAST_DEPLOYED %>
-      </div>
+      <span>Powered by Tenejo</span>
+      <% if Rails.env.development? %>
+        <div class="version">
+          ENV: <%= Rails.env %>
+          <br>SHA: <%= GIT_SHA %>
+          <br>Branch: <%= BRANCH %>
+          <br>Updated: <%= LAST_DEPLOYED %>
+        </div>
+      <% end %>
     </div>
     <div class="navbar-right">
       <div class="navbar-text text-right">
