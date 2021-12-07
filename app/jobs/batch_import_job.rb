@@ -2,9 +2,9 @@
 class BatchImportJob < ApplicationJob
   queue_as :default
 
-  def perform(filename)
+  def perform(import_job)
     # probably not optimal, but enough until we get
     # import hammered out
-    Tenejo::CsvImporter.import(Tenejo::Preflight.process_csv(File.open(filename)))
+    Tenejo::CsvImporter.new(import_job).import
   end
 end

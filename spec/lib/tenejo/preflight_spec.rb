@@ -10,6 +10,14 @@ RSpec.describe Tenejo::Preflight do
   after :all do
     FileUtils.rm_r("tmp/uploads")
   end
+
+  context '.process_csv' do
+    let(:no_data) { described_class.process_csv(nil, nil) }
+    it 'returns an error when input stream absent' do
+      expect(no_data[:fatal_errors]).to include "No manifest present"
+    end
+  end
+
   context "a file with duplicate columns" do
     let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv", "tmp/uploads") }
 
@@ -183,6 +191,7 @@ RSpec.describe Tenejo::Preflight do
       expect(p.last.file).to eq "c"
     end
   end
+
   describe Tenejo::PFCollection do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do

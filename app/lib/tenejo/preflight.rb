@@ -164,6 +164,7 @@ module Tenejo
     end
 
     def self.process_csv(input, import_path = DEFAULT_UPLOAD_PATH)
+      return { fatal_errors: "No manifest present" } unless input
       begin
         csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
                       header_converters: [->(m) { map_header(m) }])
