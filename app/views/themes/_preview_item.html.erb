@@ -1,0 +1,77 @@
+<div id='homepage-preview'>
+  <div class="homepage-body">
+    <div class="preview-header">
+      <div class="preview-masthead clearfix">
+        <div class="preview-logo">
+          <%= image_tag theme&.logo if theme&.logo&.attached? %>
+        </div>
+        <div class="preview-site-title"><%= @theme.site_title %></div>
+      </div>
+
+      <div class="preview-navbar-header clearfix">
+        <ul class="nav navbar-nav">
+          <li>Home</li>
+          <li>About</li>
+          <li>Help</li>
+          <li>Contact</li>
+        </ul>
+
+        <form class="navbar-form navbar-right">
+          <label for="search-field-header">Search</label>
+          <div class="input-group input-group-sm">
+            <input type="text" placeholder="Enter search terms" class="form-control "/>
+            <span class="input-group-btn">
+              <button type="button" id="search-submit" class="btn btn-primary">Go</button>
+            </span>
+          </div>
+
+        </form>
+
+
+      </div>
+    </div>
+
+    <div class="preview-body clearfix">
+      <h1>Item Title</h1>
+      <img src="https://via.placeholder.com/600x150/000000/FFFFFF/?text=Universal Viewer" alt="Placeholder" class="img-responsive"/>
+
+
+      <div class="col-sm-9">
+        <dl class="work-show work" itemscope="" itemtype="http://schema.org/CreativeWork">
+
+          <dt>Last modified</dt>
+          <dd>
+            <ul class="tabular">
+              <li class="attribute attribute-date_modified">12/02/2021</li>
+            </ul>
+          </dd>
+          <dt>Creator</dt>
+          <dd>
+            <ul class="tabular">
+              <li itemprop="creator" itemscope="" itemtype="http://schema.org/Person" class="attribute attribute-creator">
+                <span itemprop="name">
+                  <a href="#">Ator, Cre</a>
+                </span>
+              </li>
+            </ul>
+          </dd>
+
+
+          <dt>Rights statement</dt>
+          <dd>
+            <ul class="tabular">
+              <li class="attribute attribute-rights_statement">
+                <a href="http://rightsstatements.org/vocab/NKC/1.0/" target="_blank">No Known Copyright</a>
+              </li>
+            </ul>
+          </dd>
+
+
+        </dl>
+      </div>
+    </div>
+    <div class="preview-footer clearfix">
+      Powered by Tenejo
+    </div>
+  </div>
+</div>

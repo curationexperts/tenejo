@@ -1,35 +1,42 @@
 <div id='homepage-preview'>
   <div class="homepage-body">
     <div class="preview-header">
-      <div class="preview-masthead">
-        &nbsp;
-      </div>
-      <div class="preview-logo">
-      </div>
-      <div class="preview-masthead-image">
-        <div class="preview-site-title"><%= @theme.site_title %></div>
-        <div class="preview-navbar-header">
-          <ul class="">
-            <li>Home</li>
-            <li>About</li>
-            <li>Help</li>
-            <li>Contact</li>
-          </ul>
-          <div class="preview-navbar-search">
-            <form>
-              <label for="search-field-header">Search</label>
-              <input type="text" placeholder="Enter search terms" />
-              <button type="button" id="search-submit">Go</button>
-            </form>
-          </div>
+      <div class="preview-masthead clearfix">
+        <div class="preview-logo">
+          <%= image_tag theme&.logo if theme&.logo&.attached? %>
         </div>
+        <div class="preview-site-title"><%= @theme.site_title %></div>
+      </div>
+
+      <div class="preview-navbar-header clearfix">
+        <ul class="nav navbar-nav">
+          <li>Home</li>
+          <li>About</li>
+          <li>Help</li>
+          <li>Contact</li>
+        </ul>
+
+        <form class="navbar-form navbar-right">
+          <label for="search-field-header">Search</label>
+          <div class="input-group input-group-sm">
+            <input type="text" placeholder="Enter search terms" class="form-control "/>
+            <span class="input-group-btn">
+              <button type="button" id="search-submit" class="btn btn-primary">Go</button>
+            </span>
+          </div>
+
+        </form>
+
+
       </div>
     </div>
-    <div class="preview-body">
-      Some homepage stuff goes here...
+
+    <div class="preview-body clearfix">
+      <h1>Heading H1</h1>
+      <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur rerum impedit dolores reprehenderit tempora, nesciunt dolorum eos id, at nihil officia minima incidunt deserunt ex debitis ipsa corrupti illum rem.</p>
     </div>
-    <div class="preview-footer">
-      Some footer stuff goes here...
+    <div class="preview-footer clearfix">
+      Powered by Tenejo
     </div>
   </div>
 </div>

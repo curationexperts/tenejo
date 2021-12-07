@@ -1,0 +1,159 @@
+<div id='homepage-preview'>
+  <div class="homepage-body">
+    <div class="preview-header">
+      <div class="preview-masthead clearfix">
+        <div class="preview-logo">
+          <%= image_tag theme&.logo if theme&.logo&.attached? %>
+        </div>
+        <div class="preview-site-title"><%= @theme.site_title %></div>
+      </div>
+
+      <div class="preview-navbar-header clearfix">
+        <ul class="nav navbar-nav">
+          <li>Home</li>
+          <li>About</li>
+          <li>Help</li>
+          <li>Contact</li>
+        </ul>
+
+        <form class="navbar-form navbar-right">
+          <label for="search-field-header">Search</label>
+          <div class="input-group input-group-sm">
+            <input type="text" placeholder="Enter search terms" class="form-control "/>
+            <span class="input-group-btn">
+              <button type="button" id="search-submit" class="btn btn-primary">Go</button>
+            </span>
+          </div>
+
+        </form>
+
+
+      </div>
+    </div>
+
+    <div class="preview-body clearfix">
+      <div class="col-xs-4">
+        <div id="facets" class="facets preview-facets sidenav">
+
+          <div class="top-panel-heading panel-heading">
+            <h2 class="facets-heading">
+              Limit your search
+            </h2>
+          </div>
+
+          <div id="facet-panel-collapse" class="collapse panel-group">
+
+            <div class="panel panel-default facet_limit blacklight-human_readable_type_sim ">
+              <div class="collapsed collapse-toggle panel-heading" aria-expanded="false" data-toggle="collapse" data-target="#facet-human_readable_type_sim">
+                <h3 class="panel-title facet-field-heading">
+                  <a data-turbolinks="false" data-no-turbolink="true" href="#">Type</a>
+                </h3>
+              </div>
+              <div id="facet-human_readable_type_sim" class="panel-collapse facet-content collapse">
+                <div class="panel-body">
+
+                  <ul class="facet-values list-unstyled">
+                    <li>
+                      <span class="facet-label">
+                        <a class="facet_select" href="#">Work</a>
+                      </span>
+                      <span class="facet-count" style="width: 8px;">1</span>
+                    </li>
+
+                  </ul>
+
+
+                </div>
+              </div>
+            </div>
+
+
+            <div class="panel panel-default facet_limit blacklight-creator_sim ">
+              <div class="collapsed collapse-toggle panel-heading" aria-expanded="false" data-toggle="collapse" data-target="#facet-creator_sim">
+                <h3 class="panel-title facet-field-heading">
+                  <a data-turbolinks="false" data-no-turbolink="true" href="#">Creator</a>
+                </h3>
+              </div>
+              <div id="facet-creator_sim" class="panel-collapse facet-content collapse">
+                <div class="panel-body">
+
+                  <ul class="facet-values list-unstyled">
+                    <li>
+                      <span class="facet-label">
+                        <a class="facet_select" href="#">Ator, Cre</a>
+                      </span>
+                      <span class="facet-count" style="width: 8px;">1</span>
+                    </li>
+
+                  </ul>
+
+
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-8">
+        <hr>
+        <ul class="list-unstyled catalog" start="1">
+
+
+          <li class="document blacklight-work" itemscope="" itemtype="http://schema.org/CreativeWork">
+            <div class="row search-result-wrapper">
+
+              <div class="search-results-title-row">
+                <h3 class="search-result-title">
+                  <a href="#">Item Title</a>
+                </h3>
+              </div>
+
+
+              <div class="col-xs-3">
+                <div class="list-thumbnail">
+                  <a data-context-href="#">
+                    <img src="https://via.placeholder.com/150?text=Thumbnail"></a>
+                  </div>
+                </div>
+
+
+                <div class="col-xs-9">
+                  <div class="metadata">
+                    <dl class="dl-horizontal">
+                      <dt data-solr-field-name="creator_tesim">Creator:</dt>
+                      <dd>
+                        <span itemprop="creator">
+                          <a href="#">Ator, Cre</a>
+                        </span>
+                      </dd>
+                      <dt data-solr-field-name="depositor_tesim">Owner:</dt>
+                      <dd>
+                        <a href="#">cre@tor.com</a>
+                      </dd>
+                      <dt data-solr-field-name="date_uploaded_dtsi">Date Uploaded:</dt>
+                      <dd>12/02/2021</dd>
+                      <dt data-solr-field-name="date_modified_dtsi">Date Modified:</dt>
+                      <dd>12/02/2021</dd>
+                      <dt data-solr-field-name="rights_statement_tesim">Rights Statement:</dt>
+                      <dd>
+                        <a href="http://rightsstatements.org/vocab/NKC/1.0/">No Known Copyright</a>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+
+
+              </div>
+            </li>
+
+
+          </ul>
+        </div>
+      </div>
+      <div class="preview-footer clearfix">
+        Powered by Tenejo
+      </div>
+    </div>
+  </div>
