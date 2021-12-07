@@ -69,7 +69,10 @@
 
   <hr/>
   <div class="actions">
-    <%= form.submit 'Save Changes', name: 'save', class: 'btn btn-primary' %>
-    <%= form.submit 'Reset to Defaults', name: 'reset', class: 'btn btn-default' %>
-  </div>
-<% end %>
+    <%= form.submit 'Preview Changes', name: 'save', class: 'btn btn-primary btn-block' %>
+    <%= form.submit 'Apply Changes', name: 'save', class: 'btn btn-danger btn-block'%>
+
+    <%= button_tag(name: 'reset', class: 'btn btn-default btn-block', "data-loading-text":"Loading...") do %>
+      <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Reset to Defaults
+    <% end %>
+</div><% end %>
