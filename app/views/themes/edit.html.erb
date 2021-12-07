@@ -5,7 +5,39 @@
 </div>
 <div class="row">
   <div class="col-xs-12 col-lg-4">
-  <div class="panel panel-default">
-  <div class="panel-body"><%= render 'form', theme: @theme %>  </div></div></div>
-  <div class="col-xs-12 col-lg-8"><%= render 'preview_home', theme: @theme %></div>
-</div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <%= render 'form', theme: @theme %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xs-12 col-lg-8">
+    <div class="panel panel-default">
+      <div class="panel-heading" style="background: #fff;">
+        Homepage preview
+      </div>
+      <div class="panel-body"  style="background: #f3f3f4;">
+        <%= render 'preview_home', theme: @theme %>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading" style="background: #fff;">
+        Search preview
+      </div>
+      <div class="panel-body" style="background: #f3f3f4;">
+        <%= render 'preview_search', theme: @theme %>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading" style="background: #fff;">
+        Item preview
+      </div>
+      <div class="panel-body" style="background: #f3f3f4;">
+        <%= render 'preview_item', theme: @theme %>
+      </div>
+    </div>
+
+  </div>
