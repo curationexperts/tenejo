@@ -53,3 +53,5 @@ vendor/bundle
 /config/master.key
 
 public/uv
+public/system
+public/uploads/tmp
