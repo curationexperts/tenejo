@@ -193,12 +193,20 @@ RSpec.describe Tenejo::Preflight do
   end
 
   describe Tenejo::PFCollection do
-    let(:rec) { described_class.new({}, 1) }
-    it "is not valid when blank" do
-      expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq creator: ["can't be blank"],
-        deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
-        keyword: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
+    context "a record with packed fields" do
+      let(:rec) { described_class.new({:keyword=>"lions|~|tigers|~|bears"}, 1) }
+      it "should unpack field" do
+        expect(rec.keyword).to eq ["lions","tigers","bears"]
+      end
+    end
+    context "a blank record" do
+      let(:rec) { described_class.new({}, 1) }
+      it "is not valid when blank" do
+        expect(rec.valid?).not_to eq true
+        expect(rec.errors.messages).to eq creator: ["can't be blank"],
+          deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
+          keyword: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
+      end
     end
   end
 end

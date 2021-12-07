@@ -14,8 +14,9 @@ module Tenejo
       self.lineno = lineno
       h.delete(:object_type)
       h.each do |k, v|
-        if respond_to?("#{k}=")
-          send("#{k}=", v) if v.present?
+        if respond_to?("#{k}=") && v.present?
+          v = v.split("|~|") if v =~ /\|~\|/
+          send("#{k}=", v)
         end
       end
       @children = []
