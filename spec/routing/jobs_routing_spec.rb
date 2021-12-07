@@ -14,25 +14,29 @@ RSpec.describe JobsController, type: :routing do
     it "routes to #show" do
       expect(get: "/jobs/1").to route_to("jobs#show", id: "1")
     end
+  end
 
+  # Only job subclasses should be persisted to the database and
+  # Jobs are not currently modifiable via the UI after creation
+  describe "invalid routes" do
     it "routes to #edit" do
-      expect(get: "/jobs/1/edit").to route_to("jobs#edit", id: "1")
+      expect(get: "/jobs/1/edit").not_to be_routable
     end
 
     it "routes to #create" do
-      expect(post: "/jobs").to route_to("jobs#create")
+      expect(post: "/jobs").not_to be_routable
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/jobs/1").to route_to("jobs#update", id: "1")
+      expect(put: "/jobs/1").not_to be_routable
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/jobs/1").to route_to("jobs#update", id: "1")
+      expect(patch: "/jobs/1").not_to be_routable
     end
 
     it "routes to #destroy" do
-      expect(delete: "/jobs/1").to route_to("jobs#destroy", id: "1")
+      expect(delete: "/jobs/1").not_to be_routable
     end
   end
 end

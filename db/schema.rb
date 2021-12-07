@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_29_173942) do
+ActiveRecord::Schema.define(version: 2021_12_05_193250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -192,7 +192,9 @@ ActiveRecord::Schema.define(version: 2021_11_29_173942) do
     t.integer "files"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "parent_job_id"
     t.index ["completed_at"], name: "index_jobs_on_completed_at"
+    t.index ["parent_job_id"], name: "index_jobs_on_parent_job_id"
     t.index ["status"], name: "index_jobs_on_status"
     t.index ["type"], name: "index_jobs_on_type"
     t.index ["user_id"], name: "index_jobs_on_user_id"
@@ -628,6 +630,7 @@ ActiveRecord::Schema.define(version: 2021_11_29_173942) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "collection_type_participants", "hyrax_collection_types"
   add_foreign_key "curation_concerns_operations", "users"
+  add_foreign_key "jobs", "jobs", column: "parent_job_id"
   add_foreign_key "jobs", "users"
   add_foreign_key "mailboxer_conversation_opt_outs", "mailboxer_conversations", column: "conversation_id", name: "mb_opt_outs_on_conversations_id"
   add_foreign_key "mailboxer_notifications", "mailboxer_conversations", column: "conversation_id", name: "notifications_on_conversation_id"
