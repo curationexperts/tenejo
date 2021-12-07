@@ -142,6 +142,22 @@ RSpec.describe Tenejo::Preflight do
     end
   end
   describe Tenejo::PFWork do
+    context "a record with a potentially packed field, which doesn't have a packed value" do
+      let(:rec) { described_class.new({:resource_type=>"Book"}, 1) }
+      it "should record warning " do
+        expect(rec.valid?).to eq false
+        expect(rec.resource_type).to eq ["Book"]
+      end
+    end
+    context "a record with packed fields including mix of valid & invalid" do
+      let(:rec) { described_class.new({:resource_type=>"Poster|~|Airplane|~|Book|~|Bear"}, 1) }
+      it "should record warning " do
+        expect(rec.valid?).to eq false
+        expect(rec.resource_type).to eq ["Poster", "Book"]
+        expect(rec.warnings[:resource_type]).to include "Resource type \"Airplane\" on line 1 is not recognized and will be ignored."
+        expect(rec.warnings[:resource_type]).to include "Resource type \"Bear\" on line 1 is not recognized and will be ignored."
+      end
+    end
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true

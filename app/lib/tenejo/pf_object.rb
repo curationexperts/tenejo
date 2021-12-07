@@ -68,6 +68,16 @@ module Tenejo
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
 
+    validates_each :resource_type, allow_blank: true, allow_nil: true do |rec, att, val|
+      val = [val].flatten
+      valid_types = RESOURCE_TYPES["terms"].map{|x| x["term"]}
+      val = val.reject do|x|
+        next if valid_types.include?(x)
+        rec.warnings[:resource_type] << "Resource type \"#{x}\" on line #{rec.lineno} is not recognized and will be ignored." 
+      end
+      rec.send("#{att}=", val)
+    end
+
     validates_each :visibility, allow_blank: true, allow_nil: true do |rec, attr, val|
       rec.errors.add(attr, "Unknown visibility \"#{val}\" on line #{rec.lineno}") unless [:open, :registered, :restricted].include?(val.to_sym)
     end
