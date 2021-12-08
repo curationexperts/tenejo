@@ -40,13 +40,19 @@ class ThemesController < ApplicationController
 
   # PATCH/PUT /themes/1 or /themes/1.json
   def update
-    params[:theme] = Theme::DEFAULTS if params[:reset]
-    theme.logo.attach(params[:theme][:logo]) if params[:theme][:logo]
-    if @theme.update(theme_params)
-      redirect_to edit_theme_path
+    if params[:apply]
+      appearance.header_background_color = @theme.primary_color
     else
-      render edit_theme_path, status: :unprocessable_entity
+      params[:theme] = Theme::DEFAULTS if params[:reset]
+      theme.logo.attach(params[:theme][:logo]) if params[:theme][:logo]
+      if @theme.update(theme_params)
+        redirect_to edit_theme_path
+      else
+        render edit_theme_path, status: :unprocessable_entity
+      end
     end
+    
+
   end
 
   # DELETE /themes/1 or /themes/1.json
