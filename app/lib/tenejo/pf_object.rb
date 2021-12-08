@@ -10,23 +10,47 @@ module Tenejo
       @warnings ||= Hash.new { |h, k| h[k] = [] }
     end
 
-    def initialize(h, lineno)
+    def initialize(row, lineno)
       self.lineno = lineno
-      h.delete(:object_type)
-      h.each do |k, v|
-        if respond_to?("#{k}=")
-          send("#{k}=", v) if v.present?
-        end
+      row.delete(:object_type)
+      row.each do |field_name, value|
+        set_attribute(field_name, value, lineno)
       end
       @children = []
       @lineno = lineno
     end
+
+    def set_attribute(field_name, value, lineno)
+      setter = "#{field_name}="
+      return if value.nil?
+      list = value.split("|~|")
+      if singular?(field_name)
+        unpacked_value = list&.shift
+        warnings[field_name] << "#{field_name.to_s.titlecase} on line #{lineno} has extra values: using '#{unpacked_value}' -- ignoring: '#{list.join(', ')}'" if list.count != 0
+      else
+        unpacked_value = list
+      end
+      send(setter, unpacked_value) if respond_to?(setter)
+    end
+
+    def singular?(attribute_name)
+      self.class.singular_fields.include?(attribute_name)
+    end
+
+    def self.singular_fields
+      raise NotImplementedError
+    end
   end
+
   class PFCollection < PreFlightObj
     ALL_FIELDS = (Collection.terms + [:deduplication_key, :visibility, :parent]).uniq.freeze
     REQUIRED_FIELDS = (Collection.required_terms + [:identifier, :deduplication_key, :visibility, :creator, :keyword]).uniq.freeze
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
+
+    def self.singular_fields
+      @singular_fields ||= (ALL_FIELDS - Collection.properties.select { |_k, v| v["multiple"] }.keys.map(&:to_sym)).sort
+    end
   end
 
   class PFFile < PreFlightObj
@@ -55,6 +79,10 @@ module Tenejo
       row[:file] = f if f
       @import_path = import_path
       super row, lineno
+    end
+
+    def self.singular_fields
+      @singular_fields ||= (ALL_FIELDS - FileSet.properties.select { |_k, v| v["multiple"] }.keys.map(&:to_sym)).sort
     end
   end
 
@@ -103,6 +131,10 @@ module Tenejo
       return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement)
       warnings[:rights_statement] << "Rights Statement on line #{@lineno} not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
       @rights_statement = "Copyright Undetermined"
+    end
+
+    def self.singular_fields
+      @singular_fields ||= (ALL_FIELDS - Work.properties.select { |_k, v| v["multiple"] }.keys.map(&:to_sym)).sort
     end
   end
 end
