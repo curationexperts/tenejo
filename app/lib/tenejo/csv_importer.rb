@@ -46,7 +46,7 @@ module Tenejo
         identifier: primary_id,
         title: title,
         depositor: job_owner,
-        collection_type_gid: Tenejo::CsvImporter.default_collection_type
+        collection_type_gid: Tenejo::CsvImporter.default_collection_type.gid
       )
     end
 

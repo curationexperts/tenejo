@@ -50,6 +50,7 @@ RSpec.describe Tenejo::CsvImporter do
         expect(collection.depositor).to eq job_owner.user_key
         expect(collection.date_uploaded.in_time_zone).to be_within(1.minute).of Time.current
         expect(collection.title).to eq pf_collection.title
+        expect(collection.collection_type).to be_a_kind_of Hyrax::CollectionType
       end
     end
 
