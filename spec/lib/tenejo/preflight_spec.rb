@@ -93,14 +93,14 @@ RSpec.describe Tenejo::Preflight do
       expect(graph[:work][1].files.map(&:file)).to eq ["MN-02 4.png"]
     end
     it "connects works with works" do
-      expect(graph[:work][1].children.map(&:identifier)).to eq ["MPC008"]
+      expect(graph[:work][1].children.map(&:identifier)).to eq [["MPC008"]]
     end
     it "warns about disconnected  works" do
       expect(graph[:warnings]).to include "Could not find parent work \"NONA\" for work \"MPC009\" on line 11"
     end
     it "connects works and collections with parents" do
       expect(graph[:collection].size).to eq 2
-      expect(graph[:collection].first.children.map(&:identifier)).to eq ["MPC002", "MPC003"]
+      expect(graph[:collection].first.children.map(&:identifier)).to eq [["MPC002"], ["MPC003"]]
       expect(graph[:collection].last.children.map(&:identifier)).to be_empty
     end
     it "warns when work has no parent" do
@@ -189,6 +189,30 @@ RSpec.describe Tenejo::Preflight do
       expect(p.size).to eq 3
       expect(p.first.file).to eq "a"
       expect(p.last.file).to eq "c"
+    end
+
+    it "unpacks multi-valued fields" do
+      rec = described_class.new({ keyword: "Lions|~|Tigers|~|Bears" }, 1)
+      expect(rec.keyword).to eq ["Lions", "Tigers", "Bears"]
+    end
+
+    it "wraps multi-value fields in an array", :aggregate_failures do
+      rec = described_class.new({ title: "Have a nice day", visibility: "public" }, 1)
+      expect(rec.title).to eq ["Have a nice day"]
+      expect(rec.visibility).to eq :open # example of singular field not in an array
+    end
+
+    it "gives a warning if a single-valued field has packed data" do
+      rec = described_class.new({ visibility: "public|~|private|~|jet" }, 1)
+      expect(rec.visibility).to eq :open
+      expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 has extra values: using 'public' -- ignoring: 'private, jet'"]
+    end
+
+    it "gives a warning if a controlled field has one or more invalid entries" do
+      pending "TODO: figure out how multiples and validations should interact"
+      rec = described_class.new({ resource_type: "Poster|~|Airplane|~|Book|~|Bear" }, 1)
+      expect(rec.resource_type).to eq ["Poster", "Book"]
+      expect(rec.warnings[:resource_type]).to eq ["Resource Type on line 1 contains invalid values, 'Airplane' & 'Bear' will be ignored"]
     end
   end
 

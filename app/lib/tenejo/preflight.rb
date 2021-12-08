@@ -88,7 +88,7 @@ module Tenejo
     end
 
     def self.index(c, key: :identifier)
-      c.index_by { |v| v.send(key); }
+      c.index_by { |v| v.send(key).first; }
     end
 
     def self.connect_works(graph)
@@ -97,7 +97,7 @@ module Tenejo
         if idx.key?(f.parent)
           idx[f.parent].children << f
         elsif f.parent.present?
-          graph[:warnings] << %/Could not find parent work "#{f.parent}" for work "#{f.identifier}" on line #{f.lineno}/
+          graph[:warnings] << %/Could not find parent work "#{f.parent}" for work "#{f.identifier.first}" on line #{f.lineno}/
         end
       end
       graph

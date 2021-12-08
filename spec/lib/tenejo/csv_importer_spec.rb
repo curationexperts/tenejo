@@ -41,7 +41,7 @@ RSpec.describe Tenejo::CsvImporter do
         # Ensure a collection with the expected :identifier does not exist
         Collection.where(identifier: 'TEST0001').to_a.each { |c| c.destroy(eradicate: true) }
       end
-      let(:pf_collection) { Tenejo::PFCollection.new({ identifier: ['TEST0001'], title: ['Importer test collection'] }, -1) }
+      let(:pf_collection) { Tenejo::PFCollection.new({ identifier: 'TEST0001', title: 'Importer test collection' }, -1) }
 
       it "creates a new collection", :aggregate_failures do
         csv_import = described_class.new(import_job)
@@ -69,7 +69,7 @@ RSpec.describe Tenejo::CsvImporter do
           collection.save! # I know this seems ridiculous, but tests were flaky otherwise...
         end
       end
-      let(:pf_collection) { Tenejo::PFCollection.new({ identifier: ['TEST0002'], title: ['Importer test collection'] }, -1) }
+      let(:pf_collection) { Tenejo::PFCollection.new({ identifier: 'TEST0002', title: 'Importer test collection' }, -1) }
 
       after(:context) do
         Collection.where(identifier: 'TEST0002').to_a.each { |c| c.destroy(eradicate: true) }
@@ -91,13 +91,12 @@ RSpec.describe Tenejo::CsvImporter do
 
       context 'with all the values' do
         let(:settable_attributes) {
-          { "identifier" => ["TEST0002"], "title" => ["Snappy title"], "alternative_title" => ["The other title"],
-          "label" => "Not a real title", "relative_path" => "path/to/file.ext", "import_url" => "https:://localhost:3000/import",
-          "resource_type" => ["Image"], "creator" => ["c1"], "contributor" => ["c2"], "description" => ["a test fixture"],
-          "abstract" => ["used for tests"], "keyword" => ["none"], "license" => ["http://creativecommons.org/publicdomain/mark/1.0/"],
-          "rights_notes" => ["use freely"], "rights_statement" => ["http://rightsstatements.org/vocab/CNE/1.0/"],
-          "access_right" => ["free to use"], "publisher" => ["DCE"], "date_created" => ["2021-12-06"], "subject" => ["tbd"],
-          "language" => ["english"], "based_near" => [], "related_url" => ["/also/#"], "bibliographic_citation" => ["yada yada"], "source" => ["mhb"] }
+          { "identifier" => "TEST0002", "title" => "Snappy title", "alternative_title" => "The other title",
+            "resource_type" => "Image", "creator" => "c1", "contributor" => "c2", "description" => "a test fixture",
+            "abstract" => "impressionism", "keyword" => "none", "license" => "http://creativecommons.org/publicdomain/mark/1.0/",
+            "rights_notes" => "use freely", "rights_statement" => "http://rightsstatements.org/vocab/CNE/1.0/",
+            "publisher" => "DCE", "date_created" => "2021-12-06", "subject" => "tbd", "language" => "english",
+            "related_url" => "/also/#", "bibliographic_citation" => "yada yada", "source" => "mhb" }
         }
         let(:fixed_attributes) {
           { "id" => "fake0id", "depositor" => "fake_admin@example.org", "date_uploaded" => "2021-01-01 00:00:01",
@@ -112,7 +111,9 @@ RSpec.describe Tenejo::CsvImporter do
           collection = Collection.where(identifier: 'TEST0002').last
 
           # Most settings should be updated by the import
-          expect(collection.attributes).to include settable_attributes
+          # TODO: the next two lines will break if/when any settable attributes are not multi-valued in the model
+          wrapped_settable_attributes = settable_attributes.transform_values { |v| [v] }
+          expect(collection.attributes).to include wrapped_settable_attributes
 
           # A handful of values should not have been modified even if they were in the preflight
           expect(collection.id).not_to eq "fake0id"
