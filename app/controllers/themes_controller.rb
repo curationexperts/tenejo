@@ -40,13 +40,18 @@ class ThemesController < ApplicationController
 
   # PATCH/PUT /themes/1 or /themes/1.json
   def update
-    params[:theme] = Theme::DEFAULTS if params[:reset]
-    theme.logo.attach(params[:theme][:logo]) if params[:theme][:logo]
+    if params[:reset] == "true"
+      params[:theme] = Theme::DEFAULTS
+      @theme.logo.purge
+    end
+
     if @theme.update(theme_params)
       redirect_to edit_theme_path
     else
       render edit_theme_path, status: :unprocessable_entity
     end
+
+    apply_theme_to_site if params[:apply] == "true"
   end
 
   # DELETE /themes/1 or /themes/1.json
@@ -74,5 +79,19 @@ class ThemesController < ApplicationController
   # Restrict theme access to admins
   def ensure_admin!
     authorize! :read, :admin_dashboard
+  end
+
+  def apply_theme_to_site
+    theme = Theme.current_theme
+    appearance_to_theme_mapping = {
+      header_background_color:          theme.primary_color,
+      header_text_color:                theme.primary_text_color,
+      link_color:                       theme.accent_text_color,
+      footer_link_color:                theme.accent_text_color,
+      primary_button_background_color:  theme.primary_color
+    }
+    appearance_to_theme_mapping.each do |appearance_color, theme_color|
+      ContentBlock.find_or_create_by(name: appearance_color).update!(value: theme_color)
+    end
   end
 end
