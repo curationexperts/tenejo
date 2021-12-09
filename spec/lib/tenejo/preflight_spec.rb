@@ -26,9 +26,9 @@ RSpec.describe Tenejo::Preflight do
     end
   end
   context "a file that isn't a csv " do
-    let(:graph) { described_class.read_csv("spec/fixtures/images/cat.jpg", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/images/tiny.jpg", "tmp/uploads") }
     it "returns a fatal error" do
-      expect(graph[:fatal_errors]).to eq ["Could not recognize this file format: Invalid byte sequence in UTF-8 in line 1."]
+      expect(graph[:fatal_errors]).to eq ["File format or encoding not recognized"]
     end
   end
   context "a file with no data" do
