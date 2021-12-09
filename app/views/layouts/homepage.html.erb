@@ -1,0 +1,10 @@
+<% content_for(:navbar) do %>
+    <%= render '/controls' %>
+  </div>
+<% end %>
+
+<% content_for(:precontainer_content) do %>
+  <%= render 'hyrax/homepage/announcement' if controller_name == 'homepage' %>
+<% end %>
+
+<%= render template: 'layouts/hyrax' %>
