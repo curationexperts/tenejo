@@ -5,52 +5,69 @@
       <p><%= t('hyrax.homepage.featured_works.no_works') %></p>
     </div>
   <% else %>
-    <% 7.times do %>
+    <% 5.times do %>
       <%= render partial: 'featured', collection: @featured_work_list.featured_works %>
     <% end %>
   <% end %>
 </div>
 
 <style>
+  .homepage-hero {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+  }
+  .home-content {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
   .cards {
-    max-width: 1170px;
-    margin: 0 auto 2rem;
     display: grid;
-    grid-gap: 1rem 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    grid-template-rows: 240px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-rows: auto;
+    gap: 1rem 2rem;
+    align-items: stretch;
   }
   .card {
-
     color: #344055;
-
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.315); */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.315);
     background: rgba(255, 255, 255, 0.90);
-    /* text-align: center; */
+    text-align: center;
 
+  }
+  .card .img-container {
     overflow: hidden;
     padding: 0;
-    /* min-height: 4rem; */
-    height: 240px; 
-    margin: 0 auto;
-
-  }
-  .card img {
-    /* max-width: 320px; */
-    /* max-height: 240px; */
-    padding: 0;
-    margin: 0;
-    /* border-radius: 5px; */
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     display: block;
   }
-  .card h3 {
-    color: #334454;
-    font-size: 1.5rem;
-    line-height: 3rem;
-    margin: 1rem 0;
-    padding: 0 1rem;
+  .card img {
+
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    transform: scale(1);
+    transition: all 0.3s ease-in-out;
   }
+  .card img:hover {
+    transform: scale(1.05);
+  }
+
+  .card figcaption {
+
+    margin: 1rem 0;
+    padding: 0.5rem 2rem;
+
+    display: flex;
+    align-items: flex-end;
+  }
+  .card figcaption h2 {
+    color: #2e2e2e;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+  }
+
+}
 </style>
