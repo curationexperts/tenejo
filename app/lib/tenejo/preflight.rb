@@ -11,7 +11,7 @@ module Tenejo
   class Preflight # rubocop:disable Metrics/ClassLength
     def self.check_unknown_headers(row, graph)
       row.to_h.keys.each do |x|
-        graph[:warnings] << "The column \"#{x}\" is unknown, and will be ignored" unless KNOWN_HEADERS.include? x
+        graph[:warnings] << "The column \"#{x.dup.encode('UTF-8')}\" is unknown, and will be ignored" unless KNOWN_HEADERS.include? x
       end
     end
 
@@ -77,14 +77,15 @@ module Tenejo
           parse_to_type(row, import_path, csv.lineno, graph)
         end
         graph[:fatal_errors] << "No data was detected" if empty_graph?(graph)
-      rescue CSV::MalformedCSVError => x
-        graph[:fatal_errors] << "Could not recognize this file format: #{x.message}"
+        connect_works(connect_files(graph))
+      rescue EncodingError, CSV::MalformedCSVError
+        graph[:fatal_errors] << "File format or encoding not recognized"
       rescue DuplicateColumnError => x
         graph[:fatal_errors] << x.message
       ensure
         csv.close
       end
-      connect_works(connect_files(graph))
+      graph
     end
 
     def self.index(c, key: :identifier)
