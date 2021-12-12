@@ -45,14 +45,14 @@ RSpec.describe Tenejo::Preflight do
   end
 
   context "a file that has unmapped header names" do
-    let(:graph) { described_class.read_csv("spec/fixtures/unmapped.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/unmapped.csv", "tmp/uploads") }
     it "records a warning for that row" do
       expect(graph[:warnings]).to include "The column \"frankabillity\" is unknown, and will be ignored"
     end
   end
 
   context "a row with too many columns" do
-    let(:graph) { described_class.read_csv("spec/fixtures/missing_cols.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/missing_cols.csv", "tmp/uploads") }
     it "records a warning for that row" do
       expect(graph[:warnings]).to eq ["The number of columns in row 2 differed from the number of headers (missing quotation mark?)"]
     end
@@ -96,7 +96,7 @@ RSpec.describe Tenejo::Preflight do
       expect(graph[:work][1].children.map(&:identifier)).to eq [["MPC008"]]
     end
     it "warns about disconnected  works" do
-      expect(graph[:warnings]).to include "Could not find parent work \"NONA\" for work \"MPC009\" on line 11"
+      expect(graph[:warnings]).to include "Could not find parent work \"NONA\" for work \"MPC009\" on line 10"
     end
     it "connects works and collections with parents" do
       expect(graph[:collection].size).to eq 2
@@ -145,10 +145,9 @@ RSpec.describe Tenejo::Preflight do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq creator: ["can't be blank"],
-        deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
-        keyword: ["can't be blank"],
-        parent: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
+      expect(rec.errors.messages).to eq deduplication_key: ["can't be blank"],
+        identifier: ["can't be blank"], title: ["can't be blank"], creator: ["can't be blank"],
+        visibility: ["can't be blank"]
     end
     it "transforms visibility" do
       rec = described_class.new({ visibility: 'Public' }, 1)
@@ -175,12 +174,19 @@ RSpec.describe Tenejo::Preflight do
     it "restricts license" do
       rec = described_class.new({ license: 'foo' }, 1)
       expect(rec.warnings[:license]).to eq ["License on line 1 is not recognized and will be left blank"]
-      expect(rec.license).to eq ""
+      expect(rec.license).to eq []
     end
+
+    it "discards extra license" do
+      rec = described_class.new({ license: 'All rights reserved|~|Not validated' }, 1)
+      expect(rec.license).to eq ['All rights reserved']
+      expect(rec.warnings[:license]).to eq ["Multiple licenses on line 1: using 'All rights reserved' -- ignoring 'Not validated'"]
+    end
+
     it "restricts rights statement" do
       expect(rec.valid?).not_to eq true
       expect(rec.warnings[:rights_statement]).to eq ["Rights Statement on line 1 not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"]
-      expect(rec.rights_statement).to eq "Copyright Undetermined"
+      expect(rec.rights_statement).to eq ["Copyright Undetermined"]
     end
 
     it "can unpack" do
@@ -220,9 +226,8 @@ RSpec.describe Tenejo::Preflight do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq creator: ["can't be blank"],
-        deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
-        keyword: ["can't be blank"], title: ["can't be blank"], visibility: ["can't be blank"]
+      expect(rec.errors.messages).to eq deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
+        title: ["can't be blank"], visibility: ["can't be blank"]
     end
   end
 end
