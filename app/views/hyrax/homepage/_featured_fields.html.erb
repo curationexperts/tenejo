@@ -4,7 +4,7 @@
   <div
     class="img-container">
     <%= render_thumbnail_tag(featured, { alt: "#{featured.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" }, {suppress_link: true})%>
-    <%#= image_tag get_random_image %>
+    <%#= image_tag random_image %>
   </div>
   <figcaption>
     <h2><%= featured.title.first %></h2>

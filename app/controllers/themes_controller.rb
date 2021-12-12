@@ -40,7 +40,6 @@ class ThemesController < ApplicationController
 
   # PATCH/PUT /themes/1 or /themes/1.json
   def update
-
     if params[:reset] == "true"
       params[:theme] = Theme::DEFAULTS
       @theme.logo.purge
