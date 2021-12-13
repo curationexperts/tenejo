@@ -6,8 +6,8 @@ class HttpCheck < OkComputer::Check
     super()
   end
   def check
-    %x(curl -s '#{@url}' > /dev/null)
-    $?.exitstatus == 0 ? mark_message("Check passed") : (mark_failure && mark_message("Check failed"))
+    system("curl -s '#{@url}'") ? 
+      mark_message("Check passed") : (mark_failure && mark_message("Check failed"))
   end
 end
 class ServiceCheck < OkComputer::Check
@@ -16,8 +16,8 @@ class ServiceCheck < OkComputer::Check
     super()
   end
   def check
-    %x(systemctl is-active #{@service}) 
-    $?.exitstatus == 0 ? mark_message("Check passed") : (mark_failure && mark_message("Check failed"))
+    system("systemctl is-active #{@service}") ? 
+           mark_message("Check passed") : (mark_failure && mark_message("Check failed"))
   end
 end
 
@@ -26,4 +26,4 @@ OkComputer::Registry.register "redis", ServiceCheck.new('redis')
 OkComputer::Registry.register "solr", HttpCheck.new(ENV['SOLR_URL'])
 OkComputer::Registry.register "fedora", HttpCheck.new(ENV['FEDORA_URL'])
 OkComputer::Registry.register "tomcat", ServiceCheck.new('tomcat9')
-OkComputer::Registry.register "tomcat", ServiceCheck.new('postgres')
+OkComputer::Registry.register "postgres", ServiceCheck.new('postgres')
