@@ -44,7 +44,7 @@ module Tenejo
 
   class PFCollection < PreFlightObj
     ALL_FIELDS = (Collection.terms + [:deduplication_key, :visibility, :parent]).uniq.freeze
-    REQUIRED_FIELDS = (Collection.required_terms + [:identifier, :deduplication_key, :visibility, :creator, :keyword]).uniq.freeze
+    REQUIRED_FIELDS = (Collection.required_terms + [:identifier, :deduplication_key, :visibility]).uniq.freeze
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
 
@@ -54,7 +54,7 @@ module Tenejo
   end
 
   class PFFile < PreFlightObj
-    ALL_FIELDS = [:parent, :file, :resource_type].freeze
+    ALL_FIELDS = [:parent, :file, :files, :resource_type].freeze
     REQUIRED_FIELDS = [:parent, :file].freeze
     attr_accessor(*ALL_FIELDS)
     attr_reader :import_path
@@ -67,11 +67,12 @@ module Tenejo
     end
 
     def self.unpack(row, lineno, import_path)
-      row[:files].split("|~|").map do |f|
+      files = row[:files].split("|~|").map do |f|
         cp = row.dup
         cp[:files] = f
         PFFile.new(cp, lineno, import_path)
       end
+      files
     end
 
     def initialize(row, lineno, import_path)
@@ -87,10 +88,13 @@ module Tenejo
   end
 
   class PFWork < PreFlightObj
-    ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :files,
-                  :visibility, :license, :parent, :rights_statement, :resource_type,
-                  :abstract_or_summary, :date_created, :subject, :language, :publisher, :related_url, :location, :source, :bibliographic_citation].freeze
-    REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :parent].freeze
+    # ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :files,
+    #               :visibility, :license, :parent, :rights_statement, :resource_type,
+    #               :abstract_or_summary, :date_created, :subject, :language, :publisher, :related_url,
+    #               :location, :source, :bibliographic_citation].freeze
+    ALL_FIELDS = (Work.terms + [:deduplication_key, :visibility, :parent, :files]).uniq.freeze
+    # REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :parent].freeze
+    REQUIRED_FIELDS = (Work.required_terms + [:identifier, :deduplication_key, :visibility]).uniq.freeze
 
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
@@ -122,15 +126,18 @@ module Tenejo
 
     def check_license
       return if license.blank?
-      return if LICENSES["terms"].map { |x| x['term'] }.include?(license)
+      first_license = license&.shift
+      warnings[:license] << "Multiple licenses on line 1: using '#{first_license}' -- ignoring '#{license.join(', ')}'" if license.count != 0
+
+      return @license = [first_license] if LICENSES["terms"].map { |x| x['term'] }.include?(first_license)
       warnings[:license] << "License on line #{@lineno} is not recognized and will be left blank"
-      @license = ""
+      @license = self.class.singular_fields.include?(:license) ? "" : []
     end
 
     def check_rights
-      return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement)
+      return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement&.first)
       warnings[:rights_statement] << "Rights Statement on line #{@lineno} not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
-      @rights_statement = "Copyright Undetermined"
+      @rights_statement = ["Copyright Undetermined"]
     end
 
     def self.singular_fields

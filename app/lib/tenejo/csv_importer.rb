@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:todo Metrics/ClassLength
 module Tenejo
   class CsvImporter
     def initialize(import_job)
@@ -37,7 +38,7 @@ module Tenejo
       save_collection(collection)
     end
 
-    # Finds or creates a job by it's user supplied identifier
+    # Finds or creates a collection by its user supplied identifier
     # returns a valid collection or nil
     def find_or_new_collection(primary_id, title)
       collection_found = Collection.where(identifier: primary_id).last
@@ -52,7 +53,7 @@ module Tenejo
 
     def update_collection_attributes(collection, pfcollection)
       return unless collection
-      attributes_to_copy.each { |source, dest| collection.send(dest, pfcollection.send(source)) }
+      collection_attributes_to_copy.each { |source, dest| collection.send(dest, pfcollection.send(source)) }
       # set the parent collection
       # these timestamps are the Hyrax managed fields, not rails timestamps
       if collection.date_uploaded
@@ -81,6 +82,44 @@ module Tenejo
 
     def create_or_update_work(pfwork)
       # expensive stuff here
+      work = find_or_new_work(pfwork.identifier, pfwork.title)
+      update_work_attributes(work, pfwork)
+      save_work(work)
+    end
+
+    # Finds or creates a work by its user supplied identifier
+    # returns a valid work or nil
+    def find_or_new_work(primary_id, title)
+      work_found = Work.where(identifier: primary_id).last
+      return work_found if work_found
+      Work.new(
+        identifier: primary_id,
+        title: title,
+        depositor: job_owner
+      )
+    end
+
+    def update_work_attributes(work, pfwork)
+      return unless work
+      work_attributes_to_copy.each { |source, dest| work.send(dest, pfwork.send(source)) }
+      # set the parent collection
+      # these timestamps are the Hyrax managed fields, not rails timestamps
+      if work.date_uploaded
+        work.date_modified = Time.current
+      else
+        work.date_uploaded = Time.current
+      end
+      work.depositor ||= job_owner
+    end
+
+    def save_work(work)
+      return unless work
+      begin
+        work.save! # do we need to go through the actor stack?
+        # update job status table - work creation successful
+      rescue
+        # update job status table - work creation failed - save error to table
+      end
     end
 
     def make_files(graph)
@@ -97,14 +136,24 @@ module Tenejo
       @default_collection_type ||= Hyrax::CollectionType.find_or_create_default_collection_type
     end
 
-    def attributes_to_copy
-      @attributes_to_copy ||=
-        ((Collection.terms & Tenejo::PFCollection::ALL_FIELDS) - fields_to_exclude
+    def collection_attributes_to_copy
+      @collection_attributes_to_copy ||=
+        ((Collection.terms & Tenejo::PFCollection::ALL_FIELDS) - collection_fields_to_exclude
         ).map { |key| [key, "#{key}=".to_sym] }.to_h
     end
 
-    def fields_to_exclude
+    def collection_fields_to_exclude
       [:collection_type_gid, :depositor, :has_model, :date_uploaded, :create_date, :modified_date, :head, :tail]
+    end
+
+    def work_attributes_to_copy
+      @work_attributes_to_copy ||=
+        ((Work.terms & Tenejo::PFWork::ALL_FIELDS) - work_fields_to_exclude
+        ).map { |key| [key, "#{key}=".to_sym] }.to_h
+    end
+
+    def work_fields_to_exclude
+      [:depositor, :has_model, :date_uploaded, :create_date, :modified_date, :head, :tail]
     end
   end
 end
