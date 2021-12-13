@@ -11,12 +11,15 @@
       <% theme = Theme.current_theme %>
       <style>
         #homepage-preview {
-          color: <%= theme&.primary_text_color %>;
+          color: <%= theme&.primary_text_color %>
+          ;
         }
 
         .preview-header {
-          background-color: <%= theme&.primary_color %>;
-          color: <%= theme&.accent_text_color %>;
+          background-color: <%= theme&.primary_color %>
+          ;
+          color: <%= contrasting_text_color(theme&.primary_color) %>
+          ;
           border-radius: 0.5em 0.5em 0 0;
         }
 
@@ -27,23 +30,32 @@
         .preview-body h1 {
           font-size: 1.5em;
           margin-top: 0;
-          color: <%= theme&.accent_color %>;
+          color: <%= theme&.accent_text_color %>
+          ;
         }
         .preview-body a {
-          color: <%= theme&.accent_color %>;
+          color: <%= theme&.accent_color %>
+          ;
         }
 
         .preview-footer {
-          background-color: <%= theme&.primary_color %>;
-          color: <%= theme&.accent_text_color %>;
+          background-color: <%= theme&.primary_color %>
+          ;
+          color: <%= contrasting_text_color(theme&.accent_text_color) %>
+          ;
           border-radius: 0 0 0.5em 0.5em;
         }
 
 
         .preview-navbar-header {
           width: 100%;
-          background-color: <%= theme&.accent_color %>
+          background: <%= theme&.accent_color %>
+          ;
+
+          color: <%= contrasting_text_color(theme&.accent_color) %>
+          ;
         }
+
         .preview-navbar-header .btn-primary {
           background-color: <%= theme&.primary_color %>
           ;
@@ -54,7 +66,7 @@
         .preview-site-title {
           float: left;
           line-height: 3em;
-          /* font-weight: bold; */
+          font-weight: bold;
         }
         .preview-navbar-header ul {
           list-style-type: none;
@@ -73,80 +85,104 @@
         .preview-facets .top-panel-heading {
           padding: 0;
         }
-        .preview-facets .panel-title{
-            font-size: 1.1em !important;
-            font-weight: 500 !important;
-            line-height: 1 !important;
+        .preview-facets .panel-title {
+          font-size: 1.1em !important;
+          font-weight: 500 !important;
+          line-height: 1 !important;
         }
-        .preview-facets .panel-heading.collapse-toggle .panel-title:after{
-            color: <%= theme&.accent_color %>;
+        .preview-facets .panel-heading.collapse-toggle .panel-title:after {
+          color: <%= theme&.accent_text_color %>
+          !important;
         }
+
+
+        .preview-navbar-header .btn-primary.btn {}
 
         /* / Homepage Styles / */
-        body{
-          background-color: <%= theme&.background_color %> !important;
+        body {
+          background-color: <%= theme&.background_color %>
+          !important;
         }
 
-        .navbar-inverse .navbar-nav > li > a, 
-        .navbar-inverse .navbar-text, 
-        .navbar-inverse .navbar-brand{
-          color: <%= theme&.accent_text_color %> !important;
-        }
-        .navbar-default{
-          background-color: <%= theme&.accent_color %> !important;
+        .navbar-inverse {
+          color: <%= contrasting_text_color(theme&.primary_color) %>
+          !important;
+          background-color: <%= theme&.primary_color %>
+          !important;
           border: none;
-          color: <%= theme&.accent_text_color %> !important;
+
+        }
+        .navbar-inverse .navbar-nav > li > a,
+        .navbar-inverse .navbar-text,
+        .navbar-inverse .navbar-brand {
+          color: <%= contrasting_text_color(theme&.primary_color) %>
+          !important;
+        }
+        .navbar-default {
+          background-color: <%= theme&.accent_color %>
+          !important;
+          border: none;
+          color: <%= contrasting_text_color(theme&.accent_color) %>
+          !important;
         }
 
-        .navbar-default .navbar-nav li a{
-          color: <%= theme&.accent_text_color %> !important;
+        .navbar-default .navbar-nav li a {
+          color: <%= theme&.accent_text_color %>
+          !important;
         }
         .navbar-default .navbar-nav > .active > a,
-        .navbar-default .navbar-nav > .active > a:hover, 
-        .navbar-default .navbar-nav > .active > a:focus{
-          color: <%= theme&.accent_text_color %> !important;
-          background-color: <%= theme&.accent_color %>;
-          filter: brightness(90%);
+        .navbar-default .navbar-nav > .active > a:hover,
+        .navbar-default .navbar-nav > .active > a:focus {
+          color: <%= darken_color(theme&.accent_text_color, 0.9) %>
+          !important;
+          background-color: <%= darken_color(theme&.accent_color, 0.9) %>
+          ;
+
         }
-        .navbar-default .navbar-nav > li > a:hover, 
-        .navbar-default .navbar-nav > li > a:focus,{
-          color: <%= theme&.primary_text_color %>;
-          background-color: <%= theme&.accent_color %>;
-          filter: brightness(95%);
+        .navbar-default .navbar-nav > li > a:hover,
+        .navbar-default .navbar-nav > li > a:focus {
+          color: <%= darken_color(theme&.accent_text_color, 0.95) %>
+          !important;
+          background-color: <%= darken_color(theme&.accent_color, 0.95) %>
+          !important;
         }
 
-        .pagination > .active > a, 
-        .pagination > .active > a:hover, 
-        .pagination > .active > a:focus, 
-        .pagination > .active > span, 
-        .pagination > .active > span:hover, 
-        .pagination > .active > span:focus{
-          color: <%= theme&.accent_text_color %>;
-          background-color: <%= theme&.accent_color %>;
-          filter: brightness(95%);
-          border-color: <%= theme&.accent_color %>;
+        .pagination > .active > a,
+        .pagination > .active > a:hover,
+        .pagination > .active > a:focus,
+        .pagination > .active > span,
+        .pagination > .active > span:hover,
+        .pagination > .active > span:focus {
+          color: <%= darken_color(theme&.accent_text_color, 0.95) %>
+          ;
+          background-color: <%= darken_color(theme&.accent_color, 0.95) %>
+          ;
+          border-color: <%= darken_color(theme&.accent_color, 0.95) %>
+          ;
         }
 
         .home-content h2,
-        .card a:hover, 
-        .card a:focus{
-          color: <%= theme&.accent_color %> !important;
+        .card a:hover,
+        .card a:focus {
+          color: <%= theme&.accent_color %>
+          !important;
         }
-        .card figcaption h2{
-          color: <%= theme&.accent_color %> !important;
+        .card figcaption h2 {
+          color: <%= theme&.accent_color %>
+          !important;
         }
         .search-result-wrapper a,
         .page_links a,
-        .panel-title > a, 
-        .panel-title > small, 
-        .panel-title > .small, 
-        .panel-title > small > a, 
+        .panel-title > a,
+        .panel-title > small,
+        .panel-title > .small,
+        .panel-title > small > a,
         .panel-title > .small > a,
-        .panel-heading.collapse-toggle .panel-title:after, 
+        .panel-heading.collapse-toggle .panel-title:after,
         nav.breadcrumb ol li a,
         .pagination a,
-        .attribute a{
-          color: <%= theme&.accent_color %> !important;
+        .attribute a {
+          color: <%= theme&.accent_text_color %>
+          !important;
         }
-
       </style>
