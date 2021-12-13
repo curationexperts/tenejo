@@ -22,8 +22,8 @@ class ServiceCheck < OkComputer::Check
 end
 
 
-OkComputer::Registry.register "redis", ServiceCheck.new('redis')
+OkComputer::Registry.register "redis", ServiceCheck.new('redis-server')
 OkComputer::Registry.register "solr", HttpCheck.new(ENV['SOLR_URL'])
 OkComputer::Registry.register "fedora", HttpCheck.new(ENV['FEDORA_URL'])
 OkComputer::Registry.register "tomcat", ServiceCheck.new('tomcat9')
-OkComputer::Registry.register "postgres", ServiceCheck.new('postgres')
+OkComputer::Registry.register "postgres", ServiceCheck.new('postgresql')
