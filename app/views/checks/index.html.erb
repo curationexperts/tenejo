@@ -1,0 +1,9 @@
+<h1>System Status</h1>
+
+
+<% @results.each do |r| %>
+  <div class="fail-<%=r.failure_occurred%>">
+    <p><%=r.registrant_name%> up? <%=r.success?%></p> 
+  </div>
+
+<%end%>
