@@ -11,43 +11,43 @@
       <% theme = Theme.current_theme %>
       <style>
         #homepage-preview {
-          color: <%= theme&.primary_text_color %>;
+          color: <%= theme&.preview_primary_text_color %>;
         }
 
         .preview-header {
-          background-color: <%= theme&.primary_color %>;
-          color: <%= theme&.accent_text_color %>;
+          background-color: <%= theme&.preview_primary_color %>;
+          color: <%= theme&.preview_accent_text_color %>;
           border-radius: 0.5em 0.5em 0 0;
         }
 
         .preview-body {
-          background-color: <%= theme&.background_color %>
+          background-color: <%= theme&.preview_background_color %>
           ;
         }
         .preview-body h1 {
           font-size: 1.5em;
           margin-top: 0;
-          color: <%= theme&.accent_color %>;
+          color: <%= theme&.preview_accent_color %>;
         }
         .preview-body a {
-          color: <%= theme&.accent_color %>;
+          color: <%= theme&.preview_accent_color %>;
         }
 
         .preview-footer {
-          background-color: <%= theme&.primary_color %>;
-          color: <%= theme&.accent_text_color %>;
+          background-color: <%= theme&.preview_primary_color %>;
+          color: <%= theme&.preview_accent_text_color %>;
           border-radius: 0 0 0.5em 0.5em;
         }
 
 
         .preview-navbar-header {
           width: 100%;
-          background-color: <%= theme&.accent_color %>
+          background-color: <%= theme&.preview_accent_color %>
         }
         .preview-navbar-header .btn-primary {
-          background-color: <%= theme&.primary_color %>
+          background-color: <%= theme&.preview_primary_color %>
           ;
-          border-color: <%= theme&.primary_color %>
+          border-color: <%= theme&.preview_primary_color %>
           ;
         }
 
@@ -79,7 +79,7 @@
             line-height: 1 !important;
         }
         .preview-facets .panel-heading.collapse-toggle .panel-title:after{
-            color: <%= theme&.accent_color %>;
+            color: <%= theme&.preview_accent_color %>;
         }
 
         /* / Homepage Styles / */
