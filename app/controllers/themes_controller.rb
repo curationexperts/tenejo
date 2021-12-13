@@ -43,6 +43,7 @@ class ThemesController < ApplicationController
     if params[:reset] == "true"
       params[:theme] = Theme::DEFAULTS
       @theme.logo.purge
+      @theme.reset_preview_to_defaults
     end
 
     if @theme.update(theme_params)
@@ -83,6 +84,7 @@ class ThemesController < ApplicationController
 
   def apply_theme_to_site
     theme = Theme.current_theme
+    theme.apply_preview
     appearance_to_theme_mapping = {
       header_background_color:          theme.primary_color,
       header_text_color:                theme.primary_text_color,
