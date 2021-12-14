@@ -1,0 +1,16 @@
+<h1>System Status</h1>
+
+
+<% @results.each do |r| %>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%=r.registrant_name%> </h3>
+  </div>
+  <div class="panel-body">
+    <span class="text-<%= r.failure_occurred  ? 'danger' : 'success' %>">
+      <%=r.success?%>
+    </span>
+  </div>
+</div>
+
+<%end%>
