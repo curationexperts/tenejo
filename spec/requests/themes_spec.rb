@@ -48,7 +48,7 @@ RSpec.describe "/themes", type: :request do
     it "applies defaults to the whole site", :aggregate_failures do
       ContentBlock.find_or_create_by(name: "header_background_color").update!(value: '#010101')
       new_color = '#0FF0FF88'
-      patch theme_url, params: { theme: { primary_color: new_color } }
+      patch theme_url, params: { theme: { preview_primary_color: new_color } }
       patch theme_url, params: { apply: "true", theme: { site_title: 'Tenejo' } }
       background_color = ContentBlock.find_by(name: "header_background_color").value
       expect(background_color).to eq new_color
