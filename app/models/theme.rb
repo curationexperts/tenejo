@@ -5,13 +5,13 @@ class Theme < ApplicationRecord
     primary_color: '#000000',
     accent_color: '#C8512A',
     primary_text_color: '#1A1A1A',
-    accent_text_color: '#FFFFFF',
+    accent_text_color: '#C8512A',
     background_color: '#FFFFFF',
     preview_site_title: 'Tenejo',
     preview_primary_color: '#000000',
-    preview_accent_color: '#D35F00',
+    preview_accent_color: '#C8512A',
     preview_primary_text_color: '#1A1A1A',
-    preview_accent_text_color: '#FFFFFF',
+    preview_accent_text_color: '#C8512A',
     preview_background_color: '#FFFFFF'
     # logo: 'default_logo.png' # see ensure_logo below for logo attachment default
   ).freeze

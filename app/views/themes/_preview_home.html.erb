@@ -2,9 +2,11 @@
   <div class="homepage-body">
     <div class="preview-header">
       <div class="preview-masthead clearfix">
-        <div class="preview-logo">
-          <%= image_tag theme&.logo if theme&.logo&.attached? %>
-        </div>
+        <% if theme&.logo&.attached? %>
+          <div class="preview-logo">
+            <%= image_tag theme&.logo  %>
+          </div>
+        <% end %>
         <div class="preview-site-title"><%= @theme.site_title %></div>
       </div>
 
