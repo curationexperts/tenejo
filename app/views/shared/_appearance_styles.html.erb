@@ -69,7 +69,6 @@
           line-height: 3em;
           font-weight: bold;
           opacity: 0.8;
-          padding-left: .5em;
         }
 
         .preview-navbar-header ul {
@@ -156,8 +155,9 @@
         }
         .edit_collection .btn-primary,
         .navbar-default .navbar-right .btn-primary {
-          color: <%= darken_color(theme&.accent_color, 0.85) %>
-          ;
+          background-color: <%= theme&.primary_color%> !important;
+          border-color: transparent;
+            color: <%= contrasting_text_color(theme&.primary_color) %> !important;
           
 
         }
