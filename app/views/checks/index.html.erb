@@ -2,8 +2,15 @@
 
 
 <% @results.each do |r| %>
-  <div class="fail-<%=r.failure_occurred%>">
-    <p><%=r.registrant_name%> up? <%=r.success?%></p> 
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%=r.registrant_name%> </h3>
   </div>
+  <div class="panel-body">
+    <span class="text-<%= r.failure_occurred  ? 'danger' : 'success' %>">
+      <%=r.success?%>
+    </span>
+  </div>
+</div>
 
 <%end%>
