@@ -11,37 +11,37 @@
       <% theme = Theme.current_theme %>
       <style>
         #homepage-preview {
-          color: <%= theme&.primary_text_color %>
+          color: <%= theme&.preview_primary_text_color %>
           ;
         }
 
         .preview-header {
-          background-color: <%= theme&.primary_color %>
+          background-color: <%= theme&.preview_primary_color %>
           ;
-          color: <%= contrasting_text_color(theme&.primary_color) %>
+          color: <%= contrasting_text_color(theme&.preview_primary_color) %>
           ;
           border-radius: 0.5em 0.5em 0 0;
         }
 
         .preview-body {
-          background-color: <%= theme&.background_color %>
+          background-color: <%= theme&.preview_background_color %>
           ;
         }
         .preview-body h1 {
           font-size: 1.5em;
           margin-top: 0;
-          color: <%= theme&.accent_text_color %>
+          color: <%= theme&.preview_accent_text_color %>
           ;
         }
         .preview-body a {
-          color: <%= theme&.accent_color %>
+          color: <%= theme&.preview_accent_text_color %>
           ;
         }
 
         .preview-footer {
-          background-color: <%= theme&.primary_color %>
+          background-color: <%= theme&.preview_primary_color %>
           ;
-          color: <%= contrasting_text_color(theme&.accent_text_color) %>
+          color: <%= contrasting_text_color(theme&.preview_accent_color) %>
           ;
           border-radius: 0 0 0.5em 0.5em;
         }
@@ -49,17 +49,16 @@
 
         .preview-navbar-header {
           width: 100%;
-          background: <%= theme&.accent_color %>
+          background-color: <%= theme&.preview_accent_color %>
           ;
-
-          color: <%= contrasting_text_color(theme&.accent_color) %>
+          color: <%= contrasting_text_color(theme&.preview_accent_color) %>
           ;
         }
 
         .preview-navbar-header .btn-primary {
-          background-color: <%= theme&.primary_color %>
+          background-color: <%= theme&.preview_primary_color %>
           ;
-          border-color: <%= theme&.primary_color %>
+          border-color: <%= theme&.preview_primary_color %>
           ;
         }
 
@@ -67,6 +66,7 @@
           float: left;
           line-height: 3em;
           font-weight: bold;
+          opacity: 0.8;
         }
         .preview-navbar-header ul {
           list-style-type: none;
@@ -91,8 +91,8 @@
           line-height: 1 !important;
         }
         .preview-facets .panel-heading.collapse-toggle .panel-title:after {
-          color: <%= theme&.accent_text_color %>
-          !important;
+          color: <%= theme&.preview_accent_text_color %>
+          ;
         }
 
 
@@ -117,6 +117,7 @@
         .navbar-inverse .navbar-brand {
           color: <%= contrasting_text_color(theme&.primary_color) %>
           !important;
+          opacity: 0.8;
         }
         .navbar-default {
           background-color: <%= theme&.accent_color %>
@@ -145,6 +146,7 @@
           !important;
           background-color: <%= darken_color(theme&.accent_color, 0.95) %>
           !important;
+          opacity: 0.8;
         }
 
         .pagination > .active > a,
@@ -161,6 +163,12 @@
           ;
         }
 
+        .work-title-wrapper .title-with-badges h1, 
+        .work-title-wrapper .title-with-badges h2, 
+        .work-title-wrapper .title-with-badges .modal-title{
+          color: <%= theme&.accent_color %> !important;
+        }
+        
         .home-content h2,
         .card a:hover,
         .card a:focus {
@@ -182,7 +190,7 @@
         nav.breadcrumb ol li a,
         .pagination a,
         .attribute a {
-          color: <%= theme&.accent_text_color %>
+          color: <%= theme&.accent_color %>
           !important;
         }
       </style>

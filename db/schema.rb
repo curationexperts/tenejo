@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_05_193250) do
+ActiveRecord::Schema.define(version: 2021_12_13_194215) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -523,6 +523,12 @@ ActiveRecord::Schema.define(version: 2021_12_05_193250) do
     t.string "background_color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "preview_site_title"
+    t.string "preview_primary_color"
+    t.string "preview_accent_color"
+    t.string "preview_primary_text_color"
+    t.string "preview_accent_text_color"
+    t.string "preview_background_color"
   end
 
   create_table "tinymce_assets", force: :cascade do |t|

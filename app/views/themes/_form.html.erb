@@ -17,7 +17,8 @@
     <div class="row">
       <div class="col-xs-12">
         <%= form.label :site_title %>
-        <%= form.text_field :site_title, class: 'form-control' %>
+        <%= form.text_field :preview_site_title, class: 'form-control' %>
+        <%= form.hidden_field :site_title %>
       </div>
     </div>
   </div>
@@ -39,11 +40,13 @@
     <div class="row">
       <div class="col-xs-12">
         <%= form.label :primary_color %>
-        <%= form.color_field :primary_color, class: 'form-control' %>
+        <%= form.color_field :preview_primary_color, class: 'form-control' %>
+        <%= form.hidden_field :primary_color %>
       </div>
       <div class="col-xs-12">
         <%= form.label :accent_color %>
-        <%= form.color_field :accent_color, class: 'form-control' %>
+        <%= form.color_field :preview_accent_color, class: 'form-control' %>
+        <%= form.hidden_field :accent_color %>
       </div>
     </div>
   </div>
@@ -52,17 +55,20 @@
     <div class="row">
       <div class="col-xs-12">
         <%= form.label :primary_text_color %>
-        <%= form.color_field :primary_text_color, class: 'form-control' %>
+        <%= form.color_field :preview_primary_text_color, class: 'form-control' %>
+        <%= form.hidden_field :primary_text_color %>
       </div>
 
       <div class="col-xs-12">
         <%= form.label :accent_text_color %>
-        <%= form.color_field :accent_text_color, class: 'form-control' %>
+        <%= form.color_field :preview_accent_text_color, class: 'form-control' %>
+        <%= form.hidden_field :accent_text_color %>
       </div>
 
       <div class="col-xs-12">
         <%= form.label :background_color %>
-        <%= form.color_field :background_color, class: 'form-control' %>
+        <%= form.color_field :preview_background_color, class: 'form-control' %>
+        <%= form.hidden_field :background_color %>
       </div>
     </div>
   </div>
