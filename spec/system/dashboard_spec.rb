@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'dashboard' do
   before do
     driven_by(:rack_test)
-    allow(Theme).to receive(:current_theme).and_return(nil)
+    allow(Theme).to receive(:current_theme).and_return(Theme.new)
   end
 
   let(:user) { User.new(email: 'user@example.com') }

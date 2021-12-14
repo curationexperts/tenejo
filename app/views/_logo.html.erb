@@ -1,0 +1,11 @@
+<% theme = Theme.current_theme %>
+
+<a id="logo" class="navbar-brand site-navbar-brand" href="<%= hyrax.root_path %>" data-no-turbolink="true">
+  <% if theme&.logo&.attached? %>
+    <div class="site-logo">
+      <%= image_tag Rails.application.routes.url_helpers.rails_blob_path(theme&.logo, {only_path: true}) %>
+    </div>
+  <% end %>
+
+  <span class="institution_name"><%= theme.site_title %></span>
+</a>

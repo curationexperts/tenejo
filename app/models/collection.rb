@@ -8,14 +8,14 @@ class Collection < ActiveFedora::Base
   self.indexer = Hyrax::CollectionWithBasicMetadataIndexer
 
   def self.terms
-    @metadata ||= properties.keys.map(&:to_sym)
+    @metadata ||= properties.keys.sort.map(&:to_sym)
   end
 
   def self.required_terms
-    @required_metadata ||= Hyrax::Forms::CollectionForm.required_fields
+    @required_metadata ||= Hyrax::Forms::CollectionForm.required_fields.sort
   end
 
   def self.editable_terms
-    @editable_metadata ||= Hyrax::Forms::CollectionForm.terms
+    @editable_metadata ||= Hyrax::Forms::CollectionForm.terms.sort
   end
 end

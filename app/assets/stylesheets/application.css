@@ -15,7 +15,23 @@
  *= require_self
  */
 
-
 .site-footer {
-    height: auto;
+	height: auto;
+}
+
+.site-navbar-brand{
+    padding: 5px 15px;
+    line-height: 40px;
+}
+.site-logo {
+	padding: 0 5px 0 0;
+	float: left;
+}
+.site-logo img {
+	height: 3rem;
+	width: auto;
+}
+.dashboard .btn-primary{
+	background-color: #337ab7;
+  border-color: #2e6da4;
 }
