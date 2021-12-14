@@ -22,7 +22,7 @@ RSpec.describe Tenejo::Preflight do
     let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv", "tmp/uploads") }
 
     it "records fatal error for duplicate column " do
-      expect(dupes[:fatal_errors]).to include "Duplicate column names detected [:identifier, :identifier, :deduplication_key, :deduplication_key], cannot process"
+      expect(dupes[:fatal_errors]).to include "Duplicate column names detected [:identifier, :identifier, :title, :title], cannot process"
     end
   end
   context "a file that isn't a csv " do
@@ -145,9 +145,8 @@ RSpec.describe Tenejo::Preflight do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq deduplication_key: ["can't be blank"],
-        identifier: ["can't be blank"], title: ["can't be blank"], creator: ["can't be blank"],
-        visibility: ["can't be blank"]
+      expect(rec.errors.messages).to eq identifier: ["can't be blank"],
+        title: ["can't be blank"], creator: ["can't be blank"], visibility: ["can't be blank"]
     end
     it "transforms visibility" do
       rec = described_class.new({ visibility: 'Public' }, 1)
@@ -226,7 +225,7 @@ RSpec.describe Tenejo::Preflight do
     let(:rec) { described_class.new({}, 1) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors.messages).to eq deduplication_key: ["can't be blank"], identifier: ["can't be blank"],
+      expect(rec.errors.messages).to eq identifier: ["can't be blank"],
         title: ["can't be blank"], visibility: ["can't be blank"]
     end
   end

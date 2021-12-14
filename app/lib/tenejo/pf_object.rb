@@ -43,8 +43,8 @@ module Tenejo
   end
 
   class PFCollection < PreFlightObj
-    ALL_FIELDS = (Collection.terms + [:deduplication_key, :visibility, :parent]).uniq.freeze
-    REQUIRED_FIELDS = (Collection.required_terms + [:identifier, :deduplication_key, :visibility]).uniq.freeze
+    ALL_FIELDS = (Collection.terms + [:visibility, :parent]).uniq.freeze
+    REQUIRED_FIELDS = (Collection.required_terms + [:identifier, :visibility]).uniq.freeze
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
 
@@ -88,13 +88,8 @@ module Tenejo
   end
 
   class PFWork < PreFlightObj
-    # ALL_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :files,
-    #               :visibility, :license, :parent, :rights_statement, :resource_type,
-    #               :abstract_or_summary, :date_created, :subject, :language, :publisher, :related_url,
-    #               :location, :source, :bibliographic_citation].freeze
-    ALL_FIELDS = (Work.terms + [:deduplication_key, :visibility, :parent, :files]).uniq.freeze
-    # REQUIRED_FIELDS = [:title, :identifier, :deduplication_key, :creator, :keyword, :visibility, :parent].freeze
-    REQUIRED_FIELDS = (Work.required_terms + [:identifier, :deduplication_key, :visibility]).uniq.freeze
+    ALL_FIELDS = (Work.terms + [:visibility, :parent, :files]).uniq.freeze
+    REQUIRED_FIELDS = (Work.required_terms + [:identifier, :visibility]).uniq.freeze
 
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
