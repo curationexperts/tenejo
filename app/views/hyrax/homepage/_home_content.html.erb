@@ -5,9 +5,9 @@
       <p><%= t('hyrax.homepage.featured_works.no_works') %></p>
     </div>
   <% else %>
-    <% 5.times do %>
-      <%= render partial: 'featured', collection: @featured_work_list.featured_works %>
-    <% end %>
+
+    <%= render partial: 'featured', collection: @featured_work_list.featured_works %>
+
   <% end %>
 </div>
 
