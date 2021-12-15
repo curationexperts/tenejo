@@ -3,7 +3,7 @@
 module ApplicationHelper
   def random_image
     image_path_prefix = "app/assets/images/"
-    image_files = Dir.glob("#{image_path_prefix}unsplash/*")
+    image_files = Dir.glob("#{image_path_prefix}amherst/*")
     image_files.sample.split(image_path_prefix)[1]
   end
 
