@@ -142,7 +142,8 @@ body {
 }
 .navbar-inverse .navbar-nav > li > a,
 .navbar-inverse .navbar-text,
-.navbar-inverse .navbar-brand {
+.navbar-inverse .navbar-brand,
+a.footer-link {
   color: <%= contrasting_text_color(theme&.primary_color) %>
   !important;
 
@@ -165,7 +166,7 @@ body {
 
 }
 .navbar-default .navbar-nav li a {
-  color: <%= contrasting_text_color(theme&.accent_text_color) %>
+  color: <%= contrasting_text_color(theme&.accent_color) %>
   !important;
 }
 .navbar-default .navbar-nav > .active > a,
@@ -232,5 +233,14 @@ nav.breadcrumb ol li a,
 .attribute a {
   color: <%= theme&.accent_color %>
   !important;
+}
+
+/* Styles for Dashboard only */
+.page_links a:not(body.dashboard),
+.pagination a:not(body.dashboard),
+.attribute a:not(body.dashboard),
+nav.breadcrumb ol li a:not(body.dashboard),
+.nav-tabs > li > a:not(body.dashboard){
+  color: #4e4a42 !important;
 }
 </style>
