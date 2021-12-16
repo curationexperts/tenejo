@@ -103,7 +103,9 @@
   !important;
 }
 
-/* / Homepage Styles / */
+/* -----------------------------
+   Homepage Styles
+   ----------------------------- */
 body {
   background-color: <%= theme&.background_color %>
   !important;
@@ -162,8 +164,6 @@ a.footer-link {
   border-color: transparent;
   color: <%= contrasting_text_color(theme&.primary_color) %>
   !important;
-
-
 }
 .navbar-default .navbar-nav li a {
   color: <%= contrasting_text_color(theme&.accent_color) %>
@@ -180,7 +180,7 @@ a.footer-link {
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-  color: <%= contrasting_text_color(theme&.accent_text_color) %>
+  color: <%= contrasting_text_color(theme&.accent_color) %>
   !important;
   background-color: <%= darken_color(theme&.accent_color, 0.75) %>
   !important;
@@ -201,23 +201,23 @@ a.footer-link {
 }
 #sort-dropdown .dropdown-toggle,
 #per_page-dropdown .dropdown-toggle {
-  color: <%= theme&.accent_color %>
+  color: <%= theme&.accent_text_color %>
 }
 .work-title-wrapper .title-with-badges h1,
 .work-title-wrapper .title-with-badges h2,
 .work-title-wrapper .title-with-badges .modal-title {
-  color: <%= theme&.accent_color %>
+  color: <%= theme&.accent_text_color %>
   !important;
 }
 
 .home-content h2,
 .card a:hover,
 .card a:focus {
-  color: <%= theme&.accent_color %>
+  color: <%= theme&.accent_text_color %>
   !important;
 }
 .card figcaption h2 {
-  color: <%= theme&.accent_color %>
+  color: <%= theme&.accent_text_color %>
   !important;
 }
 .search-result-wrapper a,
@@ -231,16 +231,16 @@ a.footer-link {
 nav.breadcrumb ol li a,
 .pagination a,
 .attribute a {
-  color: <%= theme&.accent_color %>
+  color: <%= theme&.accent_text_color %>
   !important;
 }
 
 /* Styles for Dashboard only */
-.page_links a:not(body.dashboard),
-.pagination a:not(body.dashboard),
-.attribute a:not(body.dashboard),
-nav.breadcrumb ol li a:not(body.dashboard),
-.nav-tabs > li > a:not(body.dashboard){
+body.dashboard .page_links a,
+body.dashboard .pagination a,
+body.dashboard .attribute a,
+body.dashboard nav.breadcrumb ol li a,
+body.dashboard .nav-tabs > li > a{
   color: #4e4a42 !important;
 }
 </style>
