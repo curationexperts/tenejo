@@ -19,6 +19,13 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :invitable, :database_authenticatable,
          :recoverable, :rememberable, :validatable
+  def active_for_authentication?
+    super && !deactivated
+  end
+
+  def destroy
+    update(deactivated: true) unless deactivated
+  end
 
   # Method added by Blacklight; Blacklight uses #to_s on your
   # user class to get a user-displayable login/identifier for
