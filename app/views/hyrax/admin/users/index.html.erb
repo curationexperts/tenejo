@@ -30,7 +30,7 @@
                     <%= image_tag(user.avatar.url(:thumb), width: 30) if user.avatar.file %>
                   <% end %>
               </td>
-              <td><%= link_to user.email, hyrax.user_path(user) %></td>
+              <td><%= link_to user.email, hyrax.user_path(user) %> <%= user.deactivated ? "(deactivated)" : "" -%> </td>
               <td><% roles = @presenter.user_roles(user) %>
                   <ul><% roles.each do |role| %>
                     <li><%= role %></li>
@@ -45,6 +45,11 @@
                   </relative-time>
                 </td>
               <% end %>
+              <% if user.deactivated %>
+                <td><%= link_to "Reactivate",  user_path(:id=>user.id, :deactivated=>false), :method=>:put, :data => {:confirm => 'Are you sure?'}%></td>
+              <% else %>
+                <td><%= link_to "Deactivate",  user_path(:id=>user.id, :deactivated=>true), :method=>:put, :data => {:confirm => 'Are you sure?'}%></td>
+              <%end%>
             </tr>
           <% end %>
         </tbody>

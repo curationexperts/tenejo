@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :checks,       only: [:index]
   resources :preflights, only: [:index, :new, :create, :show]
   resources :imports,    only: [:index, :new, :create, :show]
+  resources :users, only: [:update], controller: 'user'
 
   resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
     collection do

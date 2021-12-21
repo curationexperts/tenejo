@@ -10,8 +10,18 @@ RSpec.describe User, type: :model do
     expect(job.user).to eq user
   end
 
-  it 'is protected from deletion if the user has jobs', :aggregate_failures do
-    expect { user.destroy! }.to raise_exception(ActiveRecord::RecordNotDestroyed)
-    expect(user.errors.messages[:base]).to include('Cannot delete record because dependent jobs exist')
+  it "soft destroys" do
+    expect(user.deactivated?).to be false
+    user.destroy
+    expect(described_class.find(user.id)).not_to be nil
+    expect(user.active_for_authentication?).to be false
+  end
+
+  it "can be disabled" do
+    expect(user.deactivated?).to be false
+    expect(user.active_for_authentication?).to be true
+    user.deactivated = true
+    user.save!
+    expect(user.active_for_authentication?).to be false
   end
 end
