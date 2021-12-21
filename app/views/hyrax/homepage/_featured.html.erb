@@ -4,7 +4,11 @@
 
   <%= link_to [main_app, presenter] do %>
     <div class="img-container">
-      <%= image_tag "/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/1100,/0/default.jpg", alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" %>
+      <% if presenter.file_set_presenters.first.alpha_channels == "srgb"  %>
+          <%= image_tag "/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/1100,/0/default.jpg", alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" %>
+      <% else %>
+          <%= render_thumbnail_tag(presenter, { alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" }, {suppress_link: true})%>
+      <% end %>
     </div>
     <figcaption>
       <h2><%= presenter.title.first %></h2>
