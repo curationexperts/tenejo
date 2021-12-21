@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-class FeaturedWork < ActiveRecord::Base
+class FeaturedWork < ApplicationRecord
   FEATURE_LIMIT = 8
   validate :count_within_limit, on: :create
   validates :order, inclusion: { in: proc { 0..FEATURE_LIMIT } }
