@@ -1,16 +1,13 @@
-<%# presenter = featured.presenter %>
-<figure class="card" data-id="<%#= presenter.id %>">
-
-  <%#= render 'hyrax/homepage/featured_fields', featured: presenter %>
+<% presenter = featured.presenter %>
+<figure class="card" data-id="<%= presenter.id %>">
   <span class="sr-only"><%= t('hyrax.homepage.featured_works.document.title_label') %></span>
 
-<%= link_to [main_app, featured] do %>
-  <div
-    class="img-container">
-    <%#= render_thumbnail_tag(featured, { alt: "#{featured.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" }, {suppress_link: true})%>
-  </div>
-  <figcaption>
-    <h2><%= featured.title.first %></h2>
-  </figcaption>
-<% end %>
+  <%= link_to [main_app, presenter] do %>
+    <div class="img-container">
+      <%= image_tag "/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/1100,/0/default.jpg", alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" %>
+    </div>
+    <figcaption>
+      <h2><%= presenter.title.first %></h2>
+    </figcaption>
+  <% end %>
 </figure>
