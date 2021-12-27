@@ -34,6 +34,10 @@ Rails.application.routes.draw do
   curation_concerns_basic_routes
   concern :exportable, Blacklight::Routes::Exportable.new
 
+  match '/404', to: 'errors#not_found', via: :all
+  match '/500', to: 'errors#unhandled_exception', via: :all
+  match '/422', to: 'errors#unprocessable', via: :all
+  
   resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog' do
     concerns :exportable
   end
@@ -45,6 +49,7 @@ Rails.application.routes.draw do
       delete 'clear'
     end
   end
+
   authenticate :user, ->(u) { u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
   end
