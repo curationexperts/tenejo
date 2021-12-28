@@ -15,6 +15,7 @@ module Tenejo
     config.load_defaults 5.2
     config.active_job.queue_adapter = :sidekiq
     Rails.application.routes.default_url_options[:host] = ENV['URL_HOST']
+    config.exceptions_app = self.routes
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

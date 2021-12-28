@@ -3,8 +3,8 @@ require "rails_helper"
 # rubocop:disable RSpec/AnyInstance
 RSpec.describe ErrorsController, type: :request do
   it "loads the page when 500 error detected" do
-    allow_any_instance_of(CatalogController).to receive(:show).and_raise("Whoa Beavis!")
-    get '/catalog/1'
+    allow_any_instance_of(CatalogController).to receive(:index).and_raise("Whoa Beavis!")
+    get '/catalog'
     expect(response.status).to eq 500
     expect(response.body).not_to be_empty
     expect(response.content_length).to be > 0
@@ -12,8 +12,8 @@ RSpec.describe ErrorsController, type: :request do
     expect(response).to render_template(:unhandled_exception)
   end
   it "loads the page when 422 error detected" do
-    allow_any_instance_of(CatalogController).to receive(:show).and_raise(ActionController::InvalidAuthenticityToken)
-    get '/catalog/1'
+    allow_any_instance_of(CatalogController).to receive(:index).and_raise(ActionController::InvalidAuthenticityToken)
+    get '/catalog'
     expect(response.status).to eq 422
     expect(response.body).not_to be_empty
     expect(response.content_length).to be > 0
