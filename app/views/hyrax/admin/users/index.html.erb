@@ -46,9 +46,9 @@
                 </td>
               <% end %>
               <% if user.deactivated %>
-                <td><%= link_to "Reactivate",  user_path(:id=>user.id, :deactivated=>false), :method=>:put, :data => {:confirm => 'Are you sure?'}%></td>
+                <td><%= link_to "Reactivate",  main_app.activate_path(:id=>user.id, :deactivated=>false), :method=>:put, :data => {:confirm => 'Are you sure?'}%></td>
               <% else %>
-                <td><%= link_to "Deactivate",  user_path(:id=>user.id, :deactivated=>true), :method=>:put, :data => {:confirm => 'Are you sure?'}%></td>
+                <td><%= link_to "Deactivate",  main_app.activate_path(:id=>user.id, :deactivated=>true), :method=>:put, :data => {:confirm => 'Are you sure?'}%></td>
               <%end%>
             </tr>
           <% end %>
