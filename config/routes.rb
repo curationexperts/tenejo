@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   resources :checks,       only: [:index]
   resources :preflights, only: [:index, :new, :create, :show]
   resources :imports,    only: [:index, :new, :create, :show]
-  resources :users, only: [:update], controller: 'user'
 
   resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
     collection do
@@ -25,6 +24,9 @@ Rails.application.routes.draw do
     concerns :searchable
   end
   devise_for :users
+  devise_scope  :users do
+    put "activate", to: "users#activate"
+  end
   mount Hydra::RoleManagement::Engine => '/'
 
   mount Qa::Engine => '/authorities'
