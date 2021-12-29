@@ -4,14 +4,26 @@
 
   <%= link_to [main_app, presenter] do %>
     <div class="img-container">
-      <% if presenter.file_set_presenters.first.alpha_channels == "srgb"  %>
-          <%= image_tag "/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/1100,/0/default.jpg", alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" %>
+      <% if 
+        presenter.file_set_presenters.first.audio? || 
+        presenter.file_set_presenters.first.video? || 
+        presenter.file_set_presenters.first.office_document?  %>
+        <%= render_thumbnail_tag(presenter, { alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" }, {suppress_link: true})%>
       <% else %>
-          <%= render_thumbnail_tag(presenter, { alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}" }, {suppress_link: true})%>
-      <% end %>
-    </div>
-    <figcaption>
-      <h2><%= presenter.title.first %></h2>
-    </figcaption>
-  <% end %>
-</figure>
+
+        <%= image_tag( 
+          "/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/700,/0/default.jpg", 
+          srcset: [
+            ["/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/300,/0/default.jpg", "300w"],
+            ["/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/700,/0/default.jpg", "700w"],
+            ["/images/#{(presenter.file_set_presenters.first.original_file_id).gsub('/', '%2F')}/full/1000,/0/default.jpg", "1000w"]],
+          sizes: "(max-width: 700px) 100vw, (max-width: 900px) 50vw, 33vw", 
+          alt: "#{presenter.title.first.to_s} #{ t('hyrax.homepage.admin_sets.thumbnail')}") %>
+
+        <% end %>
+      </div>
+      <figcaption>
+        <h2><%= presenter.title.first %></h2>
+      </figcaption>
+    <% end %>
+  </figure>
