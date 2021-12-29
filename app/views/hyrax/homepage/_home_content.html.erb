@@ -2,7 +2,7 @@
 <div class="cards">
   <% if @featured_work_list.empty? %>
     <div class="card">
-      <p><%= t('hyrax.homepage.featured_works.no_works') %></p>
+      <h3><%= t('hyrax.homepage.featured_works.no_works') %></h3>
     </div>
   <% else %>
 
@@ -34,6 +34,8 @@
     text-align: center;
 
   }
+  .card p{margin: 1rem 0;}
+  .card h3{margin: 1.5rem 0;}
   .card .img-container {
     overflow: hidden;
     padding: 0;
