@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
   end
-  devise_for :users
+  devise_for :users, controllers: {invitations: 'tenejo/invite'}
   devise_scope  :users do
     put "activate", to: "users#activate"
   end
