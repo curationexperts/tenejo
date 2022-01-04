@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  rescue_from Net::SMTPFatalError, with: :mail_error
   helper Openseadragon::OpenseadragonHelper
   # Adds a few additional behaviors into the application controller
   include Blacklight::Controller
@@ -12,4 +13,13 @@ class ApplicationController < ActionController::Base
   include Hyrax::ThemedLayoutController
   include HttpAuthConcern
   with_themed_layout '1_column'
+
+  private
+
+  def mail_error(e)
+    flash[:error] = "There seems to be a problem with the mail system. Invitation was not sent."
+    logger.error("Mailer error: #{e.message}")
+    logger.error(e.backtrace.join("\n"))
+    redirect_to dashboard_path
+  end
 end

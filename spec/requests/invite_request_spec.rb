@@ -15,6 +15,15 @@ RSpec.describe "/tenejo/invite", type: :request do
       sign_in admin
     end
 
+    describe "some sort of mailer error" do
+      it "handles smtp errors" do
+        expect_any_instance_of(Devise::InvitationsController).to receive(:create).and_raise(Net::SMTPFatalError)
+        post user_invitation_path, params: { user: { email: 'newuser@example.com', password: '123456', role_ids: [admin.roles.first.id] } }
+        expect(response).to redirect_to dashboard_path
+        expect(flash[:error]).to eq "There seems to be a problem with the mail system. Invitation was not sent."
+      end
+    end
+
     describe "GET /index" do
       it "renders a successful response" do
         get new_user_invitation_path
