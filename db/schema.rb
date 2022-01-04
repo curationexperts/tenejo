@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_20_171236) do
+ActiveRecord::Schema.define(version: 2022_01_04_203407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -515,7 +515,6 @@ ActiveRecord::Schema.define(version: 2021_12_20_171236) do
   end
 
   create_table "themes", force: :cascade do |t|
-    t.string "site_title"
     t.string "primary_color"
     t.string "accent_color"
     t.string "primary_text_color"
@@ -523,12 +522,15 @@ ActiveRecord::Schema.define(version: 2021_12_20_171236) do
     t.string "background_color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "preview_site_title"
     t.string "preview_primary_color"
     t.string "preview_accent_color"
     t.string "preview_primary_text_color"
     t.string "preview_accent_text_color"
     t.string "preview_background_color"
+    t.string "site_title"
+    t.string "preview_site_title"
+    t.string "site_description"
+    t.string "preview_site_description"
   end
 
   create_table "tinymce_assets", force: :cascade do |t|

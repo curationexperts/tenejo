@@ -1,16 +1,62 @@
-
 <% provide :page_title, Theme.current_theme.site_title %>
 
-
-
-<div class="row">
+<div class="row hero_content row-no-gutters">
   <div class="col-xs-12">
     <%= image_tag random_image, alt: "Homepage Hero Image", class:"homepage-hero" %>
-  </div>
-</div>
+    <div class="hero_image_caption">
+      <%# <small>Hero image caption and
+        <a href="#">link</a>
+      </small> %>
+    </div>
 
-<div class="row home-content">
-  <div class="col-xs-12">
-    <%= render 'home_content' %>
+    <div class="hero_search col-md-8 col-xs-12">
+      <div class="col-xs-12">
+        <h2><%= Theme.current_theme.site_title %></h2>
+        <p><%= Theme.current_theme.site_description %></p>
+      </div>
+
+      <div class="hero_search_form col-xs-12">
+        <%= form_tag search_form_action, method: :get, class: "form-horizontal search-form", role: "search" do %>
+          <%= render_hash_as_hidden_fields(search_state.params_for_search.except(:q, :search_field, :qt, :page, :utf8)) %>
+          <%= hidden_field_tag :search_field, 'all_fields' %>
+          <div class="form-group">
+
+            <label class="control-label sr-only" for="search-field-header">
+              <%= t("hyrax.search.form.q.label", application_name: application_name) %>
+            </label>
+
+            <div class="input-group">
+              <%= text_field_tag :q, current_search_parameters , class: "q form-control", id: "search-field-header", placeholder: t("hyrax.search.form.q.placeholder") %>
+
+              <div class="input-group-btn">
+                <button type="submit" class="btn btn-primary" id="search-submit-header">
+                  <%= t('hyrax.search.button.html') %>
+                </button>
+              </div>
+              <!-- /.input-group-btn -->
+            </div>
+            <!-- /.input-group -->
+
+          </div>
+          <!-- /.form-group -->
+        <% end %>
+
+        <div class="hero_browse col-xs-12">
+          <hr>
+            <%= link_to "Browse All Items",
+              main_app.search_catalog_path(),
+              class: 'btn btn-success' %>
+            <%= link_to t('hyrax.homepage.admin_sets.link'),
+              main_app.search_catalog_path(f: { human_readable_type_sim: ["Collection"]}),
+              class: 'btn btn-info' %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <div class="row home-content">
+    <div class="col-xs-12">
+      <%= render 'home_content' %>
+    </div>
+  </div>

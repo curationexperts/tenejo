@@ -2,12 +2,14 @@
 class Theme < ApplicationRecord
   DEFAULTS = ActiveSupport::HashWithIndifferentAccess.new(
     site_title: 'Tenejo',
+    site_description: 'Digitized culturally significant library collections.',
     primary_color: '#000000',
     accent_color: '#C8512A',
     primary_text_color: '#1A1A1A',
     accent_text_color: '#C8512A',
     background_color: '#FFFFFF',
     preview_site_title: 'Tenejo',
+    preview_site_description: 'Digitized culturally significant library collections.',
     preview_primary_color: '#000000',
     preview_accent_color: '#C8512A',
     preview_primary_text_color: '#1A1A1A',
@@ -37,6 +39,7 @@ class Theme < ApplicationRecord
 
   def reset_preview_to_defaults
     self.preview_site_title = DEFAULTS[:site_title]
+    self.preview_site_description = DEFAULTS[:site_description]
     self.preview_primary_color = DEFAULTS[:primary_color]
     self.preview_accent_color = DEFAULTS[:accent_color]
     self.preview_primary_text_color = DEFAULTS[:primary_text_color]
@@ -47,6 +50,7 @@ class Theme < ApplicationRecord
 
   def apply_preview
     self.site_title = preview_site_title
+    self.site_description = preview_site_description
     self.primary_color = preview_primary_color
     self.accent_color = preview_accent_color
     self.primary_text_color = preview_primary_text_color

@@ -59,3 +59,11 @@ en:
     homepage:
       admin_sets:
         title: Highlights
+        link: Browse by Collections
+    search:
+      button:
+        html: <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search
+        text: Search
+      form:
+        q:
+          label: Search
