@@ -66,13 +66,10 @@ module Tenejo
         csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
                       header_converters: [->(m) { map_header(m) }])
         graph = init_graph
-        headerlen = 0
+        headers = csv.shift
+        headerlen = check_duplicate_headers(headers)
+        check_unknown_headers(headers, graph)
         csv.each do |row|
-          if csv.lineno == 1 # is header, headers are already transformed by the above
-            headerlen = check_duplicate_headers(row)
-            check_unknown_headers(row, graph)
-            next
-          end
           next unless check_length(row, headerlen, csv.lineno, graph)
           parse_to_type(row, import_path, csv.lineno, graph)
         end
@@ -82,8 +79,6 @@ module Tenejo
         graph[:fatal_errors] << "File format or encoding not recognized"
       rescue DuplicateColumnError => x
         graph[:fatal_errors] << x.message
-      ensure
-        csv.close
       end
       graph
     end
