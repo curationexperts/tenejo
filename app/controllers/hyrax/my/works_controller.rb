@@ -21,7 +21,7 @@ module Hyrax
 
         add_breadcrumb t(:'hyrax.controls.home'), root_path
         add_breadcrumb t(:'hyrax.dashboard.breadcrumbs.admin'), hyrax.dashboard_path
-        add_breadcrumb t(:'hyrax.admin.sidebar.works'), hyrax.my_works_path 
+        add_breadcrumb t(:'hyrax.admin.sidebar.works'), hyrax.my_works_path
         managed_works_count
         @create_work_presenter = create_work_presenter_class.new(current_user)
         super
