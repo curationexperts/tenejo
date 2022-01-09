@@ -96,11 +96,11 @@ RSpec.describe "preflights/show", type: :view do
   end
 
   it "shows any files", :aggregate_failures do
-    FileDummy = Struct.new(:lineno, :parent, :import_path, :file, keyword_init: true)
+    FileDummy = Struct.new(:lineno, :parent, :import_path, :file, :visibility, keyword_init: true)
     @preflight_graph = {
       file: [
-        FileDummy.new(file: 'hydra.tiff', lineno: 8),
-        FileDummy.new(file: 'hydra.tiff', lineno: 4)
+        FileDummy.new(file: 'hydra.tiff', lineno: 8, visibility: :open),
+        FileDummy.new(file: 'hydra.tiff', lineno: 4, visibility: :restricted)
       ]
     }
     render

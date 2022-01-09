@@ -158,7 +158,7 @@ RSpec.describe Tenejo::Preflight do
     end
     it "validates visibility" do
       rec = described_class.new({ visibility: 'spoon' }, 1)
-      expect(rec.visibility).to eq 'spoon'
+      expect(rec.visibility).to eq :spoon
       expect(rec.valid?).not_to eq true
       expect(rec.errors[:visibility]).to eq ["Unknown visibility \"spoon\" on line 1"]
     end

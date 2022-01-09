@@ -164,15 +164,17 @@
       <thead><tr>
         <th>Row</th>
         <th>Visibility</th>
-        <th>Identifier</th>
-        <th>Title</th>
+        <th>Parent</th>
+        <th>Path</th>
+        <th>Filename</th>
       </tr></thead>
       <tbody>
       <% @preflight_graph[:file].each do |item| %>
         <tr>
           <td><%= item.lineno %></td>
+          <td><%= item.visibility %></td>
           <td><%= item.parent %></td>
-          <td><%= item.import_path %></td>
+          <td><%= item.import_path %>/ </td>
           <td><%= item.file %></td>
         </tr>
       <% end %>

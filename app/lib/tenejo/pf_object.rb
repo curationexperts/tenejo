@@ -5,7 +5,7 @@ module Tenejo
   RIGHTS_STATEMENTS = YAML.safe_load(File.open(Rails.root.join("config/authorities/rights_statements.yml")))
   class PreFlightObj
     include ActiveModel::Validations
-    attr_accessor :lineno, :children
+    attr_accessor :lineno, :children, :visibility
     def warnings
       @warnings ||= Hash.new { |h, k| h[k] = [] }
     end
@@ -18,6 +18,7 @@ module Tenejo
       end
       @children = []
       @lineno = lineno
+      @visibility = transform_visibility
     end
 
     def set_attribute(field_name, value, lineno)
@@ -40,6 +41,20 @@ module Tenejo
     def self.singular_fields
       raise NotImplementedError
     end
+
+    def transform_visibility
+      return if visibility.nil?
+      case visibility.downcase
+      when 'public'
+        :open
+      when 'authenticated'
+        :registered
+      when 'private'
+        :restricted
+      else
+        visibility.to_sym
+      end
+    end
   end
 
   class PFCollection < PreFlightObj
@@ -54,7 +69,7 @@ module Tenejo
   end
 
   class PFFile < PreFlightObj
-    ALL_FIELDS = [:parent, :file, :files, :resource_type].freeze
+    ALL_FIELDS = [:parent, :file, :files, :resource_type, :visibility].freeze
     REQUIRED_FIELDS = [:parent, :file].freeze
     attr_accessor(*ALL_FIELDS)
     attr_reader :import_path
@@ -67,8 +82,8 @@ module Tenejo
     end
 
     def self.unpack(row, lineno, import_path)
+      cp = row.dup
       files = row[:files].split("|~|").map do |f|
-        cp = row.dup
         cp[:files] = f
         PFFile.new(cp, lineno, import_path)
       end
@@ -97,26 +112,15 @@ module Tenejo
     validates_each :visibility, allow_blank: true, allow_nil: true do |rec, attr, val|
       rec.errors.add(attr, "Unknown visibility \"#{val}\" on line #{rec.lineno}") unless [:open, :registered, :restricted].include?(val.to_sym)
     end
-    def transform_visibility
-      return if visibility.nil?
-      case visibility.downcase
-      when 'public'
-        :open
-      when 'authenticated'
-        :registered
-      when 'private'
-        :restricted
-      else
-        visibility
-      end
-    end
 
-    def initialize(row, lineno)
+    def initialize(row, lineno, import_path = nil, output = {})
       @files = []
-      super
+      @import_path = import_path
+      output[:file] += unpack_files_from_work(row, lineno, import_path) if row[:files]
+      row.delete(:files)
+      super(row, lineno)
       check_license
       check_rights
-      @visibility = transform_visibility
     end
 
     def check_license
@@ -133,6 +137,14 @@ module Tenejo
       return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement&.first)
       warnings[:rights_statement] << "Rights Statement on line #{@lineno} not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
       @rights_statement = ["Copyright Undetermined"]
+    end
+
+    def unpack_files_from_work(row, lineno, import_path)
+      files = CSV::Row.new(row.headers, row.fields)
+      files[:parent] = files[:identifier]
+      files[:identifier] = "auto"
+      files[:object_type] = "file"
+      PFFile.unpack(files, lineno, import_path)
     end
 
     def self.singular_fields
