@@ -64,7 +64,7 @@ module Tenejo
       return { fatal_errors: "No manifest present" } unless input
       begin
         csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
-                      header_converters: [->(m) { map_header(m) }])
+                      header_converters: [->(m) { map_header(m) }], encoding: 'UTF-8')
         graph = init_graph
         headers = csv.shift
         headerlen = check_duplicate_headers(headers)
@@ -113,13 +113,13 @@ module Tenejo
 
     def self.parse_to_type(row, import_path, lineno, output)
       return output if row.to_h.values.all?(nil)
-      case row[:object_type].downcase
+      case row[:object_type]&.downcase
       when 'c', 'collection'
         output[:collection] << PFCollection.new(row.to_h, lineno)
       when 'f', 'file'
         output[:file] += PFFile.unpack(row, lineno, import_path)
       when 'w', 'work'
-        output[:work] << PFWork.new(row, lineno)
+        output[:work] << PFWork.new(row, lineno, import_path, output)
       else
         output[:warnings] << "Uknown object type on row #{lineno}: #{row[:object_type]}"
       end

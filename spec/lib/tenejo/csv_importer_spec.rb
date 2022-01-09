@@ -4,7 +4,7 @@ require 'active_fedora/cleaner'
 
 RSpec.describe Tenejo::CsvImporter do
   let(:job_owner) { FactoryBot.create(:user) }
-  let(:csv) { fixture_file_upload("./spec/fixtures/csv/fancy.csv") }
+  let(:csv) { fixture_file_upload("./spec/fixtures/csv/structure_test.csv") }
   let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
   let(:import_job)  { Import.create!(user: job_owner, parent_job: preflight) }
 
@@ -29,8 +29,8 @@ RSpec.describe Tenejo::CsvImporter do
     csv_import.import
 
     expect(csv_import).to have_received(:create_or_update_collection).exactly(2).times
-    expect(csv_import).to have_received(:create_or_update_work).exactly(4).times
-    expect(csv_import).to have_received(:create_or_update_file).exactly(4).times
+    expect(csv_import).to have_received(:create_or_update_work).exactly(12).times
+    expect(csv_import).to have_received(:create_or_update_file).exactly(31).times
   end
 
   context '.create_or_update_collection' do
@@ -69,6 +69,7 @@ RSpec.describe Tenejo::CsvImporter do
           )
         collection.save!
       end
+
       let(:pf_collection) { Tenejo::PFCollection.new({ identifier: 'TEST0002', title: 'Importer test collection' }, -1) }
 
       it "uses the existing collection instead of creating a new one" do
@@ -124,10 +125,8 @@ RSpec.describe Tenejo::CsvImporter do
 
   context '.create_or_update_work' do
     context "when work doesn't exist" do
-      # these tests are expensive, try to minimize how many we need to run
       before do
         # Ensure a work with the expected :identifier does not exist
-        # Work.where(identifier: 'WORK-0001').to_a.each { |w| w.destroy(eradicate: true) }
         ActiveFedora::Cleaner.clean!
       end
       let(:pf_work) { Tenejo::PFWork.new({ identifier: 'WORK-0001', title: 'Importer test work', rights_statement: "No Known Copyright" }, -1) }
@@ -156,6 +155,7 @@ RSpec.describe Tenejo::CsvImporter do
           )
         work.save!
       end
+
       let(:pf_work) { Tenejo::PFWork.new({ identifier: 'WORK-0002', title: 'Importer test work', rights_statement: 'In Copyright' }, -1) }
 
       it "uses the existing work instead of creating a new one" do
