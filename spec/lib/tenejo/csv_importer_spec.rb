@@ -58,6 +58,7 @@ RSpec.describe Tenejo::CsvImporter do
 
     context "with pre-existing collections" do
       before(:context) do
+        ActiveFedora::Cleaner.clean!
         # Ensure a collection with the expected :identifier exists -> 'TEST0002'
         collection =
           Collection.new(
@@ -66,18 +67,9 @@ RSpec.describe Tenejo::CsvImporter do
             date_uploaded: '2020-07-01 12:30:05',
             collection_type_gid: described_class.default_collection_type
           )
-        begin
-          collection.save!
-        rescue Ldp::Conflict
-          collection.save! # I know this seems ridiculous, but tests were flaky otherwise...
-        end
+        collection.save!
       end
       let(:pf_collection) { Tenejo::PFCollection.new({ identifier: 'TEST0002', title: 'Importer test collection' }, -1) }
-
-      after(:context) do
-        # Collection.where(identifier: 'TEST0002').to_a.each { |c| c.destroy(eradicate: true) }
-        ActiveFedora::Cleaner.clean!
-      end
 
       it "uses the existing collection instead of creating a new one" do
         csv_import = described_class.new(import_job)
@@ -153,6 +145,7 @@ RSpec.describe Tenejo::CsvImporter do
 
     context "with pre-existing work" do
       before(:context) do
+        ActiveFedora::Cleaner.clean!
         # Ensure a  work with the expected :identifier exists -> 'WORK-0002'
         work =
           Work.new(
@@ -161,18 +154,9 @@ RSpec.describe Tenejo::CsvImporter do
             date_uploaded: '2020-07-01 12:30:05',
             rights_statement: ['In Copyright']
           )
-        begin
-          work.save!
-        rescue Ldp::Conflict
-          work.save! # I know this seems ridiculous, but tests were flaky otherwise...
-        end
+        work.save!
       end
       let(:pf_work) { Tenejo::PFWork.new({ identifier: 'WORK-0002', title: 'Importer test work', rights_statement: 'In Copyright' }, -1) }
-
-      after(:context) do
-        # Work.where(identifier: 'WORK-0002').to_a.each { |c| c.destroy(eradicate: true) }
-        ActiveFedora::Cleaner.clean!
-      end
 
       it "uses the existing work instead of creating a new one" do
         csv_import = described_class.new(import_job)
