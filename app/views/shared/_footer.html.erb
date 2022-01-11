@@ -2,7 +2,13 @@
   <div class="container-fluid">
     <div class="navbar-text text-left">
       <span>Powered by Tenejo</span>
-      <% if Rails.env.development? %>
+      <% if production_host? %>
+        <div class="version">
+          <%= BRANCH %>
+        </div>
+      <% end %>
+      <% unless production_host? %>
+        <%# Display detailed git information in dev, test, and non-production environments %>
         <div class="version">
           ENV: <%= Rails.env %>
           <br>SHA: <%= GIT_SHA %>
