@@ -18,9 +18,9 @@ GIT_SHA =
 BRANCH =
   if CAPISTRANO_RELEASE
     CAPISTRANO_RELEASE[1]
-  elsif Rails.env.development? || Rails.env.test?
+  elsif Rails.env.development?
     `git rev-parse --abbrev-ref HEAD`.chomp
-  else
+  else # Rails.env.test?
     "Unknown branch"
   end
 
