@@ -1,7 +1,9 @@
-<div class="alert alert-info" role="alert"><strong>Heads up!</strong> This alert needs your attention, but it's not super important.</div>
-<%# content_for(:precontainer_content) do %>
-  <%#= render 'hyrax/homepage/announcement' %>
-<%# end %>
+
+<% content_for(:precontainer_content) do %>
+  <div id="announcement_text" class="container-fluid alert-warning">
+    <div class='row ' id='announcement-content' role='complementary' aria-label='announcement-text'>announcement</div>
+  </div>
+<% end %>
 <% content_for(:navbar) do %>
   <%= render '/controls' %>
 <% end %>
