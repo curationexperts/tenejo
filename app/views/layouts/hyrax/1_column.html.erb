@@ -1,9 +1,8 @@
 
 <% content_for(:precontainer_content) do %>
-  <div id="announcement_text" class="container-fluid alert-warning">
-    <div class='row ' id='announcement-content' role='complementary' aria-label='announcement-text'>announcement</div>
-  </div>
+  <%= render 'hyrax/homepage/announcement' if controller_name == 'page' %>
 <% end %>
+
 <% content_for(:navbar) do %>
   <%= render '/controls' %>
 <% end %>
