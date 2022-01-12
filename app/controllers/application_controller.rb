@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::Base
   rescue_from Net::SMTPFatalError, with: :mail_error
+  helper Hyrax::Engine.helpers
   helper Openseadragon::OpenseadragonHelper
   # Adds a few additional behaviors into the application controller
   include Blacklight::Controller
