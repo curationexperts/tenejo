@@ -17,9 +17,11 @@ jobs:
           DATABASE_USERNAME: postgres
           POSTGRES_HOST: 127.0.0.1
           POSTGRES_USER: postgres
-          WORKING_PATH: /tmp
-          UPLOAD_PATH: /tmp
-          CACHE_PATH: /tmp/cache
+          WORKING_PATH: tmp/test/uploads
+          DERIVATIVES_PATH: tmp/test/derivatives
+          IMPORT_PATH: tmp/test/import
+          UPLOAD_PATH: tmp/test/uploads
+          CACHE_PATH: tmp/cache
           FEDORA_TEST_URL: http://127.0.0.1:8080/fcrepo/rest
           SOLR_TEST_URL: http://127.0.0.1:8985/solr/hydra-test
           COVERAGE: 1

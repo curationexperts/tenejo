@@ -74,12 +74,25 @@ module Tenejo
           parse_to_type(row, import_path, csv.lineno, graph)
         end
         graph[:fatal_errors] << "No data was detected" if empty_graph?(graph)
-        connect_works(connect_files(graph))
+        connect_works(connect_files(reject_invalid(graph)))
       rescue EncodingError, CSV::MalformedCSVError
         graph[:fatal_errors] << "File format or encoding not recognized"
       rescue DuplicateColumnError => x
         graph[:fatal_errors] << x.message
       end
+      graph
+    end
+
+    def self.reject_invalid(graph)
+      invalids = %i/work collection file/.each_with_object({}) do |x, m|
+        invalids = graph[x].select { |y| !y.valid? }
+        invalids.each { |y| graph[x].delete(y) }
+        m[x] = invalids
+      end
+      invalids.each do |k, v|
+        v.each { |x| graph[:warnings] << "Invalid #{k} item: #{x.errors.full_messages.join(',')} on line #{x.lineno}" }
+      end
+      graph[:invalids] = invalids
       graph
     end
 

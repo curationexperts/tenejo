@@ -6,6 +6,9 @@ require 'fileutils'
 RSpec.describe Tenejo::Preflight do
   before :all do
     FileUtils.mkdir_p("tmp/uploads")
+    FileUtils.touch("tmp/uploads/MN-02 2.png")
+    FileUtils.touch("tmp/uploads/MN-02 3.png")
+    FileUtils.touch("tmp/uploads/MN-02 4.png")
   end
   after :all do
     FileUtils.rm_r("tmp/uploads")
@@ -74,12 +77,23 @@ RSpec.describe Tenejo::Preflight do
       expect(described_class.map_header("Rights Statement ")).to eq :rights_statement
     end
   end
+  context "with missing required headers" do
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/noid.csv", "tmp/uploads") }
+    it "requires required headers" do
+      expect(graph[:warnings].size).to eq 12
+      expect(graph[:warnings]).to include "Invalid work item: Identifier can't be blank on line 7"
+      expect(graph[:invalids].size).to eq(3)
+      expect(graph[:invalids][:work].size).to eq(4)
+      expect(graph[:invalids][:collection].size).to eq(2)
+      expect(graph[:invalids][:file].size).to eq(1)
+      expect(graph[:invalids][:work].first.errors.full_messages).to eq ["Identifier can't be blank"]
+    end
+  end
   context "a well formed file" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
 
     it "checks for missing files in IMPORT_PATH" do
-      expect(graph[:file].first.valid?).to be false
-      expect(graph[:file].first.errors[:file]).to include "Could not find file MN-02 2.png at tmp/uploads"
+      expect(graph[:file].first.valid?).to be true
     end
 
     it "records line number" do
@@ -107,7 +121,7 @@ RSpec.describe Tenejo::Preflight do
       expect(graph[:warnings]).to include "Could not find parent work \"NONEXISTENT\" for work \"NONACOLLECTION\" on line 3"
     end
     it "warns files without parent in sheet" do
-      expect(graph[:warnings]).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.whut\" on line 6"
+      expect(graph[:warnings]).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6"
     end
 
     it "parses out object types" do
@@ -123,7 +137,7 @@ RSpec.describe Tenejo::Preflight do
           expect(y.valid?).to eq true
         end
       end
-      expect(graph[:file].first.valid?).to be false
+      expect(graph[:file].first.valid?).to be true
       expect(graph[:file].last.valid?).to be true
     end
   end
