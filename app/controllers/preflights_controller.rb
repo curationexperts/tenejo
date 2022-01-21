@@ -16,7 +16,7 @@ class PreflightsController < JobsController
 
   def create
     @job = Preflight.new(job_params.merge({ user: current_user }))
-    run_preflight(@job) if @job.validate
+    @graph = run_preflight(@job) if @job.validate
 
     respond_to do |format|
       if @job.save
@@ -44,5 +44,6 @@ class PreflightsController < JobsController
     job.files = preflight_graph[:file].count
     job.completed_at = Time.current
     job.status = :completed
+    preflight_graph
   end
 end

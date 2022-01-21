@@ -39,6 +39,12 @@ RSpec.describe "/preflights", type: :request do
   end
 
   describe "POST /create" do
+    before :all do
+      FileUtils.mkdir_p('tmp/test/uploads')
+      FileUtils.touch("tmp/test/uploads/MN-02 2.png")
+      FileUtils.touch("tmp/test/uploads/MN-02 3.png")
+      FileUtils.touch("tmp/test/uploads/MN-02 4.png")
+    end
     let(:valid_attributes) { { user: admin, manifest: tempfile } }
     let(:tempfile) { fixture_file_upload('csv/fancy.csv') }
 
@@ -56,7 +62,8 @@ RSpec.describe "/preflights", type: :request do
 
       it "sets the collections, works, and jobs count", :aggregate_failures do
         post preflights_path, params: { preflight: valid_attributes }
-        created_job = Job.last
+        created_job = assigns(:job)
+        expect(assigns(:graph)).not_to be_nil
         expect(created_job.status).to eq 'completed'
         expect(created_job.completed_at).to be_within(1.second).of Time.current
         expect(created_job.collections).to eq 2
