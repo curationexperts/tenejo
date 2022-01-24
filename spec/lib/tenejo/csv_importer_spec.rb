@@ -138,7 +138,7 @@ RSpec.describe Tenejo::CsvImporter do
         # Ensure a work with the expected :identifier does not exist
         ActiveFedora::Cleaner.clean!
       end
-      let(:pf_work) { Tenejo::PFWork.new({ identifier: 'WORK-0001', title: 'Importer test work', rights_statement: "No Known Copyright" }, -1) }
+      let(:pf_work) { Tenejo::PFWork.new({ identifier: 'WORK-0001', title: 'Importer test work', rights_statement: "No Known Copyright" }, -1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
 
       it "creates a new work", :aggregate_failures do
         csv_import = described_class.new(import_job)
@@ -165,7 +165,7 @@ RSpec.describe Tenejo::CsvImporter do
         work.save!
       end
 
-      let(:pf_work) { Tenejo::PFWork.new({ identifier: 'WORK-0002', title: 'Importer test work', rights_statement: 'In Copyright' }, -1) }
+      let(:pf_work) { Tenejo::PFWork.new({ identifier: 'WORK-0002', title: 'Importer test work', rights_statement: 'In Copyright' }, -1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
 
       it "uses the existing work instead of creating a new one" do
         csv_import = described_class.new(import_job)
@@ -195,7 +195,7 @@ RSpec.describe Tenejo::CsvImporter do
             "date_modified" => nil, "head" => ['invalid value'], "tail" => ['invalid value'], "collection_type_gid" => "invalid_value", "has_model" => "european" }
         }
         let(:all_attributes) { settable_attributes.merge(fixed_attributes) }
-        let(:pf_work) { Tenejo::PFWork.new(all_attributes, -1) }
+        let(:pf_work) { Tenejo::PFWork.new(all_attributes, -1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
 
         it "updates all of them", :aggregate_failures do
           csv_import = described_class.new(import_job)

@@ -39,9 +39,9 @@ class PreflightsController < JobsController
   def run_preflight(job)
     manifest = job_params[:manifest].tempfile.path
     preflight_graph = Tenejo::Preflight.read_csv(manifest)
-    job.collections = preflight_graph[:collection].count
-    job.works = preflight_graph[:work].count
-    job.files = preflight_graph[:file].count
+    job.collections = preflight_graph.collections.count
+    job.works = preflight_graph.works.count
+    job.files = preflight_graph.files.count
     job.completed_at = Time.current
     job.status = :completed
     preflight_graph

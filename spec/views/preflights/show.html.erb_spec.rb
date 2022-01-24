@@ -5,6 +5,7 @@ RSpec.describe "preflights/show", type: :view do
   let(:user) { FactoryBot.create(:user) }
   let(:tempfile) { fixture_file_upload('csv/empty.csv') }
   let(:completion_time) { Time.current.round }
+  let(:graph) { Tenejo::Graph.new }
   let(:job) {
     Preflight.new(
       id: 8_675_309,
@@ -18,8 +19,8 @@ RSpec.describe "preflights/show", type: :view do
   }
 
   it "renders attributes", :aggregate_failures do
-    @job = job
-    @preflight_graph = {}
+    assign(:job, job)
+    @preflight_graph = Tenejo::Graph.new
     render
     expect(rendered).to have_selector('#preflight-user', text: user)
     expect(rendered).to have_selector('#preflight-manifest', text: 'empty.csv')
@@ -34,8 +35,8 @@ RSpec.describe "preflights/show", type: :view do
 
   context "provides a 'Start Import' button" do
     it "with a valid Preflight ID", :aggregate_failures do
-      @job = job
-      @preflight_graph = { fatal_errors: [] }
+      assign(:job, job)
+      assign(:preflight_graph, graph)
       render
       expect(rendered).to have_button('Start Import', type: 'submit')
       assert_select 'input[id="import_parent_job_id"][value="8675309"]'
@@ -43,27 +44,32 @@ RSpec.describe "preflights/show", type: :view do
     end
 
     it "except when there are preflight errors" do
-      @job = job
-      @preflight_graph = { fatal_errors: ["No data was detected"] }
+      assign(:job, job)
+      graph.add_fatal_error("No data was detected")
+      assign(:preflight_graph, graph)
       render
       expect(rendered).to have_no_button('Start Import', type: 'submit')
     end
   end
 
   it "handles missing attributes gracefully" do
-    @job = nil
-    @preflight_graph = {}
+    assign(:job, job)
+    assign(:preflight_graph, graph)
     expect { render }.not_to raise_error
   end
 
   it "shows any errors" do
-    @preflight_graph = { fatal_errors: ["No data was detected"] }
+    graph.add_fatal_error "No data was detected"
+    assign(:preflight_graph, graph)
     render
     expect(rendered).to have_selector('.preflight-errors', text: 'No data was detected')
   end
 
   it "shows any warnings", :aggregate_failures do
-    @preflight_graph = { warnings: ["Could not find parent work \"GONE?\" for file \"neverwhere.jpg\" on line 6", "Could not find parent work \"NONA\" for work \"MPC009\" on line 11"] }
+    graph.add_warning("Could not find parent work \"GONE?\" for file \"neverwhere.jpg\" on line 6")
+    graph.add_warning("Could not find parent work \"NONA\" for work \"MPC009\" on line 11")
+    assign(:preflight_graph, graph)
+    assign(:job, job)
     render
     expect(rendered).to have_selector('.preflight-warnings', text: 'Warnings')
     expect(rendered).to have_selector('li', text: 'Could not find parent work', count: 2)
@@ -71,12 +77,10 @@ RSpec.describe "preflights/show", type: :view do
 
   it "shows any collections", :aggregate_failures do
     CollectionDummy = Struct.new(:lineno, :visibility, :identifier, :title, keyword_init: true)
-    @preflight_graph = {
-      collection: [
-        CollectionDummy.new(title: 'Collection 1', lineno: 2),
-        CollectionDummy.new(title: 'Collection 2', lineno: 3)
-      ]
-    }
+    graph.collections << CollectionDummy.new(title: 'Collection 1', lineno: 2)
+    graph.collections << CollectionDummy.new(title: 'Collection 2', lineno: 3)
+    assign(:preflight_graph, graph)
+    assign(:job, job)
     render
     expect(rendered).to have_selector('.preflight-collections', text: 'Collections')
     expect(rendered).to have_selector('tr td', text: 'Collection 2')
@@ -84,12 +88,10 @@ RSpec.describe "preflights/show", type: :view do
 
   it "shows any works", :aggregate_failures do
     PFPlaceholder = Struct.new(:lineno, :visibility, :identifier, :title, keyword_init: true)
-    @preflight_graph = {
-      work: [
-        PFPlaceholder.new(title: 'Work 1', lineno: 5),
-        PFPlaceholder.new(title: 'Work 2', lineno: 7)
-      ]
-    }
+    graph.works << PFPlaceholder.new(title: 'Work 1', lineno: 5)
+    graph.works << PFPlaceholder.new(title: 'Work 2', lineno: 7)
+    assign(:preflight_graph, graph)
+    assign(:job, job)
     render
     expect(rendered).to have_selector('.preflight-works', text: 'Works')
     expect(rendered).to have_selector('tr td', text: 'Work 2')
@@ -97,12 +99,10 @@ RSpec.describe "preflights/show", type: :view do
 
   it "shows any files", :aggregate_failures do
     FileDummy = Struct.new(:lineno, :parent, :import_path, :file, :visibility, keyword_init: true)
-    @preflight_graph = {
-      file: [
-        FileDummy.new(file: 'hydra.tiff', lineno: 8, visibility: :open),
-        FileDummy.new(file: 'hydra.tiff', lineno: 4, visibility: :restricted)
-      ]
-    }
+    graph.files << FileDummy.new(file: 'hydra.tiff', lineno: 8, visibility: :open)
+    graph.files << FileDummy.new(file: 'hydra.tiff', lineno: 4, visibility: :restricted)
+    assign(:preflight_graph, graph)
+    assign(:job, job)
     render
     expect(rendered).to have_selector('.preflight-files', text: 'Files')
     expect(rendered).to have_selector('tr td', text: 'hydra.tiff', count: 2)

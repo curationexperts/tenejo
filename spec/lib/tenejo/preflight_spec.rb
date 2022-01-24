@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'rails_helper'
+require 'tenejo/pf_object'
 require 'fileutils'
 
 # rubocop:disable RSpec/InstanceVariable
@@ -17,7 +18,7 @@ RSpec.describe Tenejo::Preflight do
   context '.process_csv' do
     let(:no_data) { described_class.process_csv(nil, nil) }
     it 'returns an error when input stream absent' do
-      expect(no_data[:fatal_errors]).to include "No manifest present"
+      expect(no_data.fatal_errors).to include "No manifest present"
     end
   end
 
@@ -25,39 +26,39 @@ RSpec.describe Tenejo::Preflight do
     let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv", "tmp/uploads") }
 
     it "records fatal error for duplicate column " do
-      expect(dupes[:fatal_errors]).to include "Duplicate column names detected [:identifier, :identifier, :title, :title], cannot process"
+      expect(dupes.fatal_errors).to include "Duplicate column names detected [:identifier, :identifier, :title, :title], cannot process"
     end
   end
   context "a file that isn't a csv " do
     let(:graph) { described_class.read_csv("spec/fixtures/images/tiny.jpg", "tmp/uploads") }
     it "returns a fatal error" do
-      expect(graph[:fatal_errors]).to eq ["File format or encoding not recognized"]
+      expect(graph.fatal_errors).to eq ["File format or encoding not recognized"]
     end
   end
   context "a file with no data" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/empty.csv", "tmp/uploads") }
     it "returns an empty graph" do
-      [:work, :collection, :file].each do |x|
-        expect(graph[x]).to be_empty
+      [:works, :collections, :files].each do |x|
+        expect(graph.send(x)).to be_empty
       end
     end
     it "records toplevel errors" do
-      expect(graph[:fatal_errors]).to eq ["No data was detected"]
-      expect(graph[:warnings]).to be_empty
+      expect(graph.fatal_errors).to eq ["No data was detected"]
+      expect(graph.warnings).to be_empty
     end
   end
 
   context "a file that has unmapped header names" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/unmapped.csv", "tmp/uploads") }
     it "records a warning for that row" do
-      expect(graph[:warnings]).to include "The column \"frankabillity\" is unknown, and will be ignored"
+      expect(graph.warnings).to include "The column \"frankabillity\" is unknown, and will be ignored"
     end
   end
 
   context "a row with too many columns" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/missing_cols.csv", "tmp/uploads") }
     it "records a warning for that row" do
-      expect(graph[:warnings]).to eq ["The number of columns in row 2 differed from the number of headers (missing quotation mark?)"]
+      expect(graph.warnings).to eq ["The number of columns in row 2 differed from the number of headers (missing quotation mark?)"]
     end
   end
 
@@ -65,7 +66,7 @@ RSpec.describe Tenejo::Preflight do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv", "tmp/uploads") }
 
     it "records a warning for that row" do
-      expect(graph[:warnings]).to eq ["Uknown object type on row 2: potato"]
+      expect(graph.warnings).to eq ["Uknown object type on row 2: potato"]
     end
   end
 
@@ -80,61 +81,61 @@ RSpec.describe Tenejo::Preflight do
   context "with missing required headers" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/noid.csv", "tmp/uploads") }
     it "requires required headers" do
-      expect(graph[:warnings].size).to eq 0
-      expect(graph[:fatal_errors]).to include "Missing required column 'Identifier'"
-      expect(graph[:invalids].size).to eq(0)
+      expect(graph.warnings.size).to eq 0
+      expect(graph.fatal_errors).to include "Missing required column 'Identifier'"
+      expect(graph.invalids.size).to eq(0)
     end
   end
   context "a well formed file" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
 
     it "checks for missing files in IMPORT_PATH" do
-      expect(graph[:file].first.valid?).to be true
+      expect(graph.files.first.valid?).to be true
     end
 
     it "records line number" do
-      expect(graph[:work].first.lineno).to eq 4
-      expect(graph[:collection].first.lineno).to eq 2
-      expect(graph[:file].first.lineno).to eq 5
+      expect(graph.works.first.lineno).to eq 4
+      expect(graph.collections.first.lineno).to eq 2
+      expect(graph.files.first.lineno).to eq 5
     end
 
     it "connects files with parents" do
-      expect(graph[:work].first.files.map(&:file)).to eq ['MN-02 2.png', 'MN-02 3.png']
-      expect(graph[:work][1].files.map(&:file)).to eq ["MN-02 4.png"]
+      expect(graph.works.first.files.map(&:file)).to eq ['MN-02 2.png', 'MN-02 3.png']
+      expect(graph.works[1].files.map(&:file)).to eq ["MN-02 4.png"]
     end
     it "connects works with works" do
-      expect(graph[:work][1].children.map(&:identifier)).to eq [["MPC008"]]
+      expect(graph.works[1].children.map(&:identifier)).to eq [["MPC008"]]
     end
     it "warns about disconnected  works" do
-      expect(graph[:warnings]).to include "Could not find parent work \"NONA\" for work \"MPC009\" on line 10"
+      expect(graph.warnings).to include "Could not find parent work \"NONA\" for work \"MPC009\" on line 10"
     end
     it "connects works and collections with parents" do
-      expect(graph[:collection].size).to eq 2
-      expect(graph[:collection].first.children.map(&:identifier)).to eq [["MPC002"], ["MPC003"]]
-      expect(graph[:collection].last.children.map(&:identifier)).to be_empty
+      expect(graph.collections.size).to eq 2
+      expect(graph.collections.first.children.map(&:identifier)).to eq [["MPC002"], ["MPC003"]]
+      expect(graph.collections.last.children.map(&:identifier)).to be_empty
     end
     it "warns when work has no parent" do
-      expect(graph[:warnings]).to include "Could not find parent work \"NONEXISTENT\" for work \"NONACOLLECTION\" on line 3"
+      expect(graph.warnings).to include "Could not find parent work \"NONEXISTENT\" for work \"NONACOLLECTION\" on line 3"
     end
     it "warns files without parent in sheet" do
-      expect(graph[:warnings]).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6"
+      expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6"
     end
 
     it "parses out object types" do
-      expect(graph[:work].size).to eq 4
-      expect(graph[:collection].size).to eq 2
-      expect(graph[:file].size).to eq 4
+      expect(graph.works.size).to eq 4
+      expect(graph.collections.size).to eq 2
+      expect(graph.files.size).to eq 4
     end
 
     it "has validation" do
       FileUtils.touch("tmp/uploads/MN-02 4.png")
-      [:work, :collection].each do |x|
-        graph[x].each do |y|
+      [:works, :collections].each do |x|
+        graph.send(x).each do |y|
           expect(y.valid?).to eq true
         end
       end
-      expect(graph[:file].first.valid?).to be true
-      expect(graph[:file].last.valid?).to be true
+      expect(graph.files.first.valid?).to be true
+      expect(graph.files.last.valid?).to be true
     end
   end
   describe Tenejo::PFFile do
@@ -152,22 +153,22 @@ RSpec.describe Tenejo::Preflight do
     end
   end
   describe Tenejo::PFWork do
-    let(:rec) { described_class.new({}, 1) }
+    let(:rec) { described_class.new({}, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
         title: ["can't be blank"], creator: ["can't be blank"], visibility: ["can't be blank"]
     end
     it "transforms visibility" do
-      rec = described_class.new({ visibility: 'Public' }, 1)
+      rec = described_class.new({ visibility: 'Public' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq :open
-      rec = described_class.new({ visibility: 'Authenticated' }, 1)
+      rec = described_class.new({ visibility: 'Authenticated' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq :registered
-      rec = described_class.new({ visibility: 'PrIvAte' }, 1)
+      rec = described_class.new({ visibility: 'PrIvAte' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq :restricted
     end
     it "validates visibility" do
-      rec = described_class.new({ visibility: 'spoon' }, 1)
+      rec = described_class.new({ visibility: 'spoon' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq :spoon
       expect(rec.valid?).not_to eq true
       expect(rec.errors[:visibility]).to eq ["Unknown visibility \"spoon\" on line 1"]
@@ -181,13 +182,13 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "restricts license" do
-      rec = described_class.new({ license: 'foo' }, 1)
+      rec = described_class.new({ license: 'foo' }, 1, Tenejo::DEFAULT_UPLOAD_PATH,  Tenejo::Graph.new)
       expect(rec.warnings[:license]).to eq ["License on line 1 is not recognized and will be left blank"]
       expect(rec.license).to eq []
     end
 
     it "discards extra license" do
-      rec = described_class.new({ license: 'All rights reserved|~|Not validated' }, 1)
+      rec = described_class.new({ license: 'All rights reserved|~|Not validated' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.license).to eq ['All rights reserved']
       expect(rec.warnings[:license]).to eq ["Multiple licenses on line 1: using 'All rights reserved' -- ignoring 'Not validated'"]
     end
@@ -207,25 +208,25 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "unpacks multi-valued fields" do
-      rec = described_class.new({ keyword: "Lions|~|Tigers|~|Bears" }, 1)
+      rec = described_class.new({ keyword: "Lions|~|Tigers|~|Bears" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.keyword).to eq ["Lions", "Tigers", "Bears"]
     end
 
     it "wraps multi-value fields in an array", :aggregate_failures do
-      rec = described_class.new({ title: "Have a nice day", visibility: "public" }, 1)
+      rec = described_class.new({ title: "Have a nice day", visibility: "public" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.title).to eq ["Have a nice day"]
       expect(rec.visibility).to eq :open # example of singular field not in an array
     end
 
     it "gives a warning if a single-valued field has packed data" do
-      rec = described_class.new({ visibility: "public|~|private|~|jet" }, 1)
+      rec = described_class.new({ visibility: "public|~|private|~|jet" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq :open
       expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 has extra values: using 'public' -- ignoring: 'private, jet'"]
     end
 
     it "gives a warning if a controlled field has one or more invalid entries" do
       pending "TODO: figure out how multiples and validations should interact"
-      rec = described_class.new({ resource_type: "Poster|~|Airplane|~|Book|~|Bear" }, 1)
+      rec = described_class.new({ resource_type: "Poster|~|Airplane|~|Book|~|Bear" }, 1, Tenejo::Graph.new)
       expect(rec.resource_type).to eq ["Poster", "Book"]
       expect(rec.warnings[:resource_type]).to eq ["Resource Type on line 1 contains invalid values, 'Airplane' & 'Bear' will be ignored"]
     end

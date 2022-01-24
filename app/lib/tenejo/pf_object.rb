@@ -113,10 +113,10 @@ module Tenejo
       rec.errors.add(attr, "Unknown visibility \"#{val}\" on line #{rec.lineno}") unless [:open, :registered, :restricted].include?(val.to_sym)
     end
 
-    def initialize(row, lineno, import_path = nil, output = {})
+    def initialize(row, lineno, import_path, graph)
       @files = []
       @import_path = import_path
-      output[:file] += unpack_files_from_work(row, lineno, import_path) if row[:files]
+      graph.files += unpack_files_from_work(row, lineno, import_path) if row[:files]
       row.delete(:files)
       super(row, lineno)
       check_license
