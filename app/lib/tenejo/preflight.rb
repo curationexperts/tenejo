@@ -5,8 +5,8 @@ require 'active_support/core_ext/enumerable'
 require 'tenejo/pf_object'
 
 module Tenejo
-  class DuplicateColumnError < RuntimeError
-  end
+  class DuplicateColumnError < RuntimeError;end
+  class MissingIdentifierError < RuntimeError;end
 
   class Preflight # rubocop:disable Metrics/ClassLength
     def self.check_unknown_headers(row, graph)
@@ -67,6 +67,7 @@ module Tenejo
                       header_converters: [->(m) { map_header(m) }], encoding: 'UTF-8')
         graph = init_graph
         headers = csv.shift
+        raise MissingIdentifierError.new("Missing required column 'Identifier'") unless headers.include? :identifier
         headerlen = check_duplicate_headers(headers)
         check_unknown_headers(headers, graph)
         csv.each do |row|
@@ -78,6 +79,8 @@ module Tenejo
       rescue EncodingError, CSV::MalformedCSVError
         graph[:fatal_errors] << "File format or encoding not recognized"
       rescue DuplicateColumnError => x
+        graph[:fatal_errors] << x.message
+      rescue MissingIdentifierError => x
         graph[:fatal_errors] << x.message
       end
       graph

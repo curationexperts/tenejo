@@ -80,13 +80,9 @@ RSpec.describe Tenejo::Preflight do
   context "with missing required headers" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/noid.csv", "tmp/uploads") }
     it "requires required headers" do
-      expect(graph[:warnings].size).to eq 12
-      expect(graph[:warnings]).to include "Invalid work item: Identifier can't be blank on line 7"
-      expect(graph[:invalids].size).to eq(3)
-      expect(graph[:invalids][:work].size).to eq(4)
-      expect(graph[:invalids][:collection].size).to eq(2)
-      expect(graph[:invalids][:file].size).to eq(1)
-      expect(graph[:invalids][:work].first.errors.full_messages).to eq ["Identifier can't be blank"]
+      expect(graph[:warnings].size).to eq 0
+      expect(graph[:fatal_errors]).to include "Missing required column 'Identifier'"
+      expect(graph[:invalids].size).to eq(0)
     end
   end
   context "a well formed file" do
