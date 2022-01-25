@@ -11,9 +11,24 @@ module Tenejo
 
     def import
       return if fatal_errors(@graph)
-      make_collections(@graph)
-      make_works(@graph)
+      @graph.root.children.each do |child|
+        instantiate(child)
+      end
       make_files(@graph)
+    end
+
+    def instantiate(node)
+      case node
+      when Tenejo::PFCollection
+        create_or_update_collection(node)
+      when Tenejo::PFWork
+        create_or_update_work(node)
+      else
+        @graph.add_fatal_error("Row: #{node.lineno} - Did not create #{node.class} with identifier #{node.identifier} ")
+      end
+      node.children.each do |child|
+        instantiate(child)
+      end
     end
 
     def fatal_errors(graph)
@@ -24,17 +39,15 @@ module Tenejo
       @depositor
     end
 
-    def make_collections(graph)
-      graph.collections.each do |pfcollection|
-        create_or_update_collection(pfcollection)
-      end
-    end
-
     def create_or_update_collection(pfcollection)
       # put all the expensive stuff here
       # and unit test the heck out of it
       collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
       update_collection_attributes(collection, pfcollection)
+      if pfcollection.parent
+        parent = Collection.where(identifier: pfcollection.parent).first
+        collection.member_of_collections << parent
+      end
       save_collection(collection)
     end
 
@@ -74,16 +87,19 @@ module Tenejo
       end
     end
 
-    def make_works(graph)
-      graph.works.each do |pfwork|
-        create_or_update_work(pfwork)
-      end
-    end
-
     def create_or_update_work(pfwork)
       # expensive stuff here
       work = find_or_new_work(pfwork.identifier, pfwork.title)
       update_work_attributes(work, pfwork)
+      if pfwork.parent
+        # Works can have either collections
+        parent_collection = Collection.where(identifier: pfwork.parent).first
+        work.member_of_collections << parent_collection if parent_collection
+        # Or other works as their parents
+        parent_work = Work.where(identifier: pfwork.parent).first
+        parent_work.ordered_members << work if parent_work
+        parent_work&.save!
+      end
       save_work(work)
     end
 
@@ -134,6 +150,13 @@ module Tenejo
 
     def self.default_collection_type
       @default_collection_type ||= Hyrax::CollectionType.find_or_create_default_collection_type
+    end
+
+    # This method largely exists to recover from cases where
+    # ActiveFedora::Cleaner.clean! has been called during test suite runs
+    # And inadvertently wiped out the memoized object.
+    def self.reset_default_collection_type!
+      @default_collection_type = Hyrax::CollectionType.find_or_create_default_collection_type
     end
 
     def collection_attributes_to_copy
