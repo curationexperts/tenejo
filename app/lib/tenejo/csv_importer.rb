@@ -17,7 +17,7 @@ module Tenejo
     end
 
     def fatal_errors(graph)
-      graph[:fatal_errors]&.any?
+      graph.fatal_errors&.any?
     end
 
     def job_owner
@@ -25,7 +25,7 @@ module Tenejo
     end
 
     def make_collections(graph)
-      graph[:collection].each do |pfcollection|
+      graph.collections.each do |pfcollection|
         create_or_update_collection(pfcollection)
       end
     end
@@ -75,7 +75,7 @@ module Tenejo
     end
 
     def make_works(graph)
-      graph[:work].each do |pfwork|
+      graph.works.each do |pfwork|
         create_or_update_work(pfwork)
       end
     end
@@ -123,7 +123,7 @@ module Tenejo
     end
 
     def make_files(graph)
-      graph[:file].each do |pffile|
+      graph.files.each do |pffile|
         create_or_update_file(pffile)
       end
     end

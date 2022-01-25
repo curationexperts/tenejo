@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'rails_helper'
+require 'tenejo/graph'
 
 RSpec.describe BatchImportJob, type: :job do
   let(:user) { FactoryBot.create(:user) }
@@ -14,10 +15,12 @@ RSpec.describe BatchImportJob, type: :job do
     # rubocop:disable RSpec/MessageChain
     it "calls the importer with a graph made from a job" do
       # This test creates a fake preflight error which causes the fastest possible import
+      graph = Tenejo::Graph.new
+      graph.add_fatal_error('No data was detected')
       ActiveJob::Base.queue_adapter = :test
       import_job = Import.create!(user: user)
       allow(import_job).to receive_message_chain('manifest.download') { 'csv placeholder' }
-      allow(Tenejo::Preflight).to receive(:process_csv).and_return({ fatal_errors: ['No data was detected'] })
+      allow(Tenejo::Preflight).to receive(:process_csv).and_return(graph)
       described_class.perform_now(import_job)
       expect(Tenejo::Preflight).to have_received(:process_csv)
     end

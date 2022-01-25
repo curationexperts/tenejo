@@ -53,7 +53,7 @@
 <%= link_to 'Back', jobs_path, class: 'btn btn-default' %>
 
 <%# IMPORT SUBMISSION FORM %>
-<% if @preflight_graph[:fatal_errors]&.empty? %>
+<% if @preflight_graph.fatal_errors.empty? %>
   <%= form_with(model: Import, local: true) do |form| %>
     <%= form.hidden_field :parent_job_id, value: @job.id %>
     <div class="actions">
@@ -65,11 +65,11 @@
 <h2>Analysis</h2>
 
 <%# ERRORS %>
-<% unless @preflight_graph[:fatal_errors].blank? %>
+<% unless @preflight_graph.fatal_errors.blank? %>
   <div class="preflight-errors well well-sm">
     <h4 class="bg-danger"">Errors</h4>
     <ul>
-      <% @preflight_graph[:fatal_errors].each do |error| %>
+      <% @preflight_graph.fatal_errors.each do |error| %>
         <li><%= error %></li>
       <% end %>
     </ul>
@@ -77,11 +77,11 @@
 <% end %>
 
 <%# WARNINGS %>
-<% unless @preflight_graph[:warnings].blank? %>
+<% unless @preflight_graph.warnings.blank? %>
   <div class="preflight-warnings well well-sm">
     <h4 class="bg-warning">Warnings</h4>
     <ul>
-      <% @preflight_graph[:warnings].each do |warning| %>
+      <% @preflight_graph.warnings.each do |warning| %>
         <li><%= warning %></li>
       <% end %>
     </ul>
@@ -89,7 +89,7 @@
 <% end %>
 
 <%# COLLECTIONS %>
-<% unless @preflight_graph[:collection].blank? %>
+<% unless @preflight_graph.collections.blank? %>
   <div class="preflight-collections well well-sm">
     <h4 class="bg-info">Collections</h4>
     <table>
@@ -106,7 +106,7 @@
         <th>Title</th>
       </tr></thead>
       <tbody>
-      <% @preflight_graph[:collection].each do |item| %>
+      <% @preflight_graph.collections.each do |item| %>
         <tr>
           <td><%= item.lineno %></td>
           <td><%= item.visibility %></td>
@@ -120,7 +120,7 @@
 <% end %>
 
 <%# WORKS %>
-<% unless @preflight_graph[:work].blank? %>
+<% unless @preflight_graph.works.blank? %>
   <div class="preflight-works well well-sm">
     <h4 class="bg-info">Works</h4>
     <table>
@@ -137,7 +137,7 @@
         <th>Title</th>
       </tr></thead>
       <tbody>
-      <% @preflight_graph[:work].each do |item| %>
+      <% @preflight_graph.works.each do |item| %>
         <tr>
           <td><%= item.lineno %></td>
           <td><%= item.visibility %></td>
@@ -151,7 +151,7 @@
 <% end %>
 
 <%# FILES %>
-<% unless @preflight_graph[:file].blank? %>
+<% unless @preflight_graph.files.blank? %>
   <div class="preflight-files well well-sm">
     <h4 class="bg-info">Files</h4>
     <table>
@@ -169,7 +169,7 @@
         <th>Filename</th>
       </tr></thead>
       <tbody>
-      <% @preflight_graph[:file].each do |item| %>
+      <% @preflight_graph.files.each do |item| %>
         <tr>
           <td><%= item.lineno %></td>
           <td><%= item.visibility %></td>

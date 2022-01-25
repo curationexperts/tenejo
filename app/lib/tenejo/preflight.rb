@@ -2,16 +2,18 @@
 require 'csv'
 require 'active_model'
 require 'active_support/core_ext/enumerable'
-require 'tenejo/pf_object'
+require 'tenejo/graph'
 
 module Tenejo
-  class DuplicateColumnError < RuntimeError
-  end
+  KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
+  DEFAULT_UPLOAD_PATH = ENV.fetch('UPLOAD_PATH', Rails.root.join('tmp', 'uploads'))
+  class DuplicateColumnError < RuntimeError; end
+  class MissingIdentifierError < RuntimeError; end
 
   class Preflight # rubocop:disable Metrics/ClassLength
     def self.check_unknown_headers(row, graph)
       row.to_h.keys.each do |x|
-        graph[:warnings] << "The column \"#{x.dup.encode('UTF-8')}\" is unknown, and will be ignored" unless KNOWN_HEADERS.include? x
+        graph.add_warning "The column \"#{x.dup.encode('UTF-8')}\" is unknown, and will be ignored" unless KNOWN_HEADERS.include? x
       end
     end
 
@@ -26,20 +28,9 @@ module Tenejo
       (row.to_h.values.all?(nil) || lineno == 1)
     end
 
-    def self.init_graph
-      graph = Hash.new { |h, k| h[k] = [] }
-      graph[:fatal_errors] = []
-      graph[:warnings] = []
-      graph
-    end
-
-    def self.empty_graph?(graph)
-      (graph[:work] + graph[:file] + graph[:collection]).empty?
-    end
-
     def self.check_length(row, headerlen, lineno, graph)
       if row.chunk.size != headerlen && !row.map(&:last).all?(nil)
-        graph[:warnings] << "The number of columns in row #{lineno} differed from the number of headers (missing quotation mark?)"
+        graph.add_warning "The number of columns in row #{lineno} differed from the number of headers (missing quotation mark?)"
         false
       else
         true
@@ -60,86 +51,30 @@ module Tenejo
       end
     end
 
-    def self.process_csv(input, import_path = DEFAULT_UPLOAD_PATH)
-      return { fatal_errors: "No manifest present" } unless input
+    def self.process_csv(input, import_path = DEFAULT_UPLOAD_PATH) # rubocop:disable Metrics/CyclomaticComplexity
+      graph = Graph.new
+      graph.add_fatal_error("No manifest present") and return graph unless input
       begin
         csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
                       header_converters: [->(m) { map_header(m) }], encoding: 'UTF-8')
-        graph = init_graph
         headers = csv.shift
+        raise MissingIdentifierError, "Missing required column 'Identifier'" unless headers.include? :identifier
         headerlen = check_duplicate_headers(headers)
         check_unknown_headers(headers, graph)
         csv.each do |row|
           next unless check_length(row, headerlen, csv.lineno, graph)
-          parse_to_type(row, import_path, csv.lineno, graph)
+          graph.consume(row, import_path, csv.lineno)
         end
-        graph[:fatal_errors] << "No data was detected" if empty_graph?(graph)
-        connect_works(connect_files(reject_invalid(graph)))
+        graph.add_fatal_error("No data was detected") if graph.empty?
+        graph.finalize
       rescue EncodingError, CSV::MalformedCSVError
-        graph[:fatal_errors] << "File format or encoding not recognized"
+        graph.add_fatal_error "File format or encoding not recognized"
       rescue DuplicateColumnError => x
-        graph[:fatal_errors] << x.message
+        graph.add_fatal_error x.message
+      rescue MissingIdentifierError => x
+        graph.add_fatal_error x.message
       end
       graph
-    end
-
-    def self.reject_invalid(graph)
-      invalids = %i/work collection file/.each_with_object({}) do |x, m|
-        invalids = graph[x].select { |y| !y.valid? }
-        invalids.each { |y| graph[x].delete(y) }
-        m[x] = invalids
-      end
-      invalids.each do |k, v|
-        v.each { |x| graph[:warnings] << "Invalid #{k} item: #{x.errors.full_messages.join(',')} on line #{x.lineno}" }
-      end
-      graph[:invalids] = invalids
-      graph
-    end
-
-    def self.index(c, key: :identifier)
-      c.index_by { |v| v.send(key).first; }
-    end
-
-    def self.connect_works(graph)
-      idx = index(graph[:collection]).merge(index(graph[:work]))
-      (graph[:work] + graph[:collection]).each do |f|
-        if idx.key?(f.parent)
-          idx[f.parent].children << f
-        elsif f.parent.present?
-          graph[:warnings] << %/Could not find parent work "#{f.parent}" for work "#{f.identifier.first}" on line #{f.lineno}/
-        end
-      end
-      graph
-    end
-
-    def self.connect_files(graph)
-      idx = index(graph[:work])
-      graph[:file].each do |f|
-        if idx.key?(f.parent)
-          idx[f.parent].files << f
-        else
-          graph[:warnings] << %/Could not find parent work "#{f.parent}" for file "#{f.file}" on line #{f.lineno}/
-        end
-      end
-      graph
-    end
-
-    def self.parse_to_type(row, import_path, lineno, output)
-      return output if row.to_h.values.all?(nil)
-      case row[:object_type]&.downcase
-      when 'c', 'collection'
-        output[:collection] << PFCollection.new(row.to_h, lineno)
-      when 'f', 'file'
-        output[:file] += PFFile.unpack(row, lineno, import_path)
-      when 'w', 'work'
-        output[:work] << PFWork.new(row, lineno, import_path, output)
-      else
-        output[:warnings] << "Uknown object type on row #{lineno}: #{row[:object_type]}"
-      end
-      output
     end
   end
-
-  KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
-  DEFAULT_UPLOAD_PATH = ENV.fetch('UPLOAD_PATH', Rails.root.join('tmp', 'uploads'))
 end
