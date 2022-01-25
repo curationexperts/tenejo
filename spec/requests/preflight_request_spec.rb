@@ -34,7 +34,7 @@ RSpec.describe "/preflights", type: :request do
       get preflight_path Job.last
       expect(response).to render_template('preflights/show')
       expect(response.body).to match(/preflight-warnings/)
-      expect(response.body).to match(/Could not find parent work &quot;NONEXISTENT&quot;/)
+      expect(response.body).to match(/Could not find parent work or collection &quot;NONEXISTENT&quot;/)
     end
   end
 

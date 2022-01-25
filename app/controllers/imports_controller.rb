@@ -10,6 +10,11 @@ class ImportsController < JobsController
     redirect_to new_preflight_path
   end
 
+  def show
+    import_graph = Tenejo::Preflight.process_csv(@job.manifest.download)
+    @root = import_graph.root
+  end
+
   def create
     @job = Import.new(job_params)
     @job.user = current_user

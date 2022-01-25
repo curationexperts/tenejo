@@ -5,3 +5,23 @@
 #jobs-index {
   td, th { padding: 5px; }
 }
+
+table.job {
+  width: 100%;
+  thead { font-weight: bold; }
+  .identifier { width: 25%; }
+  .lineno { width: 5%; }
+  .type { width: 5%;}
+  .visibility { width: 8%; }
+  .collection_count { width: 3%; }
+  .work_count { width: 3%; }
+  .file_count { width: 3%; }
+  .index { width: 5%; text-align: center; }
+  .title { width:26%; }
+  .filename { width:23%; }
+}
+
+.file-name {
+  padding-left: 1.5rem;
+  font-style: italic;
+}
