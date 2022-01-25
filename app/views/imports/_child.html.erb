@@ -1,0 +1,38 @@
+<table class="job">
+  <tbody>
+    <tr>
+      <td class="identifier" style="padding-left: <%= depth * 2 %>rem;">
+        <% if node.children.any? || node.try(:files).try(:any?) %>
+          <button class="btn btn-info btn-xs import_expand" type="button" data-toggle="collapse" data-target=".child-of-<%= node.lineno %>" aria-expanded="false" aria-controls=".children-#{node.lineno}">
+            +
+          </button>
+        <% end %>
+        <%= node.identifier.first %>
+      </td>
+      <td class="lineno"><%= node.lineno %></td>
+      <td class="type"><%= node.class.to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "") %></td>
+      <td class="visibility"><%= node.visibility %></td>
+      <td class="collection_count"> -</td>
+      <td class="work_count"> -</td>
+      <td class="file_count"> -</td>
+      <td class="index"></td>
+      <td class="title"><%= node.title.first %></td>
+      <td class="filename"></td>
+    </tr>
+  </tbody>
+</table>
+<div class="job collapse in child-of-<%= node.lineno %>">
+  <% node.children.each do |child| %>
+    <%= render "child", node: child, parent: node.lineno, depth: depth + 1 %>
+  <% end %>
+  <% if node.try(:files).try(:any?) %>
+    <% node.files.each_with_index do |file, index| %>
+      <%= render "file", node: file, parent: node.lineno, depth: depth + 1, order: index + 1 %>
+    <% end %>
+  <% end %>
+</div>
+
+
+
+
+

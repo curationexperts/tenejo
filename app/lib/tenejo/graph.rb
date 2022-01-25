@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 require 'tenejo/pf_object'
+require 'csv'
 class Tenejo::Graph
-  attr_accessor :works, :collections, :files, :warnings, :invalids, :fatal_errors
+  attr_accessor :works, :collections, :files, :warnings, :invalids, :fatal_errors, :root
   def initialize
     @fatal_errors = []
     @works = []
@@ -9,6 +10,7 @@ class Tenejo::Graph
     @files = []
     @warnings = []
     @invalids = []
+    @root = Tenejo::PreFlightObj.new(CSV::Row.new([:object_type], ["root"]), 0)
   end
 
   def finalize
@@ -50,7 +52,7 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].files << f
       else
-        @warnings << %/Could not find parent work "#{f.parent}" for file "#{f.file}" on line #{f.lineno}/
+        @warnings << %/Could not find parent work "#{f.parent}" for file "#{f.file}" on line #{f.lineno} - the file will be ignored/
       end
     end
     self
@@ -62,7 +64,10 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].children << f
       elsif f.parent.present?
-        @warnings << %/Could not find parent work "#{f.parent}" for work "#{f.identifier.first}" on line #{f.lineno}/
+        @warnings << %/Could not find parent work or collection "#{f.parent}" for work or collection "#{f.identifier.first}" on line #{f.lineno}/
+        @root.children << f
+      else
+        @root.children << f
       end
     end
     self

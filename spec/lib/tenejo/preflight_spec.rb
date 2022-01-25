@@ -86,6 +86,7 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.invalids.size).to eq(0)
     end
   end
+
   context "a well formed file" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
 
@@ -107,7 +108,7 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.works[1].children.map(&:identifier)).to eq [["MPC008"]]
     end
     it "warns about disconnected  works" do
-      expect(graph.warnings).to include "Could not find parent work \"NONA\" for work \"MPC009\" on line 10"
+      expect(graph.warnings).to include "Could not find parent work or collection \"NONA\" for work or collection \"MPC009\" on line 10"
     end
     it "connects works and collections with parents" do
       expect(graph.collections.size).to eq 2
@@ -115,10 +116,10 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.collections.last.children.map(&:identifier)).to be_empty
     end
     it "warns when work has no parent" do
-      expect(graph.warnings).to include "Could not find parent work \"NONEXISTENT\" for work \"NONACOLLECTION\" on line 3"
+      expect(graph.warnings).to include "Could not find parent work or collection \"NONEXISTENT\" for work or collection \"NONACOLLECTION\" on line 3"
     end
     it "warns files without parent in sheet" do
-      expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6"
+      expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6 - the file will be ignored"
     end
 
     it "parses out object types" do
@@ -137,7 +138,26 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.files.first.valid?).to be true
       expect(graph.files.last.valid?).to be true
     end
+
+    describe 'graph structure' do
+      it "has a root node" do
+        expect(graph.root).to be_a Tenejo::PreFlightObj
+      end
+
+      it "root has at least 1 child for a valid CSV" do
+        expect(graph.root.children.count).to be >= 1
+      end
+
+      it "connects collections without a parent in the CSV to the root" do
+        expect(graph.root.children.map(&:identifier)).to include(["TESTINGCOLLECTION"])
+      end
+
+      it "connects works without a parent in the CSV to the root" do
+        expect(graph.root.children.map(&:identifier)).to include(["MPC009"])
+      end
+    end
   end
+
   describe Tenejo::PFFile do
     let(:rec) { described_class.new({}, 1, 'tmp/uploads') }
     it "is ok when blank" do
