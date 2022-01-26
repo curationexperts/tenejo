@@ -3,6 +3,7 @@ module Tenejo
   LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
   RESOURCE_TYPES = YAML.safe_load(File.open(Rails.root.join("config/authorities/resource_types.yml")))
   RIGHTS_STATEMENTS = YAML.safe_load(File.open(Rails.root.join("config/authorities/rights_statements.yml")))
+
   class PreFlightObj
     include ActiveModel::Validations
     attr_accessor :lineno, :children, :visibility
@@ -43,16 +44,16 @@ module Tenejo
     end
 
     def transform_visibility
-      return if visibility.nil?
-      case visibility.downcase
-      when 'public'
-        :open
+      case visibility&.downcase
+      when 'public', 'open'
+        Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
       when 'authenticated'
-        :registered
-      when 'private'
-        :restricted
+        Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_AUTHENTICATED
+      when 'private', 'restricted'
+        Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
       else
-        visibility.to_sym
+        warnings[:visibility] << "Visibility on line #{lineno} is #{visibility ? 'invalid: ' + visibility : 'blank'} - and will be treated as private"
+        Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
       end
     end
   end
@@ -108,10 +109,6 @@ module Tenejo
 
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
-
-    validates_each :visibility, allow_blank: true, allow_nil: true do |rec, attr, val|
-      rec.errors.add(attr, "Unknown visibility \"#{val}\" on line #{rec.lineno}") unless [:open, :registered, :restricted].include?(val.to_sym)
-    end
 
     def initialize(row, lineno, import_path, graph)
       @files = []

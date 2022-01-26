@@ -177,21 +177,22 @@ RSpec.describe Tenejo::Preflight do
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
-        title: ["can't be blank"], creator: ["can't be blank"], visibility: ["can't be blank"]
+        title: ["can't be blank"], creator: ["can't be blank"]
+      expect(rec.warnings).to include(visibility: ["Visibility on line 1 is blank - and will be treated as private"])
     end
-    it "transforms visibility" do
+    it "transforms visibility", :aggregate_failures do
       rec = described_class.new({ visibility: 'Public' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
-      expect(rec.visibility).to eq :open
+      expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
       rec = described_class.new({ visibility: 'Authenticated' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
-      expect(rec.visibility).to eq :registered
+      expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_AUTHENTICATED
       rec = described_class.new({ visibility: 'PrIvAte' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
-      expect(rec.visibility).to eq :restricted
+      expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
     end
     it "validates visibility" do
       rec = described_class.new({ visibility: 'spoon' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
-      expect(rec.visibility).to eq :spoon
-      expect(rec.valid?).not_to eq true
-      expect(rec.errors[:visibility]).to eq ["Unknown visibility \"spoon\" on line 1"]
+      expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
+      expect(rec.valid?).not_to eq true # for other missing values, the import process will now treat any unrecognized values as private
+      expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 is invalid: spoon - and will be treated as private"]
     end
 
     it "is ok to be blank" do
@@ -235,12 +236,12 @@ RSpec.describe Tenejo::Preflight do
     it "wraps multi-value fields in an array", :aggregate_failures do
       rec = described_class.new({ title: "Have a nice day", visibility: "public" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.title).to eq ["Have a nice day"]
-      expect(rec.visibility).to eq :open # example of singular field not in an array
+      expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC # example of singular field not in an array
     end
 
     it "gives a warning if a single-valued field has packed data" do
       rec = described_class.new({ visibility: "public|~|private|~|jet" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
-      expect(rec.visibility).to eq :open
+      expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
       expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 has extra values: using 'public' -- ignoring: 'private, jet'"]
     end
 
@@ -257,7 +258,8 @@ RSpec.describe Tenejo::Preflight do
     it "is not valid when blank" do
       expect(rec.valid?).not_to eq true
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
-        title: ["can't be blank"], visibility: ["can't be blank"]
+        title: ["can't be blank"]
+      expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 is blank - and will be treated as private"]
     end
   end
 end

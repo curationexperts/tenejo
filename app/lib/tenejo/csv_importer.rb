@@ -67,14 +67,20 @@ module Tenejo
     def update_collection_attributes(collection, pfcollection)
       return unless collection
       collection_attributes_to_copy.each { |source, dest| collection.send(dest, pfcollection.send(source)) }
-      # set the parent collection
+
       # these timestamps are the Hyrax managed fields, not rails timestamps
       if collection.date_uploaded
         collection.date_modified = Time.current
       else
         collection.date_uploaded = Time.current
       end
+
       collection.depositor ||= job_owner
+
+      # set the collection parent relationship
+      return unless pfcollection.parent
+      parent = Collection.where(identifier: pfcollection.parent).first
+      collection.member_of_collections << parent
     end
 
     def save_collection(collection)
@@ -98,7 +104,9 @@ module Tenejo
         # Or other works as their parents
         parent_work = Work.where(identifier: pfwork.parent).first
         parent_work.ordered_members << work if parent_work
-        parent_work&.save!
+        parent_work&.save! # if we need to make this code faster,
+        # find a way to accumulate all the children and then
+        # save the ordered list of children all at once.
       end
       save_work(work)
     end
@@ -156,12 +164,12 @@ module Tenejo
     # ActiveFedora::Cleaner.clean! has been called during test suite runs
     # And inadvertently wiped out the memoized object.
     def self.reset_default_collection_type!
-      @default_collection_type = Hyrax::CollectionType.find_or_create_default_collection_type
+      @default_collection_type = nil
     end
 
     def collection_attributes_to_copy
       @collection_attributes_to_copy ||=
-        ((Collection.terms & Tenejo::PFCollection::ALL_FIELDS) - collection_fields_to_exclude
+        ((Collection.terms & Tenejo::PFCollection::ALL_FIELDS) - collection_fields_to_exclude + [:visibility]
         ).map { |key| [key, "#{key}=".to_sym] }.to_h
     end
 
@@ -171,7 +179,7 @@ module Tenejo
 
     def work_attributes_to_copy
       @work_attributes_to_copy ||=
-        ((Work.terms & Tenejo::PFWork::ALL_FIELDS) - work_fields_to_exclude
+        ((Work.terms & Tenejo::PFWork::ALL_FIELDS) - work_fields_to_exclude + [:visibility]
         ).map { |key| [key, "#{key}=".to_sym] }.to_h
     end
 
