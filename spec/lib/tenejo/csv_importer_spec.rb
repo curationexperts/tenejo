@@ -22,8 +22,7 @@ RSpec.describe Tenejo::CsvImporter do
     # rubocop:disable RSpec/MessageSpies
     it "creates no objects" do
       csv_import = described_class.new(import_job)
-      expect(csv_import).not_to receive(:make_collections)
-      expect(csv_import).not_to receive(:make_works)
+      expect(csv_import).not_to receive(:instantiate)
       expect(csv_import).not_to receive(:make_files)
       csv_import.import
     end
@@ -42,6 +41,25 @@ RSpec.describe Tenejo::CsvImporter do
     expect(csv_import).to have_received(:create_or_update_file).exactly(31).times
   end
 
+  it 'creates parent-child relationships', :aggregate_failures do
+    ActiveFedora::Cleaner.clean!
+    csv_import = described_class.new(import_job)
+    csv_import.import
+
+    parent = Collection.where(identifier: 'EPHEM').last
+    child = Collection.where(identifier: 'CARDS').last
+    grandchild = Work.where(identifier: 'CARDS-0001').find { |w| w.identifier == ['CARDS-0001'] }
+    greatgrandchild = Work.where(identifier: 'CARDS-0001-J').find { |w| w.identifier == ['CARDS-0001-J'] }
+
+    expect(parent.child_collections).to include child
+    expect(child.parent_collections).to include parent
+    expect(child.child_collections).to be_empty
+    expect(child.child_works).to include grandchild
+    expect(greatgrandchild.parent_works).to include grandchild
+
+    expect(Work.where(identifier: 'CARDS-0001').count).to be > 1, "remember to simplify these test when identifier is refactored"
+  end
+
   context '.create_or_update_collection' do
     before { allow(Tenejo::Preflight).to receive(:process_csv) } # skip creating the preflight graph
 
@@ -51,6 +69,7 @@ RSpec.describe Tenejo::CsvImporter do
         # Ensure a collection with the expected :identifier does not exist
         # Collection.where(identifier: 'TEST0001').to_a.each { |c| c.destroy(eradicate: true) }
         ActiveFedora::Cleaner.clean!
+        described_class.reset_default_collection_type!
       end
       let(:pf_collection) { Tenejo::PFCollection.new({ identifier: 'TEST0001', title: 'Importer test collection' }, -1) }
 
