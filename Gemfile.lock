@@ -866,7 +866,7 @@ GEM
       rdf-xsd (~> 3.1)
       sparql (~> 3.1)
       sxp (~> 1.1)
-    sidekiq (6.3.1)
+    sidekiq (6.4.0)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -1016,7 +1016,7 @@ DEPENDENCIES
   rspec-rails
   rspec_junit_formatter
   sass-rails (~> 5.0)
-  sidekiq (~> 6.2)
+  sidekiq (~> 6.4)
   simplecov
   simplecov_json_formatter
   solr_wrapper (>= 0.3)

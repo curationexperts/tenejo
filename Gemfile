@@ -9,7 +9,7 @@ ruby '2.7.4'
 gem 'bcrypt_pbkdf'
 gem 'ed25519'
 gem 'rails', '~> 5.2.6'
-gem 'sidekiq', '~> 6.2'
+gem 'sidekiq', '~> 6.4'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.3.0'
 # Use Puma as the app server
