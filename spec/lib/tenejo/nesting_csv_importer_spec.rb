@@ -4,19 +4,19 @@ require 'rails_helper'
 require 'active_fedora/cleaner'
 
 RSpec.describe Tenejo::CsvImporter do
-  let(:job_owner) { FactoryBot.create(:user) }
-  let(:csv) { fixture_file_upload("./spec/fixtures/csv/structure_test.csv") }
-  let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
-  let(:import_job)  { Import.create!(user: job_owner, parent_job: preflight) }
+  before :all do
+    ActiveFedora::Cleaner.clean!
+    described_class.reset_default_collection_type!
+    job_owner = User.first_or_create!(FactoryBot.attributes_for(:user))
+    csv = fixture_file_upload("./spec/fixtures/csv/structure_test.csv")
+    preflight = Preflight.create!(user: job_owner, manifest: csv)
+    import_job = Import.create!(user: job_owner, parent_job: preflight)
+    csv_import = described_class.new(import_job)
+    csv_import.import
+  end
 
   context 'with a valid CSV' do
-    let(:csv) { fixture_file_upload("./spec/fixtures/csv/structure_test.csv") }
     it 'builds the expected objects and relationships', :aggregate_failures do
-      ActiveFedora::Cleaner.clean!
-      described_class.reset_default_collection_type!
-      csv_import = described_class.new(import_job)
-      csv_import.import
-
       parent = Collection.where(primary_identifier: 'EPHEM').first
       child = Collection.where(primary_identifier: 'CARDS').first
       grandchild = Work.where(primary_identifier: 'CARDS-0001').find { |w| w.identifier == ['CARDS-0001'] }
