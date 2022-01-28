@@ -45,7 +45,7 @@ module Tenejo
       collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
       update_collection_attributes(collection, pfcollection)
       if pfcollection.parent
-        parent = Collection.where(identifier: pfcollection.parent).first
+        parent = Collection.where(primary_identifier: pfcollection.parent).first
         collection.member_of_collections << parent
       end
       save_collection(collection)
@@ -54,9 +54,10 @@ module Tenejo
     # Finds or creates a collection by its user supplied identifier
     # returns a valid collection or nil
     def find_or_new_collection(primary_id, title)
-      collection_found = Collection.where(identifier: primary_id).last
+      collection_found = Collection.where(primary_identifier: primary_id).last
       return collection_found if collection_found
       Collection.new(
+        primary_identifier: primary_id.first,
         identifier: primary_id,
         title: title,
         depositor: job_owner,
@@ -67,6 +68,8 @@ module Tenejo
     def update_collection_attributes(collection, pfcollection)
       return unless collection
       collection_attributes_to_copy.each { |source, dest| collection.send(dest, pfcollection.send(source)) }
+
+      collection.primary_identifier = pfcollection.identifier.first
 
       # these timestamps are the Hyrax managed fields, not rails timestamps
       if collection.date_uploaded
@@ -79,7 +82,7 @@ module Tenejo
 
       # set the collection parent relationship
       return unless pfcollection.parent
-      parent = Collection.where(identifier: pfcollection.parent).first
+      parent = Collection.where(primary_identifier: pfcollection.parent).first
       collection.member_of_collections << parent
     end
 
@@ -99,10 +102,10 @@ module Tenejo
       update_work_attributes(work, pfwork)
       if pfwork.parent
         # Works can have either collections
-        parent_collection = Collection.where(identifier: pfwork.parent).first
+        parent_collection = Collection.where(primary_identifier: pfwork.parent).first
         work.member_of_collections << parent_collection if parent_collection
         # Or other works as their parents
-        parent_work = Work.where(identifier: pfwork.parent).first
+        parent_work = Work.where(primary_identifier: pfwork.parent).first
         parent_work.ordered_members << work if parent_work
         parent_work&.save! # if we need to make this code faster,
         # find a way to accumulate all the children and then
@@ -114,10 +117,10 @@ module Tenejo
     # Finds or creates a work by its user supplied identifier
     # returns a valid work or nil
     def find_or_new_work(primary_id, title)
-      work_found = Work.where(identifier: primary_id).last
+      work_found = Work.where(primary_identifier: primary_id).last
       return work_found if work_found
       Work.new(
-        identifier: primary_id,
+        primary_identifier: primary_id.first,
         title: title,
         depositor: job_owner
       )
@@ -128,6 +131,7 @@ module Tenejo
       work_attributes_to_copy.each { |source, dest| work.send(dest, pfwork.send(source)) }
       # set the parent collection
       # these timestamps are the Hyrax managed fields, not rails timestamps
+      work.primary_identifier = pfwork.identifier.first
       if work.date_uploaded
         work.date_modified = Time.current
       else

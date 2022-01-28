@@ -49,10 +49,10 @@ RSpec.describe Tenejo::CsvImporter do
       csv_import = described_class.new(import_job)
       csv_import.import
 
-      parent = Collection.where(identifier: 'EPHEM').first
-      child = Collection.where(identifier: 'CARDS').first
-      grandchild = Work.where(identifier: 'CARDS-0001').find { |w| w.identifier == ['CARDS-0001'] }
-      greatgrandchild = Work.where(identifier: 'CARDS-0001-J').find { |w| w.identifier == ['CARDS-0001-J'] }
+      parent = Collection.where(primary_identifier: 'EPHEM').first
+      child = Collection.where(primary_identifier: 'CARDS').first
+      grandchild = Work.where(primary_identifier: 'CARDS-0001').find { |w| w.identifier == ['CARDS-0001'] }
+      greatgrandchild = Work.where(primary_identifier: 'CARDS-0001-J').find { |w| w.identifier == ['CARDS-0001-J'] }
 
       expect(parent.child_collections).to include child
       expect(child.parent_collections).to include parent
@@ -60,21 +60,21 @@ RSpec.describe Tenejo::CsvImporter do
       expect(child.child_works).to include grandchild
       expect(greatgrandchild.parent_works).to include grandchild
 
-      private_work = Work.where(identifier: 'ORPH-0001').find { |w| w.identifier == ['ORPH-0001'] }
-      institutional_work = Work.where(identifier: 'ORPH-0002').find { |w| w.identifier == ['ORPH-0002'] }
-      public_work = Work.where(identifier: 'CARDS-0001-J').find { |w| w.identifier == ['CARDS-0001-J'] }
+      private_work = Work.where(primary_identifier: 'ORPH-0001').find { |w| w.identifier == ['ORPH-0001'] }
+      institutional_work = Work.where(primary_identifier: 'ORPH-0002').find { |w| w.identifier == ['ORPH-0002'] }
+      public_work = Work.where(primary_identifier: 'CARDS-0001-J').find { |w| w.identifier == ['CARDS-0001-J'] }
 
       expect(private_work.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
       expect(institutional_work.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_AUTHENTICATED
       expect(public_work.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
 
-      private_collection = Collection.where(identifier: 'DARK').first
-      public_collection = Collection.where(identifier: 'CARDS').find { |w| w.identifier == ['CARDS'] }
+      private_collection = Collection.where(primary_identifier: 'DARK').first
+      public_collection = Collection.where(primary_identifier: 'CARDS').find { |w| w.identifier == ['CARDS'] }
 
       expect(private_collection.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
       expect(public_collection.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
 
-      expect(Work.where(identifier: 'CARDS-0001').count).to be > 1, "remember to simplify these test when identifier is refactored"
+      expect(Work.where(primary_identifier: 'CARDS-0001').count).to be > 1, "remember to simplify these test when identifier is refactored"
     end
   end
 
@@ -85,7 +85,7 @@ RSpec.describe Tenejo::CsvImporter do
       # these tests are expensive, try to minimize how many we need to run
       before do
         # Ensure a collection with the expected :identifier does not exist
-        # Collection.where(identifier: 'TEST0001').to_a.each { |c| c.destroy(eradicate: true) }
+        # Collection.where(primary_identifier: 'TEST0001').to_a.each { |c| c.destroy(eradicate: true) }
         ActiveFedora::Cleaner.clean!
         described_class.reset_default_collection_type!
       end
@@ -93,8 +93,8 @@ RSpec.describe Tenejo::CsvImporter do
 
       it "creates a new collection", :aggregate_failures do
         csv_import = described_class.new(import_job)
-        expect { csv_import.create_or_update_collection(pf_collection) }.to change { Collection.where(identifier: 'TEST0001').count }.from(0).to(1)
-        collection = Collection.where(identifier: 'TEST0001').last
+        expect { csv_import.create_or_update_collection(pf_collection) }.to change { Collection.where(primary_identifier: 'TEST0001').count }.from(0).to(1)
+        collection = Collection.where(primary_identifier: 'TEST0001').last
         expect(collection.depositor).to eq job_owner.user_key
         expect(collection.date_uploaded.in_time_zone).to be_within(1.minute).of Time.current
         expect(collection.title).to eq pf_collection.title
@@ -109,6 +109,7 @@ RSpec.describe Tenejo::CsvImporter do
         collection =
           Collection.new(
             identifier: ['TEST0002'],
+            primary_identifier: 'TEST0002',
             title: ['Importer test collection'],
             date_uploaded: '2020-07-01 12:30:05',
             collection_type_gid: described_class.default_collection_type
@@ -120,13 +121,13 @@ RSpec.describe Tenejo::CsvImporter do
 
       it "uses the existing collection instead of creating a new one" do
         csv_import = described_class.new(import_job)
-        expect { csv_import.create_or_update_collection(pf_collection) }.not_to change { Collection.where(identifier: 'TEST0002').count }
+        expect { csv_import.create_or_update_collection(pf_collection) }.not_to change { Collection.where(primary_identifier: 'TEST0002').count }
       end
 
       it "sets administrative data", :aggregate_failures do
         csv_import = described_class.new(import_job)
         csv_import.create_or_update_collection(pf_collection)
-        collection = Collection.where(identifier: 'TEST0002').last
+        collection = Collection.where(primary_identifier: 'TEST0002').last
         expect(collection.depositor).not_to be_nil
         expect(collection.date_uploaded).to eq '2020-07-01 12:30:05' # should not be changed
         expect(collection.date_modified.in_time_zone).to be_within(1.minute).of Time.current
@@ -151,7 +152,7 @@ RSpec.describe Tenejo::CsvImporter do
         it "updates all of them", :aggregate_failures do
           csv_import = described_class.new(import_job)
           csv_import.create_or_update_collection(pf_collection)
-          collection = Collection.where(identifier: 'TEST0002').last
+          collection = Collection.where(primary_identifier: 'TEST0002').last
 
           # Most settings should be updated by the import
           # TODO: the next two lines will break if/when any settable attributes are not multi-valued in the model
@@ -179,8 +180,8 @@ RSpec.describe Tenejo::CsvImporter do
 
       it "creates a new work", :aggregate_failures do
         csv_import = described_class.new(import_job)
-        expect { csv_import.create_or_update_work(pf_work) }.to change { Work.where(identifier: 'WORK-0001').count }.from(0).to(1)
-        work = Work.where(identifier: 'WORK-0001').last
+        expect { csv_import.create_or_update_work(pf_work) }.to change { Work.where(primary_identifier: 'WORK-0001').count }.from(0).to(1)
+        work = Work.where(primary_identifier: 'WORK-0001').last
         expect(work.depositor).to eq job_owner.user_key
         expect(work.date_uploaded.in_time_zone).to be_within(1.minute).of Time.current
         expect(work.title).to eq pf_work.title
@@ -195,6 +196,7 @@ RSpec.describe Tenejo::CsvImporter do
         work =
           Work.new(
             identifier: ['WORK-0002'],
+            primary_identifier: 'WORK-0002',
             title: ['Importer test WORK'],
             date_uploaded: '2020-07-01 12:30:05',
             rights_statement: ['In Copyright']
@@ -206,13 +208,13 @@ RSpec.describe Tenejo::CsvImporter do
 
       it "uses the existing work instead of creating a new one" do
         csv_import = described_class.new(import_job)
-        expect { csv_import.create_or_update_work(pf_work) }.not_to change { Work.where(identifier: 'WORK-0002').count }
+        expect { csv_import.create_or_update_work(pf_work) }.not_to change { Work.where(primary_identifier: 'WORK-0002').count }
       end
 
       it "sets administrative data", :aggregate_failures do
         csv_import = described_class.new(import_job)
         csv_import.create_or_update_work(pf_work)
-        work = Work.where(identifier: 'WORK-0002').last
+        work = Work.where(primary_identifier: 'WORK-0002').last
         expect(work.depositor).not_to be_nil
         expect(work.date_uploaded).to eq '2020-07-01 12:30:05' # should not be changed
         expect(work.date_modified.in_time_zone).to be_within(1.minute).of Time.current
@@ -237,7 +239,7 @@ RSpec.describe Tenejo::CsvImporter do
         it "updates all of them", :aggregate_failures do
           csv_import = described_class.new(import_job)
           csv_import.create_or_update_work(pf_work)
-          work = Work.where(identifier: 'WORK-0002').last
+          work = Work.where(primary_identifier: 'WORK-0002').last
 
           # Most settings should be updated by the import
           # TODO: the next two lines will break if/when any settable attributes are not multi-valued in the model
