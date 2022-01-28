@@ -33,4 +33,8 @@ class User < ApplicationRecord
   def to_s
     email
   end
+
+  def display_name
+    self[:display_name] || email
+  end
 end
