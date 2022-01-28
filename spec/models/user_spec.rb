@@ -32,7 +32,7 @@ RSpec.describe User, type: :model do
     let!(:user) { described_class.create(email: 'teat1234@example.com', password: '654321') }
 
     it "falls back to email" do
-      expect(user.display_name).to eq user.email
+      expect(user.display_name).to eq user.user_key
     end
   end
 end

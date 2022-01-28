@@ -35,6 +35,6 @@ class User < ApplicationRecord
   end
 
   def display_name
-    self[:display_name] || email
+    self[:display_name] || user_key
   end
 end
