@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  let!(:user) { described_class.create(email: 'teat1234@example.com', password: '654321') }
+  let!(:user) { described_class.create(email: 'teat1234@example.com', password: '654321', display_name: 'Juan Valdez') }
   let!(:job) { Job.create(user: user) }
 
   it 'can have associated jobs', :aggregate_failures do
@@ -23,5 +23,16 @@ RSpec.describe User, type: :model do
     user.deactivated = true
     user.save!
     expect(user.active_for_authentication?).to be false
+  end
+
+  it "has a display name" do
+    expect(user.display_name).to eq 'Juan Valdez'
+  end
+  context "user without display name set" do
+    let!(:user) { described_class.create(email: 'teat1234@example.com', password: '654321') }
+
+    it "falls back to email" do
+      expect(user.display_name).to eq user.user_key
+    end
   end
 end
