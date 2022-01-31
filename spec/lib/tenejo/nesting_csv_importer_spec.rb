@@ -5,6 +5,7 @@ require 'active_fedora/cleaner'
 
 RSpec.describe Tenejo::CsvImporter do
   before :all do
+    ActiveRecord::Base.connection.begin_transaction
     ActiveFedora::Cleaner.clean!
     described_class.reset_default_collection_type!
     job_owner = User.find_by(email: 'admin@example.org') || User.create(email: 'admin@example.org', password: 'abcd5678')
@@ -13,6 +14,11 @@ RSpec.describe Tenejo::CsvImporter do
     import_job = Import.create!(user: job_owner, parent_job: preflight)
     csv_import = described_class.new(import_job)
     csv_import.import
+  end
+
+  after :all do
+    conn = ActiveRecord::Base.connection
+    conn.rollback_transaction if conn.transaction_open?
   end
 
   it 'builds relationships between parents and children', :aggregate_failures do

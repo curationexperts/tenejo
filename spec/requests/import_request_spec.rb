@@ -6,9 +6,6 @@ RSpec.describe "/imports", type: :request do
   let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
   let(:preflight) { Preflight.new(user: admin, manifest: tempfile) }
   let(:import) { Import.new(user: admin, parent_job: preflight) }
-  before :all do
-    Job.delete_all
-  end
 
   before do
     sign_in admin
