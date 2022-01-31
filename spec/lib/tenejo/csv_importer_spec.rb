@@ -33,7 +33,6 @@ RSpec.describe Tenejo::CsvImporter do
     expect(csv_import).to have_received(:create_or_update_file).exactly(31).times
   end
 
-
   context '.create_or_update_collection' do
     before { allow(Tenejo::Preflight).to receive(:process_csv) } # skip creating the preflight graph
 
