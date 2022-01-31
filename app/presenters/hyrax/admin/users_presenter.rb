@@ -33,7 +33,7 @@ module Hyrax
 
       private
 
-      # Returns a list of users excluding the system users and guest_users
+      # Returns a list of users excluding the system users and guest_users, eagerly load roles
       def search
         ::User.includes(:roles).registered.without_system_accounts
       end
