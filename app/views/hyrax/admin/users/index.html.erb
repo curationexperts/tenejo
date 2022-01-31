@@ -5,6 +5,14 @@
   </div>
 <% end %>
 
+<h1>Roles</h1>
+<div>
+  <ul>
+    <%@presenter.roles.each do |x| %>
+      <li><%=x.name%></li>
+    <%end%>
+</div>
+
 <div class="panel panel-default users-listing">
   <div class="panel-heading">
       <%= t('hyrax.admin.users.index.describe_users_html', count: @presenter.user_count) %>
