@@ -5,6 +5,16 @@ require 'active_fedora/cleaner'
 
 RSpec.describe Tenejo::CsvImporter do
   before :all do
+    ActiveRecord::Base.connection.begin_transaction
+    ActiveFedora::Cleaner.clean!
+    described_class.reset_default_collection_type!
+    job_owner = User.find_by(email: 'admin@example.org') || User.create(email: 'admin@example.org', password: 'abcd5678')
+    csv = fixture_file_upload("./spec/fixtures/csv/structure_test.csv")
+    preflight = Preflight.create!(user: job_owner, manifest: csv)
+    import_job = Import.create!(user: job_owner, parent_job: preflight)
+    csv_import = described_class.new(import_job)
+    csv_import.import
+
     # this nonsense is to create relevant files so that the preflighter will not reject the records
     r = CSV.read('spec/fixtures/csv/structure_test.csv')
     FileUtils.mkdir_p('tmp/test/uploads')
@@ -12,19 +22,14 @@ RSpec.describe Tenejo::CsvImporter do
       FileUtils.touch("tmp/test/uploads/#{f}")
     end
   end
-  let(:job_owner) { FactoryBot.create(:user) }
-  let(:csv) { fixture_file_upload("./spec/fixtures/csv/structure_test.csv") }
-  let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
-  let(:import_job)  { Import.create!(user: job_owner, parent_job: preflight) }
+
+  after :all do
+    conn = ActiveRecord::Base.connection
+    conn.rollback_transaction if conn.transaction_open?
+  end
 
   context 'with a valid CSV' do
-    let(:csv) { fixture_file_upload("./spec/fixtures/csv/structure_test.csv") }
     it 'builds the expected objects and relationships', :aggregate_failures do
-      ActiveFedora::Cleaner.clean!
-      described_class.reset_default_collection_type!
-      csv_import = described_class.new(import_job)
-      csv_import.import
-
       parent = Collection.where(primary_identifier: 'EPHEM').first
       child = Collection.where(primary_identifier: 'CARDS').first
       grandchild = Work.where(primary_identifier: 'CARDS-0001').find { |w| w.identifier == ['CARDS-0001'] }
