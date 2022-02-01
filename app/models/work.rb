@@ -4,9 +4,6 @@
 #  `rails generate hyrax:work Work`
 class Work < ActiveFedora::Base
   include ::Hyrax::WorkBehavior
-  property :primary_identifier, predicate: ::RDF::Vocab::DC11.identifier, multiple: false do |index|
-    index.as :stored_sortable
-  end
 
   self.indexer = WorkIndexer
   # Change this to restrict which works can be added as a child.
