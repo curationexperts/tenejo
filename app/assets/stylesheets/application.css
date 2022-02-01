@@ -93,3 +93,7 @@ div#announcement-content *{
 	padding: 0;
 	margin: 0;
 }
+.dashboard .panel.roles-listing .panel-heading,
+.dashboard .panel.users-listing .panel-heading{
+	line-height: 34px;
+}
