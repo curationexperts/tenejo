@@ -60,6 +60,14 @@ en:
       admin_sets:
         title: Highlights
         link: Browse by Collections
+    admin:
+      users:
+        index: 
+          title: Users & Roles
+          displayname_label: Display Name
+          create: Create New User
+      sidebar:
+        users: Users & Roles
     search:
       button:
         html: <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search
@@ -67,3 +75,18 @@ en:
       form:
         q:
           label: Search
+  devise:
+    invitations:
+      new:
+        header: Invite New User
+  role-management:
+    edit:
+      add_new_account: Add Users
+      accounts: Users
+      title: Edit Role
+      user: Add Users
+    new:
+      title: New Role
+      add: Create Role
+    index:
+      create: Create New Role 
