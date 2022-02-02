@@ -100,17 +100,6 @@ module Tenejo
       # expensive stuff here
       work = find_or_new_work(pfwork.identifier, pfwork.title)
       update_work_attributes(work, pfwork)
-      if pfwork.parent
-        # Works can have either collections
-        parent_collection = Collection.where(primary_identifier: pfwork.parent).first
-        work.member_of_collections << parent_collection if parent_collection
-        # Or other works as their parents
-        parent_work = Work.where(primary_identifier: pfwork.parent).first
-        parent_work.ordered_members << work if parent_work
-        parent_work&.save! # if we need to make this code faster,
-        # find a way to accumulate all the children and then
-        # save the ordered list of children all at once.
-      end
       save_work(work)
     end
 
@@ -129,7 +118,9 @@ module Tenejo
     def update_work_attributes(work, pfwork)
       return unless work
       work_attributes_to_copy.each { |source, dest| work.send(dest, pfwork.send(source)) }
-      # set the parent collection
+      set_work_parent(work, pfwork)
+      work.rights_statement = [rights_statements.authority.search(pfwork.rights_statement.first).first["id"]]
+
       # these timestamps are the Hyrax managed fields, not rails timestamps
       work.primary_identifier = pfwork.identifier.first
       if work.date_uploaded
@@ -138,6 +129,21 @@ module Tenejo
         work.date_uploaded = Time.current
       end
       work.depositor ||= job_owner
+    end
+
+    def set_work_parent(work, pfwork)
+      return unless pfwork.parent
+      # Works can have either collections OR other works as their parents
+      # for collections, set the relationship on the work
+      parent_collection = Collection.where(primary_identifier: pfwork.parent).first
+      work.member_of_collections << parent_collection if parent_collection
+      # for works, set the relationship on the parent work
+      parent_work = Work.where(primary_identifier: pfwork.parent).first
+      parent_work.ordered_members << work if parent_work
+      parent_work&.save!
+      # if we need to make this code faster,
+      # find a way to accumulate all the children and then
+      # save the ordered list of children all at once.
     end
 
     def save_work(work)
@@ -169,6 +175,10 @@ module Tenejo
     # And inadvertently wiped out the memoized object.
     def self.reset_default_collection_type!
       @default_collection_type = nil
+    end
+
+    def rights_statements
+      @rights_statements ||= Hyrax.config.rights_statement_service_class.new
     end
 
     def collection_attributes_to_copy
