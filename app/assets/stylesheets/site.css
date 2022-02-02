@@ -1,0 +1,82 @@
+.site-footer {
+    height: auto;
+}
+
+.site-navbar-brand {
+    padding: 5px 15px;
+    line-height: 40px;
+}
+.site-logo {
+    padding: 0 5px 0 0;
+    float: left;
+}
+.site-logo img {
+    height: 3rem;
+    width: auto;
+}
+.dashboard .btn-primary {
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+.hero_search {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    padding: 0 2rem !important;
+}
+.hero_image_caption {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    color: white;
+    padding: 2rem;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4));
+    width: 100%;
+    z-index: 90;
+    min-height: 480px;
+}
+.hero_image_caption {
+    z-index: 110;
+    display: block;
+    background-image: linear-gradient(
+            rgba(0, 0, 0, 0) 67%,
+            rgba(0, 0, 0, 0) 33%,
+            rgba(0, 0, 0, 0.6)
+    );
+}
+.hero_image_caption small {
+    position: absolute;
+    bottom: 10px;
+}
+
+.hero_image_caption small {
+    font-size: 93%;
+}
+.hero_image_caption a,
+.highlight-item-caption a {
+    color: white;
+}
+.hero_browse {
+    padding: 0 0 2rem;
+}
+
+div#announcement-content {
+    text-align: left;
+    color: none;
+    background-color: transparent;
+    border: none;
+    padding: 1rem;
+    border-radius: 0;
+}
+div#announcement-content *{
+    padding: 0;
+    margin: 0;
+}
+.dashboard .panel.roles-listing .panel-heading,
+.dashboard .panel.users-listing .panel-heading{
+    line-height: 34px;
+}
