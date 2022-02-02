@@ -37,7 +37,7 @@
                     <tr>
                       <th><%= t('.id_label') %></th>
                       <th><%= t('.displayname_label') %></th>
-                      <th><%= t('.role_label') %></th>
+                      <th data-orderable="false"><%= t('.role_label') %></th>
                       <% if @presenter.show_last_access? %>
                         <th><%= t('.access_label') %></th>
                       <% end %>
