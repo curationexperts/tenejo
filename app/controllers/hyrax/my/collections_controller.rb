@@ -2,6 +2,9 @@
 module Hyrax
   module My
     class CollectionsController < MyController
+      before_action do
+        authenticate_user!
+      end
       configure_blacklight do |config|
         config.search_builder_class = Hyrax::My::CollectionsSearchBuilder
       end

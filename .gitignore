@@ -10,10 +10,8 @@ bundle/*
 vendor/bundle
 
 # Ignore environment files (except test for CI)
-,env
-.env.development
+.env*
 !.env.test
-.env.production
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
