@@ -25,8 +25,6 @@
               <%= t('hyrax.admin.users.index.describe_users_html', count: @presenter.user_count) %>
               <div class="pull-right">
                 <%= link_to t('hyrax.admin.users.index.create'), main_app.new_user_invitation_path, class: "btn btn-primary" %>
-
-
               </div>
             </div>
 
@@ -148,3 +146,19 @@
       </div>
     </div>
   </div>
+
+<script>
+
+$(document).ready(function () {
+    var table1 = $('#usersTable').DataTable();
+ 
+    table1.columns().iterator('column', function (ctx, idx) {
+        $(table1.column(idx).header()).append('<span class="sort-icon"/>');
+    });
+    var table2 = $('#rolesTable').DataTable();
+    table2.columns().iterator('column', function (ctx, idx) {
+        $(table2.column(idx).header()).append('<span class="sort-icon"/>');
+    });
+});
+
+</script>
