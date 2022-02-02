@@ -9,6 +9,7 @@
 bundle/*
 vendor/bundle
 
+.env.local
 # Ignore environment files (except test for CI)
 ,env
 .env.development
