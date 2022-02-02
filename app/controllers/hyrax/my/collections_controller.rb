@@ -2,6 +2,9 @@
 module Hyrax
   module My
     class CollectionsController < MyController
+      before_action do
+        authenticate_user!
+      end
       configure_blacklight do |config|
         config.search_builder_class = Hyrax::My::CollectionsSearchBuilder
       end
@@ -24,7 +27,7 @@ module Hyrax
       def index
         add_breadcrumb t(:'hyrax.controls.home'), root_path
         add_breadcrumb t(:'hyrax.dashboard.breadcrumbs.admin'), hyrax.dashboard_path
-        add_breadcrumb t(:'hyrax.admin.sidebar.collections'), hyrax.dashboard_collections_path
+        add_breadcrumb t(:'hyrax.admin.sidebar.collections'), hyrax.my_collections_path
         collection_type_list_presenter
         managed_collections_count
         super
