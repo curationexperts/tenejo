@@ -149,7 +149,7 @@ RSpec.describe Tenejo::CsvImporter do
         expect(work.depositor).to eq job_owner.user_key
         expect(work.date_uploaded.in_time_zone).to be_within(1.minute).of Time.current
         expect(work.title).to eq pf_work.title
-        expect(work.rights_statement).to eq ["No Known Copyright"]
+        expect(work.rights_statement).to eq ["http://rightsstatements.org/vocab/NKC/1.0/"]
       end
     end
 
@@ -207,8 +207,9 @@ RSpec.describe Tenejo::CsvImporter do
 
           # Most settings should be updated by the import
           # TODO: the next two lines will break if/when any settable attributes are not multi-valued in the model
-          wrapped_settable_attributes = settable_attributes.transform_values { |v| [v] }
+          wrapped_settable_attributes = settable_attributes.except('rights_statement').transform_values { |v| [v] }
           expect(work.attributes).to include wrapped_settable_attributes
+          expect(work.rights_statement).to eq ["http://rightsstatements.org/vocab/NoC-US/1.0/"]
 
           # A handful of values should not have been modified even if they were in the preflight
           expect(work.id).not_to eq "fake0id"
