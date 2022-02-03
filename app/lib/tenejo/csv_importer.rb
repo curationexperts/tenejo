@@ -3,10 +3,14 @@
 # rubocop:todo Metrics/ClassLength
 module Tenejo
   class CsvImporter
-    def initialize(import_job)
+    def initialize(import_job, import_path = csv_import_file_root)
       @job = import_job
-      @graph = Tenejo::Preflight.process_csv(import_job.manifest.download)
+      @graph = Tenejo::Preflight.process_csv(import_job.manifest.download, import_path)
       @depositor = import_job.user.user_key
+    end
+
+    def csv_import_file_root
+      @csv_import_file_root = Hyrax.config.upload_path.call.to_s
     end
 
     def import

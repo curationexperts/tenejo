@@ -12,15 +12,8 @@ RSpec.describe Tenejo::CsvImporter do
     csv = fixture_file_upload("./spec/fixtures/csv/structure_test.csv")
     preflight = Preflight.create!(user: job_owner, manifest: csv)
     import_job = Import.create!(user: job_owner, parent_job: preflight)
-    csv_import = described_class.new(import_job)
+    csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
     csv_import.import
-
-    # this nonsense is to create relevant files so that the preflighter will not reject the records
-    r = CSV.read('spec/fixtures/csv/structure_test.csv')
-    FileUtils.mkdir_p('tmp/test/uploads')
-    r.map { |z| z[8] }.reject(&:nil?).map { |t| t.split('|~|') }.flatten.reject { |k| k == 'Files' }.each do |f|
-      FileUtils.touch("tmp/test/uploads/#{f}")
-    end
   end
 
   after :all do
