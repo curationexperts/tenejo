@@ -1,0 +1,43 @@
+/* DataTable Overrides  */
+
+
+table.dataTable thead {
+	// Uses FontAwesome icons
+	// Icon Alignment
+	.sorting:after,
+	.sorting_asc:after,
+	.sorting_desc:after {
+		font-family: "FontAwesome";
+		padding-left: 0.5rem;
+		display: inline;
+		position: relative;
+		top: 0;
+		right: 0;
+		opacity: 0.75;
+	}
+	// Clears datatables default icons
+	.sorting::after,
+	.sorting_asc::after,
+	.sorting_desc::after,
+	.sorting_asc_disabled::after,
+	.sorting_desc_disabled::after {
+		content: "";
+	}
+	// Both up & down arrows
+	.sorting::after {
+		color: lightgrey;
+		content: "\f0dc";
+	}
+	// Down arrow
+	.sorting_desc::after {
+		content: "\f0dd";
+	}
+	// Up arrow
+	.sorting_asc::after {
+		content: "\f0de";
+	}
+	// Reverts 
+	> tr > th {
+		padding-right: 8px;
+	}
+}
