@@ -1,0 +1,18 @@
+/* DataTable Icon Sort Icons */
+th::after {
+    padding-left: 0.5rem;
+    font-family: 'FontAwesome';
+}
+
+th.sorting::after {
+    color: lightgrey;
+    content: "\f0dc";
+}
+
+th.sorting_desc::after {
+    content: "\f0dd";
+}
+
+th.sorting_asc::after {
+    content: "\f0de";
+}
