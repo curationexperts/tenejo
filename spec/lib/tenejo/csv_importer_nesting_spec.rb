@@ -4,6 +4,7 @@ require 'rails_helper'
 require 'active_fedora/cleaner'
 
 RSpec.describe Tenejo::CsvImporter do
+  # rubocop:disable RSpec/InstanceVariable
   before :all do
     ActiveRecord::Base.connection.begin_transaction
     ActiveFedora::Cleaner.clean!
@@ -12,13 +13,19 @@ RSpec.describe Tenejo::CsvImporter do
     csv = fixture_file_upload("./spec/fixtures/csv/structure_test.csv")
     preflight = Preflight.create!(user: job_owner, manifest: csv)
     import_job = Import.create!(user: job_owner, parent_job: preflight)
-    csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
-    csv_import.import
+    @csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
+    @csv_import.import
   end
 
   after :all do
     conn = ActiveRecord::Base.connection
     conn.rollback_transaction if conn.transaction_open?
+  end
+
+  it 'runs without errors', :aggregate_failures do
+    expect(@csv_import.preflight_errors).to be_empty
+    expect(@csv_import.invalid_rows).to be_empty
+    expect(@csv_import.preflight_warnings).to eq ["The column \"Comment\" is unknown, and will be ignored"]
   end
 
   it 'builds relationships', :aggregate_failures do
@@ -53,4 +60,5 @@ RSpec.describe Tenejo::CsvImporter do
     expect(private_collection.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
     expect(public_collection.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
   end
+  # rubocop:enable RSpec/InstanceVariable
 end

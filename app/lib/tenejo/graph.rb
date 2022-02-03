@@ -78,19 +78,12 @@ class Tenejo::Graph
   end
 
   def reject_invalid
-    invalids = [@works, @collections, @files].each do |n|
-      n.each_with_object({}) do |x, m|
-        invalids = n.select { |y| !y.valid? }
-        invalids.each { |y| n.delete(y) }
-        m[x] = invalids
-        m
-      end
-    end
-    invalids.flatten.each do |k|
-      @warnings << "Invalid #{k} item: #{k.errors.full_messages.join(',')} on line #{k.lineno}"
-    end
-    @invalids = invalids.flatten
-    self
+    @collections, invalid_collections = @collections.partition(&:valid?)
+    @works, invalid_works = @works.partition(&:valid?)
+    @files, invalid_files = @files.partition(&:valid?)
+    @invalids = invalid_collections + invalid_works + invalid_files
+    @warnings += @invalids.map { |k| "Invalid #{k} item: #{k.errors.full_messages.join(',')} on line #{k.lineno}" }
   end
+
   DEFAULT_UPLOAD_PATH = ENV.fetch('UPLOAD_PATH', Rails.root.join('tmp', 'uploads'))
 end
