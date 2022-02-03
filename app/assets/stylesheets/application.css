@@ -10,9 +10,9 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
  *= require_self
-
+ *= require tenejo
+ *= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+ *= require datatables_overrides
  *= require_tree .
-
 */
