@@ -4,15 +4,6 @@ require 'rails_helper'
 require 'active_fedora/cleaner'
 
 RSpec.describe Tenejo::CsvImporter do
-  before :all do
-    # this nonsense is to create relevant files so that the preflighter will not reject the records
-    r = CSV.read('spec/fixtures/csv/structure_test.csv')
-    FileUtils.mkdir_p('tmp/test/uploads')
-    r.map { |z| z[8] }.reject(&:nil?).map { |t| t.split('|~|') }.flatten.reject { |k| k == 'Files' }.each do |f|
-      FileUtils.touch("tmp/test/uploads/#{f}")
-    end
-  end
-
   let(:job_owner) { FactoryBot.create(:user) }
   let(:csv) { fixture_file_upload("./spec/fixtures/csv/structure_test.csv") }
   let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
@@ -30,7 +21,7 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'calls modules', :aggregate_failures do
-    csv_import = described_class.new(import_job)
+    csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
     allow(csv_import).to receive(:create_or_update_collection)
     allow(csv_import).to receive(:create_or_update_work)
     allow(csv_import).to receive(:create_or_update_file)
