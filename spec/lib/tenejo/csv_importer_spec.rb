@@ -9,14 +9,33 @@ RSpec.describe Tenejo::CsvImporter do
   let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
   let(:import_job)  { Import.create!(user: job_owner, parent_job: preflight) }
 
-  context "with fatal errors" do
+  context "with fatal errors", :aggregate_failures do
     let(:csv) { fixture_file_upload("./spec/fixtures/csv/empty.csv") }
     # rubocop:disable RSpec/MessageSpies
     it "creates no objects" do
       csv_import = described_class.new(import_job)
+      expect(csv_import.preflight_errors).to eq ["No data was detected"]
       expect(csv_import).not_to receive(:instantiate)
       expect(csv_import).not_to receive(:make_files)
       csv_import.import
+    end
+  end
+
+  context "with non-fatal issues", :aggregate_failures do
+    let(:csv) { fixture_file_upload("./spec/fixtures/csv/fancy.csv") }
+    # rubocop:disable RSpec/MessageSpies
+    it "returns warnings" do
+      allow(File).to receive(:exist?).and_return(true)
+      csv_import = described_class.new(import_job)
+      expect(csv_import.preflight_errors).to eq []
+      expect(csv_import.invalid_rows).to eq []
+      expect(csv_import.preflight_warnings)
+        .to contain_exactly(
+              'The column "deduplication_key" is unknown, and will be ignored',
+              'Could not find parent work or collection "NONEXISTENT" for work or collection "NONACOLLECTION" on line 3',
+              'Could not find parent work "WHUT?" for file "MN-02 2.png" on line 6 - the file will be ignored',
+              'Could not find parent work or collection "NONA" for work or collection "MPC009" on line 10'
+            )
     end
   end
 

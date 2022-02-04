@@ -13,6 +13,18 @@ module Tenejo
       @csv_import_file_root = Hyrax.config.upload_path.call.to_s
     end
 
+    def preflight_errors
+      @graph.fatal_errors
+    end
+
+    def preflight_warnings
+      @graph.warnings
+    end
+
+    def invalid_rows
+      @graph.invalids
+    end
+
     def import
       return if fatal_errors(@graph)
       @graph.root.children.each do |child|
