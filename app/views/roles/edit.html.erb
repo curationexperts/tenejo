@@ -19,7 +19,7 @@
           <%= bootstrap_form_tag url: role_management.role_users_path(@role) do |f| %>
             <%= f.text_field 'user_key', label: t('role-management.edit.user') %>
             <%= f.submit t('role-management.edit.add') %>
-            <%= link_to t('role-management.edit.cancel'), role_management.roles_path, class: 'btn btn-default' %>
+            <%= link_to t('role-management.edit.cancel'),  hyrax.admin_users_path(anchor: "roles"), class: 'btn btn-default' %>
           <% end %>
         </div>
       </div>
