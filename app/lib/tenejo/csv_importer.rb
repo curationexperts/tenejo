@@ -61,7 +61,7 @@ module Tenejo
       collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
       update_collection_attributes(collection, pfcollection)
       if pfcollection.parent
-        parent = Collection.where(primary_identifier: pfcollection.parent).first
+        parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
         collection.member_of_collections << parent
       end
       save_collection(collection)
@@ -70,7 +70,7 @@ module Tenejo
     # Finds or creates a collection by its user supplied identifier
     # returns a valid collection or nil
     def find_or_new_collection(primary_id, title)
-      collection_found = Collection.where(primary_identifier: primary_id).last
+      collection_found = Collection.where(primary_identifier_ssi: primary_id).last
       return collection_found if collection_found
       Collection.new(
         primary_identifier: primary_id.first,
@@ -98,7 +98,7 @@ module Tenejo
 
       # set the collection parent relationship
       return unless pfcollection.parent
-      parent = Collection.where(primary_identifier: pfcollection.parent).first
+      parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
       collection.member_of_collections << parent
     end
 
@@ -122,7 +122,7 @@ module Tenejo
     # Finds or creates a work by its user supplied identifier
     # returns a valid work or nil
     def find_or_new_work(primary_id, title)
-      work_found = Work.where(primary_identifier: primary_id).last
+      work_found = Work.where(primary_identifier_ssi: primary_id).last
       return work_found if work_found
       Work.new(
         primary_identifier: primary_id.first,
@@ -151,10 +151,10 @@ module Tenejo
       return unless pfwork.parent
       # Works can have either collections OR other works as their parents
       # for collections, set the relationship on the work
-      parent_collection = Collection.where(primary_identifier: pfwork.parent).first
+      parent_collection = Collection.where(primary_identifier_ssi: pfwork.parent).first
       work.member_of_collections << parent_collection if parent_collection
       # for works, set the relationship on the parent work
-      parent_work = Work.where(primary_identifier: pfwork.parent).first
+      parent_work = Work.where(primary_identifier_ssi: pfwork.parent).first
       parent_work.ordered_members << work if parent_work
       parent_work&.save!
       # if we need to make this code faster,
