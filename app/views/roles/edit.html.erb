@@ -10,9 +10,6 @@
       <div class="row">
         <div class="col-xs-8">
           <%= f.submit t('role-management.edit.update') %>
-          <% if can? :destroy, Role %>
-            <%= button_to t('role-management.edit.delete'), role_management.role_path(@role), method: :delete, class: 'btn btn-danger' %>
-          <% end %>
         </div>
       </div>
     <% end %>
