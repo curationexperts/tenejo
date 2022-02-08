@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe "/user", type: :request do
   context "logged in but not admin" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { User.create(email: 'foobar@example.com', password: '123456') }
     before do
       sign_in user
     end
@@ -20,14 +20,14 @@ RSpec.describe "/user", type: :request do
   end
   context "logged in as admin" do
     let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
-    let(:user) { FactoryBot.create(:user, :email=>'user@example.com') }
+    let(:user) { User.create(email: 'user@example.com', password: '123456') }
     before do
       sign_in admin
     end
 
     describe "edit form" do
       it "renders the edit form" do
-        get edit_user_path(user.id)
+        get edit_user_path(id: user.id)
         expect(response).to be_successful
         expect(response).to render_template 'users/edit'
         expect(assigns(:user).email).to match user.email
@@ -37,7 +37,7 @@ RSpec.describe "/user", type: :request do
     describe "user index" do
       it "renders username linked to edit" do
         get "/admin/users"
-        expect(response.body).to match(edit_user_path(user.id))
+        expect(response.body).to match "users/#{admin.id}/edit"
       end
       it "renders the links" do
         get '/admin/users'
