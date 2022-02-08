@@ -8,17 +8,25 @@
 <div class="panel panel-default">
   <div class="panel-body">
     <%= form_for @user do |f| %>
-      <div class="form-group">
-        <%= f.label "Email" %>
-        <%= f.text_field :id, class: "form-control", disabled: true %>
-      </div>
-      <div class="form-group">
-        <%= f.label "Display Name" %>
-        <%= f.text_field :display_name, class: "form-control" %>
-      </div>
-      <div class="actions">
-        <%= f.submit "Update User" , class: "btn btn-primary" %>
-        <%= link_to "Cancel", hyrax.admin_users_path, class: 'btn btn-default' %>
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="form-group">
+            <%= f.label "Email" %>
+            <%= f.text_field :email, class: "form-control", disabled: true %>
+          </div>
+          <div class="form-group">
+            <%= f.label "Display Name" %>
+            <%= f.text_field :display_name, class: "form-control" %>
+          </div>
+          <div class="form-group">
+            <%= f.label "Add Role" %>
+            <%= f.collection_select('role_ids', (Role.all - @user.roles ), :id, :name,{include_blank: 'Please select a role…'}, { class: "form-control"}) %>
+          </div>
+          <div class="actions">
+            <%= f.submit "Update User" , class: "btn btn-primary" %>
+            <%= link_to "Cancel", hyrax.admin_users_path, class: 'btn btn-default' %>
+          </div>
+        </div>
       </div>
     <% end %>
     <hr>
@@ -34,14 +42,18 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>role.name</td>
-                  <td>
-                    <% if can? :remove_role, User %>
-                      <%= link_to "Remove Role", "#", method: :delete, data: {confirm: 'Are you sure?'} %>
-                    <% end %>
-                  </td>
-                </tr>
+
+                <% @user.roles.each do |role| %>
+                  <tr>
+                    <td><%= role.name %></td>
+
+                    <td>
+                      <% if can? :remove_role, User %>
+                        <%= link_to "Remove Role", "#", method: :delete, data: {confirm: 'Are you sure?'} %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
               </tbody>
             </table>
           </div>
