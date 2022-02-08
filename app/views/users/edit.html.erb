@@ -49,7 +49,7 @@
 
                     <td>
                       <% if can? :remove_role, User %>
-                        <%= link_to "Remove Role", "#", method: :delete, data: {confirm: 'Are you sure?'} %>
+                        <%= link_to "Remove Role", role_management.role_user_path(role, @user.id), method: :delete, data: {confirm: 'Are you sure?'} %>
                       <% end %>
                     </td>
                   </tr>
