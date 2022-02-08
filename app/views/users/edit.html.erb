@@ -7,7 +7,7 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
-    <%= form_for :user, :method=>:patch do |f| %>
+    <%= form_for @user do |f| %>
       <div class="form-group">
         <%= f.label "Email" %>
         <%= f.text_field :id, class: "form-control", disabled: true %>
@@ -38,7 +38,7 @@
                   <td>role.name</td>
                   <td>
                     <% if can? :remove_role, User %>
-                  <%= link_to "Remove Role", "#", method: :delete, data: {confirm: 'Are you sure?'} %>
+                      <%= link_to "Remove Role", "#", method: :delete, data: {confirm: 'Are you sure?'} %>
                     <% end %>
                   </td>
                 </tr>
