@@ -3,12 +3,12 @@ require 'rails_helper'
 
 RSpec.describe "/user", type: :request do
   context "logged in but not admin" do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { User.create(:email=>'test@example.com', password: "123457") }
     before do
       sign_in user
     end
     it "redirects" do
-      get admin_users_path
+      get hyrax.admin_users_path
       expect(response).to redirect_to blacklight_path
     end
   end
@@ -27,7 +27,7 @@ RSpec.describe "/user", type: :request do
 
     describe "user index" do
       it "renders the links" do
-        get admin_users_path
+        get hyrax.admin_users_path
         expect(response).to be_successful
         expect(response).to render_template 'admin/users/index'
       end
