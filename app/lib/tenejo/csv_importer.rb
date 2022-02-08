@@ -10,7 +10,7 @@ module Tenejo
     end
 
     def csv_import_file_root
-      @csv_import_file_root = Hyrax.config.upload_path.call.to_s
+      Hyrax.config.upload_path.call
     end
 
     def preflight_errors
