@@ -1,11 +1,51 @@
-<h1>
-  Hi <%=@user%>
-</h1>
+<% provide :page_header do %>
+  <h2>
+    <span class="fa fa-user" aria-hidden="true"></span>
+    Edit User
+  </h2>
+<% end %>
 
-<div>
-  <%=form_for @user do |f| %>
-    <%=f.text_field :display_name%>
-    <%=f.submit %>
-  <%end%>
-
-</div>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <%= form_for :user, :method=>:patch do |f| %>
+      <div class="form-group">
+        <%= f.label "Email" %>
+        <%= f.text_field :id, class: "form-control", disabled: true %>
+      </div>
+      <div class="form-group">
+        <%= f.label "Display Name" %>
+        <%= f.text_field :display_name, class: "form-control" %>
+      </div>
+      <div class="actions">
+        <%= f.submit "Update User" , class: "btn btn-primary" %>
+        <%= link_to "Cancel", hyrax.admin_users_path, class: 'btn btn-default' %>
+      </div>
+    <% end %>
+    <hr>
+      <div class="row">
+        <div class="col-xs-12">
+          <h3>Roles</h3>
+          <div class="table-responsive">
+            <table class="table table-striped datatable">
+              <thead>
+                <tr>
+                  <th>Role</th>
+                  <th data-orderable="false">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>role.name</td>
+                  <td>
+                    <% if can? :remove_role, User %>
+                  <%= link_to "Remove Role", "#", method: :delete, data: {confirm: 'Are you sure?'} %>
+                    <% end %>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
