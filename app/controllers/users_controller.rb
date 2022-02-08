@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   private
 
   def load_user
-    @usr = User.where(email: params[:id]).first
+    @user = User.where(email: params[:id]).first
   end
 
   def ensure_admin!
