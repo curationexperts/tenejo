@@ -1,5 +1,5 @@
-class Tenejo::RegistrationsController  < ApplicationController
-
+# frozen_string_literal: true
+class Tenejo::RegistrationsController < ApplicationController
   def edit
     @user = User.where(email: params[:id]).first
   end

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :checks,       only: [:index]
   resources :preflights, only: [:index, :new, :create, :show]
   resources :imports,    only: [:index, :new, :create, :show]
+  resources :users,    only: [:edit, :update]
 
   resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
     collection do
@@ -23,14 +24,9 @@ Rails.application.routes.draw do
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
   end
-  devise_for :users, controllers: {
-    invitations: 'tenejo/invite',
-    registrations: 'tenejo/registrations'
-  }
+  devise_for :users, controllers: { invitations: 'tenejo/invite' }
   devise_scope  :users do
     put "activate", to: "users#activate"
-    get "/edit/:id", to: "tenejo/registrations#edit"
-    patch "/edit/:id", to: "tenejo/registrations#update"
   end
   mount Hydra::RoleManagement::Engine => '/'
 

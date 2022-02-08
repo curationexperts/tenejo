@@ -3,9 +3,9 @@
 </h1>
 
 <div>
-  <%=form_for :user, :method=>:patch do |f| %>
+  <%=form_for @user do |f| %>
     <%=f.text_field :display_name%>
-    <%=f.submit "Go"%>
+    <%=f.submit %>
   <%end%>
 
 </div>
