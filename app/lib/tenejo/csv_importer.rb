@@ -116,6 +116,7 @@ module Tenejo
       # expensive stuff here
       work = find_or_new_work(pfwork.identifier, pfwork.title)
       update_work_attributes(work, pfwork)
+      create_or_update_files(work, pfwork)
       save_work(work)
     end
 
@@ -160,6 +161,32 @@ module Tenejo
       # if we need to make this code faster,
       # find a way to accumulate all the children and then
       # save the ordered list of children all at once.
+    end
+
+    def create_or_update_files(work, pfwork)
+      # Cases
+      # - new work, new files
+      # - existing work, update files - NOT IMPLEMENTED YET
+      # - existing work, add files - NOT IMPLEMENTED YET
+      # - existing work, delete files - NOT SUPPORTED
+      file_sets = pfwork.files.map do |pffile|
+        file_set = FileSet.new
+        file_set.label = File.basename(pffile.file)
+        file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
+        file_set.visibility = pffile.visibility
+        file_set.save!
+        local_path = File.join(pffile.import_path, pffile.file)
+        IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+        file_set
+      end
+      work.ordered_members = file_sets
+      # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
+      # That's probably ok in this context
+      # Hyrax.config.callback.callbacks[:after_create_fileset].source
+      # => "Hyrax.config.callback.set(:after_create_fileset, warn: false) do |file_set, user|
+      #       Hyrax.publisher.publish('file.set.attached', file_set: file_set, user: user)
+      #       Hyrax.publisher.publish('object.metadata.updated', object: file_set, user: user)
+      #     end"
     end
 
     def save_work(work)
