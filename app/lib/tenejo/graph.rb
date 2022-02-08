@@ -85,5 +85,5 @@ class Tenejo::Graph
     @warnings += @invalids.map { |k| "Invalid #{k} item: #{k.errors.full_messages.join(',')} on line #{k.lineno}" }
   end
 
-  DEFAULT_UPLOAD_PATH = ENV.fetch('UPLOAD_PATH', Rails.root.join('tmp', 'uploads'))
+  DEFAULT_UPLOAD_PATH = Hyrax.config.upload_path.call
 end
