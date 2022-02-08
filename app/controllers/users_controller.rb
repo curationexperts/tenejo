@@ -14,7 +14,7 @@ class UsersController < ApplicationController
 
   def update
     @user.display_name = params[:user][:display_name]
-    @user.roles << Role.find(params[:role_ids])
+    @user.roles << Role.find(params[:user][:role_ids])
     @user.save!
     flash[:notice] = "User updated"
     redirect_to hyrax.admin_users_path
