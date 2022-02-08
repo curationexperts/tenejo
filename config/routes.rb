@@ -23,9 +23,14 @@ Rails.application.routes.draw do
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
     concerns :searchable
   end
-  devise_for :users, controllers: {invitations: 'tenejo/invite'}
+  devise_for :users, controllers: {
+    invitations: 'tenejo/invite',
+    registrations: 'tenejo/registrations'
+  }
   devise_scope  :users do
     put "activate", to: "users#activate"
+    get "/edit/:id", to: "tenejo/registrations#edit"
+    patch "/edit/:id", to: "tenejo/registrations#update"
   end
   mount Hydra::RoleManagement::Engine => '/'
 

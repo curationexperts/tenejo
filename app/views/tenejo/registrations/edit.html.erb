@@ -1,0 +1,11 @@
+<h1>
+  Hi <%=@user%>
+</h1>
+
+<div>
+  <%=form_for :user, :method=>:patch do |f| %>
+    <%=f.text_field :display_name%>
+    <%=f.submit "Go"%>
+  <%end%>
+
+</div>

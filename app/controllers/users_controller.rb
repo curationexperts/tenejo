@@ -7,6 +7,10 @@ class UsersController < ApplicationController
     redirect_to hyrax.admin_users_path
   end
 
+  def edit
+    @user = User.find(params[:id])
+  end
+
   private
 
   def ensure_admin!

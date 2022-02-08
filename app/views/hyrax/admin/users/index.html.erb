@@ -47,7 +47,7 @@
                   <tbody>
                     <% @presenter.users.each do |user| %>
                       <tr>
-                        <td><%= link_to user.email, hyrax.edit_dashboard_profile_path(user) %>
+                        <td><%= link_to user.email, "/edit/#{user.email}" %>
                           <%= user.deactivated ? "(deactivated)" : "" -%>
                         </td>
                         <td><%= user.display_name %></td>
