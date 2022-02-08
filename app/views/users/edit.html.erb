@@ -7,7 +7,7 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
-    <%= form_for @user do |f| %>
+    <%= form_for :user, url: user_path(@user.id), method: :put do |f| %>
       <div class="row">
         <div class="col-xs-8">
           <div class="form-group">
