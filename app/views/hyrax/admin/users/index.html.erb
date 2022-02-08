@@ -47,7 +47,7 @@
                   <tbody>
                     <% @presenter.users.each do |user| %>
                       <tr>
-                        <td><%= link_to user.email, main_app.edit_user_path(user)%>
+                        <td><%= link_to user.email, main_app.edit_user_path(user.id)%>
                           <%= user.deactivated ? "(deactivated)" : "" -%>
                         </td>
                         <td><%= user.display_name %></td>

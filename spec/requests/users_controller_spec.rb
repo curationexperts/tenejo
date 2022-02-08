@@ -20,12 +20,25 @@ RSpec.describe "/user", type: :request do
   end
   context "logged in as admin" do
     let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { FactoryBot.create(:user, :email=>'user@example.com') }
     before do
       sign_in admin
     end
 
+    describe "edit form" do
+      it "renders the edit form" do
+        get edit_user_path(user.id)
+        expect(response).to be_successful
+        expect(response).to render_template 'users/edit'
+        expect(assigns(:user).email).to match user.email
+      end
+    end
+
     describe "user index" do
+      it "renders username linked to edit" do
+        get "/admin/users"
+        expect(response.body).to match(edit_user_path(user.id))
+      end
       it "renders the links" do
         get '/admin/users'
         expect(response).to be_successful
