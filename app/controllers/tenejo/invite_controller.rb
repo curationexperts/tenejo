@@ -2,6 +2,7 @@
 class Tenejo::InviteController < Devise::InvitationsController
   before_action :configure_permitted_parameters
   with_themed_layout 'dashboard'
+  
   protected
 
   # form was modified to include new role_ids param, so we have to tell devise about it
