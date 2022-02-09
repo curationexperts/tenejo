@@ -37,6 +37,7 @@
                     <tr>
                       <th><%= t('.id_label') %></th>
                       <th><%= t('.displayname_label') %></th>
+                      <th><%= t('.status') %></th>
                       <th data-orderable="false"><%= t('.role_label') %></th>
                       <% if @presenter.show_last_access? %>
                         <th><%= t('.access_label') %></th>
@@ -47,18 +48,24 @@
                   <tbody>
                     <% @presenter.users.each do |user| %>
                       <tr>
-                        <td><%= link_to user.email, hyrax.edit_dashboard_profile_path(user) %>
-                          <%= user.deactivated ? "(deactivated)" : "" -%>
+                        <td>
+                          <%= link_to user.email, hyrax.edit_dashboard_profile_path(user) %>
                         </td>
                         <td><%= user.display_name %></td>
-                        <td><% roles = @presenter.user_roles(user) %>
+                        <td>
+                          <% if user.deactivated %>
+                            <span class='label label-danger'>deactivated<span>
+                          <% end %>
+                        </td>
+                        <td>
+                          <% roles = @presenter.user_roles(user) %>
                           <ul>
                             <% roles.each do |role| %>
                               <li><%= role %></li>
                             <% end %>
                           </ul>
-                        </td>
 
+                        </td>
                         <% if @presenter.show_last_access? %>
                           <td>
                             <%# in the case that a user is created who never signs in, this is necessary %>
@@ -103,9 +110,7 @@
                 roles</strong>
               in this repository
               <div class="pull-right">
-
                 <%= link_to t('role-management.index.create'), role_management.new_role_path, class: "btn btn-primary" %>
-
               </div>
             </div>
             <div class="panel-body">
@@ -119,7 +124,6 @@
                     </tr>
                   </thead>
                   <tbody>
-
                     <% @presenter.roles.each do |x| %>
                       <tr>
                         <td><%= link_to x.name, role_management.role_path(x) %></td>
@@ -129,7 +133,6 @@
                           <%= link_to "Delete",  role_management.role_path(x), method: :delete, data: {confirm: 'Are you sure?'}%></td>
                         <%end%>
                       </tr>
-
                     </tbody>
                   </table>
 
@@ -138,9 +141,7 @@
             </div>
             <div class="panel-footer">
               <div class="pull-right">
-
                 <%= link_to t('role-management.index.create'), role_management.new_role_path, class: "btn btn-primary" %>
-
               </div>
             </div>
           </div>
@@ -148,3 +149,4 @@
       </div>
     </div>
   </div>
+</div>

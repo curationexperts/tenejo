@@ -85,6 +85,7 @@ en:
           title: Users & Roles
           displayname_label: Display Name
           create: Create New User
+          status: Status
       sidebar:
         users: Users & Roles
       admin_sets:
