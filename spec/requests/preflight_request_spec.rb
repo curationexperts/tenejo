@@ -40,10 +40,10 @@ RSpec.describe "/preflights", type: :request do
 
   describe "POST /create" do
     before :all do
-      FileUtils.mkdir_p('tmp/test/uploads')
-      FileUtils.touch("tmp/test/uploads/MN-02 2.png")
-      FileUtils.touch("tmp/test/uploads/MN-02 3.png")
-      FileUtils.touch("tmp/test/uploads/MN-02 4.png")
+      FileUtils.mkdir_p('tmp/test/uploads/ftp')
+      FileUtils.touch("tmp/test/uploads/ftp/MN-02 2.png")
+      FileUtils.touch("tmp/test/uploads/ftp/MN-02 3.png")
+      FileUtils.touch("tmp/test/uploads/ftp/MN-02 4.png")
     end
     let(:valid_attributes) { { user: admin, manifest: tempfile } }
     let(:tempfile) { fixture_file_upload('csv/fancy.csv') }

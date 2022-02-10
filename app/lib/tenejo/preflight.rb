@@ -6,7 +6,7 @@ require 'tenejo/graph'
 
 module Tenejo
   KNOWN_HEADERS = Tenejo::PFWork::ALL_FIELDS + Tenejo::PFCollection::ALL_FIELDS + Tenejo::PFFile::ALL_FIELDS + [:object_type]
-  DEFAULT_UPLOAD_PATH = Hyrax.config.upload_path.call
+  DEFAULT_UPLOAD_PATH = File.join(Hyrax.config.upload_path.call, 'ftp')
   class DuplicateColumnError < RuntimeError; end
   class MissingIdentifierError < RuntimeError; end
 
