@@ -17,8 +17,8 @@
       <div class="row">
         <div class="col-xs-8">
           <%= bootstrap_form_tag url: role_management.role_users_path(@role) do |f| %>
-            <%= f.collection_select('user_key', (User.order('display_name ASC').reject(&:deactivated) - @role.users ), :user_key,  :display_name, {include_blank:'Please select a user…', label: t('role-management.edit.user'), class: "form-control"}) %>
-  
+            <%= f.collection_select('user_key', (User.order('email ASC').reject(&:deactivated) - @role.users ), :user_key,  :display_name, {include_blank:'Please select a user…', label: t('role-management.edit.user'), class: "form-control"}) %>
+
             <%= f.submit t('role-management.edit.add') %>
             <%= link_to t('role-management.edit.cancel'),  hyrax.admin_users_path(anchor: "roles"), class: 'btn btn-default' %>
           <% end %>
@@ -35,6 +35,7 @@
                   <tr>
                     <th>User</th>
                     <th>Display Name</th>
+                    <th>Status</th>
                     <th data-orderable="false">Actions</th>
                   </tr>
                 </thead>
@@ -44,16 +45,21 @@
                       <td><%= user.user_key %></td>
                       <td><%= user.display_name %></td>
                       <td>
-                        <% if can? :remove_user, Role %>
-                          <%= link_to t('role-management.edit.remove'), role_management.role_user_path(@role, user.id), method: :delete, data: {confirm: 'Are you sure?'} %>
-                        <% end %>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
+                        <% if user.deactivated %>
+                          <span class='label label-danger'>deactivated<span>
+                            <% end %>
+                          </td>
+                          <td>
+                            <% if can? :remove_user, Role %>
+                              <%= link_to t('role-management.edit.remove'), role_management.role_user_path(@role, user.id), method: :delete, data: {confirm: 'Are you sure?'} %>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
