@@ -120,7 +120,6 @@
                     <tr>
                       <th>Role Name</th>
                       <th>Users</th>
-                      <th>Deactivated</th>
                       <th data-orderable="false">Actions</th>
                     </tr>
                   </thead>
@@ -128,8 +127,14 @@
                     <% @presenter.roles.each do |x| %>
                       <tr>
                         <td><%= link_to x.name, role_management.role_path(x) %></td>
-                        <td><%= x.users.reject(&:deactivated).map.sort_by(&:display_name).join(", ") %></td>
-                        <td><%= x.users.where(users: {deactivated: true}).map(&:display_name).join(", ") %></td>
+                        <td>
+                          <%= x.users.reject(&:deactivated).map(&:display_name).sort.join(", ") %>
+                          <% if x.users.where(users: {deactivated: true}) %>
+                          <span class="text-muted"><%= x.users.where(users: {deactivated: true}).map(&:display_name).sort.join(", ") %></span>
+                          <% end %>
+                        </td>
+                        
+              
                       
                         <td><%= link_to "Edit",  role_management.edit_role_path(x)  %>
                           |
