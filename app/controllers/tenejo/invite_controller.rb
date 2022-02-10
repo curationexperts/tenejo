@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class Tenejo::InviteController < Devise::InvitationsController
   before_action :configure_permitted_parameters
+  with_themed_layout 'dashboard'
 
   protected
 

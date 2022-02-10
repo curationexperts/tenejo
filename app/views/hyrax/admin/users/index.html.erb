@@ -48,9 +48,7 @@
                   <tbody>
                     <% @presenter.users.each do |user| %>
                       <tr>
-                        <td>
-                          <%= link_to user.email, hyrax.edit_dashboard_profile_path(user) %>
-                        </td>
+                        <td><%= link_to user.email, main_app.edit_user_path(user.id)%></td>
                         <td><%= user.display_name %></td>
                         <td>
                           <% if user.deactivated %>
@@ -76,15 +74,15 @@
                         <% end %>
                         <% if user.deactivated %>
                           <td>
-                            <%= link_to "Edit", edit_dashboard_profile_path(user) %>
+                            <%= link_to "Edit", main_app.edit_user_path(user.id) %>
                             |
-                            <%= link_to "Reactivate",  main_app.activate_path(id: user.id, deactivated: false), method: :put, data: {confirm: 'Are you sure?'}%>
+                            <%= link_to "Reactivate",  main_app.activate_path(id: user.id, deactivated: false), method: :put, data: {confirm: 'Are you sure you want to reactivate this user?'}%>
                           </td>
                         <% else %>
                           <td>
-                            <%= link_to "Edit", edit_dashboard_profile_path(user) %>
+                            <%= link_to "Edit", main_app.edit_user_path(user.id) %>
                             |
-                            <%= link_to "Deactivate",  main_app.activate_path(id: user.id, deactivated: true), method: :put, data: {confirm: 'Are you sure?'}%>
+                            <%= link_to "Deactivate",  main_app.activate_path(id: user.id, deactivated: true), method: :put, data: {confirm: 'Are you sure you want to deactivate this user?'}%>
                           </td>
                         <% end %>
                       </tr>
