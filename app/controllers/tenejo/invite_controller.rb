@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class Tenejo::InviteController < Devise::InvitationsController
   before_action :configure_permitted_parameters
+  layout :resolve_layout
 
   protected
 
@@ -9,5 +10,11 @@ class Tenejo::InviteController < Devise::InvitationsController
     devise_parameter_sanitizer.permit(:invite) do |pr|
       pr.permit(:email, role_ids: [])
     end
+  end
+
+  private
+
+  def resolve_layout
+    action_name == 'edit' ? 'hyrax' : 'hyrax/dashboard'
   end
 end
