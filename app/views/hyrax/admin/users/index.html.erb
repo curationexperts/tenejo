@@ -76,13 +76,13 @@
                               <td>
                                 <%= link_to "Edit", main_app.edit_user_path(user.id) %>
                                 |
-                                <%= link_to "Reactivate",  main_app.activate_path(id: user.id, deactivated: false), method: :put, data: {confirm: 'Are you sure?'}%>
+                                <%= link_to "Reactivate",  main_app.activate_path(id: user.id, deactivated: false), method: :put, data: {confirm: 'Are you sure you want to reactivate this user?'}%>
                               </td>
                             <% else %>
                               <td>
                                 <%= link_to "Edit", main_app.edit_user_path(user.id) %>
                                 |
-                                <%= link_to "Deactivate",  main_app.activate_path(id: user.id, deactivated: true), method: :put, data: {confirm: 'Are you sure?'}%>
+                                <%= link_to "Deactivate",  main_app.activate_path(id: user.id, deactivated: true), method: :put, data: {confirm: 'Are you sure you want to deactivate this user?'}%>
                               </td>
                             <% end %>
                           </tr>
@@ -127,15 +127,13 @@
                             <td><%= link_to x.name, role_management.role_path(x) %></td>
                             <td>
                               <% partition_users(x.users) do |active, inactive| %>
-                                <span><%= active.map(&:display_name).join(", ")%><%unless inactive.empty?%>,<%end%></span>
+                                <span><%= active.map(&:display_name).join(", ")%><% unless inactive.empty? || active.empty? %>&comma;<% end %></span>
                                 <span class="text-muted" title="deactivated user"><%= inactive.map(&:display_name).join(", ")%></span>
                               <%end%>
                               </td>
-
-
                               <td><%= link_to "Edit",  role_management.edit_role_path(x)  %>
                                 |
-                                <%= link_to "Delete",  role_management.role_path(x), method: :delete, data: {confirm: 'Are you sure?'}%></td>
+                                <%= link_to "Delete",  role_management.role_path(x), method: :delete, data: {confirm: 'Are you sure you want to delete this role?'}%></td>
                               <%end%>
                             </tr>
                           </tbody>
