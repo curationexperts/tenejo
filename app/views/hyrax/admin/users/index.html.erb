@@ -130,7 +130,7 @@
                             <td>
                               <% partition_users(x.users) do |active, inactive| %>
                                 <span><%= active.map(&:display_name).join(", ")%><%unless inactive.empty?%>,<%end%></span>
-                                <span class="text-muted"><%= inactive.map(&:display_name).join(", ")%></span>
+                                <span class="text-muted" title="deactivated user"><%= inactive.map(&:display_name).join(", ")%></span>
                               <%end%>
                               </td>
 
