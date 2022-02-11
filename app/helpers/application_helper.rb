@@ -46,7 +46,7 @@ module ApplicationHelper
 
   def partition_users(users, &block)
     inactive, active = users.partition(&:deactivated)
-    f = ->(x,y) { x.display_name <=> y.display_name}
+    f = ->(x,y) { x.display_name.downcase <=> y.display_name.downcase}
     block.call(active.sort(&f), inactive.sort(&f))
   end
 end
