@@ -44,9 +44,9 @@ module ApplicationHelper
     hex_color.scan(/../).map(&:hex).sum
   end
 
-  def partition_users(users, &block)
+  def partition_users(users)
     inactive, active = users.partition(&:deactivated)
-    f = ->(x, y) { x.display_name.downcase <=> y.display_name.downcase}
+    f = ->(x, y) { x.display_name.downcase <=> y.display_name.downcase }
     yield(active.sort(&f), inactive.sort(&f))
   end
 end
