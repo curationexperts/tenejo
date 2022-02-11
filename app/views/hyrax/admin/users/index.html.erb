@@ -55,107 +55,105 @@
                         <td>
                           <% if user.deactivated %>
                             <span class='label label-danger'>deactivated<span>
-                          <% end %>
-                        </td>
-                        <td>
-                          <% roles = @presenter.user_roles(user) %>
-                          <ul>
-                            <% roles.each do |role| %>
-                              <li><%= role %></li>
+                              <% end %>
+                            </td>
+                            <td>
+                              <% roles = @presenter.user_roles(user) %>
+                              <ul>
+                                <% roles.each do |role| %>
+                                  <li><%= role %></li>
+                                <% end %>
+                              </ul>
+
+                            </td>
+                            <% if @presenter.show_last_access? %>
+                              <td>
+                                <%# in the case that a user is created who never signs in, this is necessary %>
+                                <relative-time datetime="<%= @presenter.last_accessed(user).getutc.iso8601 %>" title="<%= @presenter.last_accessed(user).to_formatted_s(:standard) %>">
+                                  <%= @presenter.last_accessed(user).to_formatted_s(:long_ordinal) %>
+                                </relative-time>
+                              </td>
                             <% end %>
-                          </ul>
-
-                        </td>
-                        <% if @presenter.show_last_access? %>
-                          <td>
-                            <%# in the case that a user is created who never signs in, this is necessary %>
-                            <relative-time datetime="<%= @presenter.last_accessed(user).getutc.iso8601 %>" title="<%= @presenter.last_accessed(user).to_formatted_s(:standard) %>">
-                              <%= @presenter.last_accessed(user).to_formatted_s(:long_ordinal) %>
-                            </relative-time>
-                          </td>
+                            <% if user.deactivated %>
+                              <td>
+                                <%= link_to "Edit", edit_dashboard_profile_path(user) %>
+                                |
+                                <%= link_to "Reactivate",  main_app.activate_path(id: user.id, deactivated: false), method: :put, data: {confirm: 'Are you sure?'}%>
+                              </td>
+                            <% else %>
+                              <td>
+                                <%= link_to "Edit", edit_dashboard_profile_path(user) %>
+                                |
+                                <%= link_to "Deactivate",  main_app.activate_path(id: user.id, deactivated: true), method: :put, data: {confirm: 'Are you sure?'}%>
+                              </td>
+                            <% end %>
+                          </tr>
                         <% end %>
-                        <% if user.deactivated %>
-                          <td>
-                            <%= link_to "Edit", edit_dashboard_profile_path(user) %>
-                            |
-                            <%= link_to "Reactivate",  main_app.activate_path(id: user.id, deactivated: false), method: :put, data: {confirm: 'Are you sure?'}%>
-                          </td>
-                        <% else %>
-                          <td>
-                            <%= link_to "Edit", edit_dashboard_profile_path(user) %>
-                            |
-                            <%= link_to "Deactivate",  main_app.activate_path(id: user.id, deactivated: true), method: :put, data: {confirm: 'Are you sure?'}%>
-                          </td>
-                        <% end %>
-                      </tr>
-                    <% end %>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="panel-footer">
-              <div class="pull-right">
-                <%= link_to t('hyrax.admin.users.index.create'), main_app.new_user_invitation_path, class: "btn btn-primary" %>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        <div id="roles" class="tab-pane">
-          <div class="panel panel-default labels roles-listing">
-            <div class="panel-heading">
-              There are
-              <strong><%= @presenter.roles.count %>
-                roles</strong>
-              in this repository
-              <div class="pull-right">
-                <%= link_to t('role-management.index.create'), role_management.new_role_path, class: "btn btn-primary" %>
-              </div>
-            </div>
-            <div class="panel-body">
-              <div class="table-responsive">
-                <table class="table table-striped datatable" id="rolesTable">
-                  <thead>
-                    <tr>
-                      <th>Role Name</th>
-                      <th>Users</th>
-                      <th data-orderable="false">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% @presenter.roles.each do |x| %>
-                      <tr>
-                        <td><%= link_to x.name, role_management.role_path(x) %></td>
-                        <td>
-                          <% partition_users(x.users) do |active, inactive| %>
-
-                            <span class="text"><%= active.map(&:display_name).join(", ") %></span>
-                            <span class="text-muted"><%= inactive.map(&:display_name).join(", ") %></span>
-                          <%end%>
-                        </td>
-                        
-              
-                      
-                        <td><%= link_to "Edit",  role_management.edit_role_path(x)  %>
-                          |
-                          <%= link_to "Delete",  role_management.role_path(x), method: :delete, data: {confirm: 'Are you sure?'}%></td>
-                        <%end%>
-                      </tr>
-                    </tbody>
-                  </table>
-
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="panel-footer">
+                  <div class="pull-right">
+                    <%= link_to t('hyrax.admin.users.index.create'), main_app.new_user_invitation_path, class: "btn btn-primary" %>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="panel-footer">
-              <div class="pull-right">
-                <%= link_to t('role-management.index.create'), role_management.new_role_path, class: "btn btn-primary" %>
+
+
+            <div id="roles" class="tab-pane">
+              <div class="panel panel-default labels roles-listing">
+                <div class="panel-heading">
+                  There are
+                  <strong><%= @presenter.roles.count %>
+                    roles</strong>
+                  in this repository
+                  <div class="pull-right">
+                    <%= link_to t('role-management.index.create'), role_management.new_role_path, class: "btn btn-primary" %>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <div class="table-responsive">
+                    <table class="table table-striped datatable" id="rolesTable">
+                      <thead>
+                        <tr>
+                          <th>Role Name</th>
+                          <th>Users</th>
+                          <th data-orderable="false">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @presenter.roles.each do |x| %>
+                          <tr>
+                            <td><%= link_to x.name, role_management.role_path(x) %></td>
+                            <td>
+                              <% partition_users(x.users) do |active, inactive| %>
+                                <span><%= active.map(&:display_name).join(", ")%><%unless inactive.empty?%>,<%end%></span>
+                                <span class="text-muted"><%= inactive.map(&:display_name).join(", ")%></span>
+                              <%end%>
+                              </td>
+
+
+                              <td><%= link_to "Edit",  role_management.edit_role_path(x)  %>
+                                |
+                                <%= link_to "Delete",  role_management.role_path(x), method: :delete, data: {confirm: 'Are you sure?'}%></td>
+                              <%end%>
+                            </tr>
+                          </tbody>
+                        </table>
+
+                      </div>
+                    </div>
+                  </div>
+                  <div class="panel-footer">
+                    <div class="pull-right">
+                      <%= link_to t('role-management.index.create'), role_management.new_role_path, class: "btn btn-primary" %>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
