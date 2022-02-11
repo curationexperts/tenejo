@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :checks,       only: [:index]
   resources :preflights, only: [:index, :new, :create, :show]
   resources :imports,    only: [:index, :new, :create, :show]
-  resources :users,    only: [:edit, :update]
+  resources :users,    only: [:edit]
 
   resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
     collection do
@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   devise_scope  :users do
     put "activate", to: "users#activate"
   end
+
   mount Hydra::RoleManagement::Engine => '/'
 
   mount Qa::Engine => '/authorities'
@@ -36,6 +37,7 @@ Rails.application.routes.draw do
   root 'hyrax/homepage#index'
   curation_concerns_basic_routes
   concern :exportable, Blacklight::Routes::Exportable.new
+  match '/users/modify/:id', to: "users#update", as: 'user_modify', via: :put
 
   match '/404', to: 'errors#not_found', via: :all
   match '/500', to: 'errors#unhandled_exception', via: :all
