@@ -7,6 +7,15 @@ RSpec.describe "/tenejo/invite", type: :request do
       get new_user_invitation_path
       expect(response).to redirect_to new_user_session_path
     end
+
+    it "renders the accept" do
+      user = User.new(email: 'abc@example.com', password: 'foobarbaz')
+      user.save!
+      user.invite!
+      get accept_user_invitation_path(invitation_token: user.raw_invitation_token)
+      expect(response).to be_successful
+      expect(response).to render_template 'layouts/hyrax'
+    end
   end
   context "logged in as admin" do
     let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
