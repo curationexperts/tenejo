@@ -128,10 +128,11 @@
                       <tr>
                         <td><%= link_to x.name, role_management.role_path(x) %></td>
                         <td>
-                          <%= x.users.reject(&:deactivated).map(&:display_name).sort.join(", ") %>
-                          <% if x.users.where(users: {deactivated: true}) %>
-                          <span class="text-muted"><%= x.users.where(users: {deactivated: true}).map(&:display_name).sort.join(", ") %></span>
-                          <% end %>
+                          <% partition_users(x.users) do |active, inactive| %>
+
+                            <span class="text"><%= active.map(&:display_name).join(", ") %></span>
+                            <span class="text-muted"><%= inactive.map(&:display_name).join(", ") %></span>
+                          <%end%>
                         </td>
                         
               

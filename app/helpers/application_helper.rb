@@ -43,4 +43,10 @@ module ApplicationHelper
   def convert_to_brightness_value(hex_color)
     hex_color.scan(/../).map(&:hex).sum
   end
+
+  def partition_users(users, &block)
+    inactive, active = users.partition(&:deactivated)
+    f = ->(x,y) { x.display_name <=> y.display_name}
+    block.call(active.sort(&f), inactive.sort(&f))
+  end
 end
