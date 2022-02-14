@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_04_203407) do
+ActiveRecord::Schema.define(version: 2022_02_14_174107) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -328,6 +328,7 @@ ActiveRecord::Schema.define(version: 2022_01_04_203407) do
 
   create_table "roles", id: :serial, force: :cascade do |t|
     t.string "name"
+    t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
   create_table "roles_users", id: false, force: :cascade do |t|
@@ -515,6 +516,7 @@ ActiveRecord::Schema.define(version: 2022_01_04_203407) do
   end
 
   create_table "themes", force: :cascade do |t|
+    t.string "site_title"
     t.string "primary_color"
     t.string "accent_color"
     t.string "primary_text_color"
@@ -522,13 +524,12 @@ ActiveRecord::Schema.define(version: 2022_01_04_203407) do
     t.string "background_color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "preview_site_title"
     t.string "preview_primary_color"
     t.string "preview_accent_color"
     t.string "preview_primary_text_color"
     t.string "preview_accent_text_color"
     t.string "preview_background_color"
-    t.string "site_title"
-    t.string "preview_site_title"
     t.string "site_description"
     t.string "preview_site_description"
   end
