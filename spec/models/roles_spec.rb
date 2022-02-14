@@ -13,6 +13,9 @@ RSpec.describe Role, type: :model do
       expect(r.save).not_to be true
       expect(r.errors[:name]).to eq ["has already been taken"]
     end
+    it "can be deleted" do
+      expect(role.destroy).not_to eq false
+    end
   end
 
   context "an admin role" do
