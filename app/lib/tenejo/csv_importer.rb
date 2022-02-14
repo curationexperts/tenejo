@@ -30,7 +30,6 @@ module Tenejo
       @graph.root.children.each do |child|
         instantiate(child)
       end
-      make_files(@graph)
     end
 
     def instantiate(node)
@@ -197,16 +196,6 @@ module Tenejo
       rescue
         # update job status table - work creation failed - save error to table
       end
-    end
-
-    def make_files(graph)
-      graph.files.each do |pffile|
-        create_or_update_file(pffile)
-      end
-    end
-
-    def create_or_update_file(pffile)
-      # expensive stuff here
     end
 
     def self.default_collection_type

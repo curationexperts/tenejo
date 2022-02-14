@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="2/9/22, 3:33 PM">
+  <identification status="SINGLE_RESULT">
+    <identity format="TIFF EXIF" mimetype="image/tiff" toolname="FITS" toolversion="1.5.0">
+      <tool toolname="Exiftool" toolversion="11.54" />
+    </identity>
+  </identification>
+  <fileinfo>
+    <size toolname="Jhove" toolversion="1.20.1">43950</size>
+    <creatingApplicationName toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Apple Image Capture</creatingApplicationName>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">/Users/mark/_no_backup_/Projects/tenejo/spec/fixtures/images/structure_test/Joker1-Recto.tiff</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">Joker1-Recto.tiff</filename>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">475f69c0b630ce8e920f262bc6a9cc2e</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1644446467507</fslastmodified>
+  </fileinfo>
+  <filestatus />
+  <metadata>
+    <image>
+      <compressionScheme toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">LZW</compressionScheme>
+      <imageWidth toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">120</imageWidth>
+      <imageHeight toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">179</imageHeight>
+      <colorSpace toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">RGB</colorSpace>
+      <iccProfileName toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Generic RGB Profile</iccProfileName>
+      <iccProfileVersion toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2.2.0</iccProfileVersion>
+      <orientation toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">normal*</orientation>
+      <samplingFrequencyUnit toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">in.</samplingFrequencyUnit>
+      <xSamplingFrequency toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">300</xSamplingFrequency>
+      <ySamplingFrequency toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">300</ySamplingFrequency>
+      <bitsPerSample toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">8 8 8 8</bitsPerSample>
+      <samplesPerPixel toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">4</samplesPerPixel>
+      <extraSamples toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Associated Alpha</extraSamples>
+      <scannerManufacturer toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">EPSON</scannerManufacturer>
+      <scannerModelName toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">ET-7700 Series</scannerModelName>
+      <scanningSoftwareName toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Apple Image Capture</scanningSoftwareName>
+    </image>
+  </metadata>
+  <statistics fitsExecutionTime="630">
+    <tool toolname="MediaInfo" toolversion="0.7.75" status="did not run" />
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="48" />
+    <tool toolname="Jhove" toolversion="1.20.1" executionTime="596" />
+    <tool toolname="file utility" toolversion="5.39" executionTime="567" />
+    <tool toolname="Exiftool" toolversion="11.54" executionTime="594" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="did not run" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="46" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="461" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="537" />
+  </statistics>
+</fits>
+
