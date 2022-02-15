@@ -1,3 +1,4 @@
 Identifier,Object Type,Parent,Title,Description,Creator,Rights Statement,Visibility,Files
-CARDS-0001-J,Work,,Jokers,Work with mixed packing of files,T. C. Oyun Kagitlari Monopolu,Copyright Not Evaluated,Public,Joker1-Recto.tiff|~|Joker1-Verso.tiff
+CARDS-0001-J,Work,CARDS-JJ,Jokers,Work with mixed packing of files,T. C. Oyun Kagitlari Monopolu,Copyright Not Evaluated,Public,Joker1-Recto.tiff|~|Joker1-Verso.tiff
 ,File,CARDS-0001-J, ,,,,private,Joker2-Recto.tiff|~|Joker2-Verso.tiff
+CARDS-JJ,Work,,Meta Jokers,Work with child works but no direct files,T. C. Oyun Kagitlari Monopolu,Copyright Not Evaluated,Public,
