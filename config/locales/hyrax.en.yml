@@ -47,6 +47,20 @@ en:
           title_tesim: Title
   hyrax:
     account_name: My Institution Account Id
+    dashboard:
+      collections:
+        form_share:
+          add_group: Add role
+          add_sharing: Add Sharing
+          add_user: Add user
+          current_shared: Currently Shared With
+          depositor: Depositor
+          manager: Manager
+          note: Regardless of the visibility settings of this collection, you can share this collection with specific groups and users.
+          search_for_a_group: Search for a role...
+          search_for_a_user: Search for a user...
+          select_a_role: Add a responsibility...
+          viewer: Viewer
     directory:
       suffix: "@example.org"
     footer:
@@ -97,7 +111,11 @@ en:
             restricted: Private -- depositor can only select private for visibility. Access is restricted to repository administrators, managers, and viewers of the set. Must be used with "No embargo" setting above.
             title: Visibility
             varies: All settings allowed -- depositor can choose. Must use this option to allow leases.
-
+        form_participants:
+          add_group: 'Add role:'
+          add_participants: Add Participants
+          add_user: 'Add user:'
+          current_participants: Current Participants
     search:
       button:
         html: <span class="fa fa-search" aria-hidden="true"></span> Search
