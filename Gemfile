@@ -59,8 +59,8 @@ gem 'rsolr', '>= 1.0', '< 3'
 gem 'whenever', group: 'production'
 
 group :test do
-  gem 'coveralls', require: false
   gem 'capybara'
+  gem 'coveralls', require: false
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
