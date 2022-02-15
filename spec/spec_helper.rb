@@ -18,8 +18,8 @@ require 'capybara/rspec'
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 if ENV['COVERAGE']
-  require 'simplecov'
-  SimpleCov.start
+  require 'coveralls'
+  Coveralls.wear!
 end
 
 RSpec.configure do |config|
