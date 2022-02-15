@@ -1,7 +1,10 @@
+# Tenejo
+[![CircleCI](https://circleci.com/gh/curationexperts/tenejo/tree/main.svg?style=svg)](https://circleci.com/gh/curationexperts/tenejo/tree/main)
 # README
 
-This README would normally document whatever steps are necessary to get the
+The steps are necessary to get the
 application up and running.
+
 
 Things you may want to cover:
 
