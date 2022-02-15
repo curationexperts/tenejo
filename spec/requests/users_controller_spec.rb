@@ -34,7 +34,7 @@ RSpec.describe "/user", type: :request do
       end
 
       it "can update the username without a role" do
-        put user_modify_path(user.id, user: {display_name: 'frim fram'}) 
+        put user_modify_path(user.id, user: { display_name: 'frim fram' })
         expect(response).to redirect_to hyrax.admin_users_path
         user.reload
         expect(user.display_name).to eq "frim fram"
