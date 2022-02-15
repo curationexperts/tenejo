@@ -21,8 +21,12 @@ RSpec.describe Role, type: :model do
   context "an admin role" do
     let(:role) { described_class.create!(name: "admin") }
     it "does now allow deletion" do
-      expect(role.destroy).to eq false
-      expect(role.errors[:base]).to eq ["is indestructible"]
+      expect { role.destroy }.to raise_error(ActiveRecord::ReadOnlyRecord)
+    end
+
+    it "cannot be modified" do
+      role.name = "fatberg"
+      expect { role.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
     end
   end
 end
