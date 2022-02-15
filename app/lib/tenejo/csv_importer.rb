@@ -33,6 +33,14 @@ module Tenejo
     end
 
     def instantiate(node)
+      create_or_update(node)
+      node.children.each do |child|
+        instantiate(child)
+      end
+      ensure_thumbnails(node)
+    end
+
+    def create_or_update(node)
       case node
       when Tenejo::PFCollection
         create_or_update_collection(node)
@@ -41,9 +49,15 @@ module Tenejo
       else
         @graph.add_fatal_error("Row: #{node.lineno} - Did not create #{node.class} with identifier #{node.identifier} ")
       end
-      node.children.each do |child|
-        instantiate(child)
-      end
+    end
+
+    def ensure_thumbnails(node)
+      return unless node.class == Tenejo::PFWork
+      work = Work.where(primary_identifer_ssi: node.primary_identifier).first
+      return if work.id && work&.thumbnail_id && work&.representative_id
+      work.thumbnail_id ||= work.ordered_members.to_a.first&.thumbnail_id
+      work.representative_id ||= work.ordered_members.to_a.first&.representative_id
+      work.save!
     end
 
     def fatal_errors(graph)
@@ -178,7 +192,6 @@ module Tenejo
         IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
         file_set
       end
-      work.ordered_members = file_sets
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
       # That's probably ok in this context
       # Hyrax.config.callback.callbacks[:after_create_fileset].source
@@ -186,6 +199,9 @@ module Tenejo
       #       Hyrax.publisher.publish('file.set.attached', file_set: file_set, user: user)
       #       Hyrax.publisher.publish('object.metadata.updated', object: file_set, user: user)
       #     end"
+      work.ordered_members = file_sets
+      work.thumbnail ||= file_sets.first
+      work.representative ||= file_sets.first
     end
 
     def save_work(work)

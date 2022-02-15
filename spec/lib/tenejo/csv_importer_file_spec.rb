@@ -23,6 +23,9 @@ RSpec.describe Tenejo::CsvImporter do
     RSpec::Mocks.with_temporary_scope do
       # Suppress a legacy ActiveFedora warning: URI.escape is obsolete
       allow(URI).to receive(:encode) { |file_name| file_name }
+      # Suppress a legacy LDP warning: URI.unescape is obsolete
+      allow(URI).to receive(:decode) { |file_name| file_name }
+      # Bypass calling FITS in CI environments
       allow_any_instance_of(Hydra::FileCharacterization::Characterizer).to receive(:call) {
         File.read('spec/fixtures/images/structure_test/Joker1-Recto.fits.xml')
       }
@@ -36,24 +39,41 @@ RSpec.describe Tenejo::CsvImporter do
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = @old_perform_enqueued_jobs
     ActiveJob::Base.queue_adapter = @old_queue_adapter
   end
+  # rubocop:enable RSpec/InstanceVariable
+
+  let(:jokers) { Work.where(primary_identifier_ssi: 'CARDS-0001-J').first }
+  let(:joker_1_front) { jokers.ordered_members.to_a.first }
+
+  it 'only creates one work with the expected id' do
+    hits = Work.where(primary_identifier_ssi: 'CARDS-0001-J').count
+    expect(hits).to eq 1
+  end
 
   it 'attaches file_sets to works' do
-    jokers = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
     expect(jokers.file_sets.map(&:label)).to contain_exactly('Joker1-Recto.tiff', 'Joker2-Recto.tiff', 'Joker1-Verso.tiff', 'Joker2-Verso.tiff')
   end
 
   it 'attaches packed & linked files in order' do
-    jokers = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
     expect(jokers.ordered_members.to_a.map(&:label)).to eq ['Joker1-Recto.tiff', 'Joker1-Verso.tiff', 'Joker2-Recto.tiff', 'Joker2-Verso.tiff']
   end
 
   it 'attaches files to file_sets', :aggregate_failures do
-    jokers = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
-    joker = jokers.ordered_members.to_a.first
-    expect(joker.original_file.mime_type).to eq "image/tiff"
-    expect(joker.original_file.file_name).to eq ["Joker1-Recto.tiff"]
-    expect(joker.original_file.width).to eq ["120"]
-    expect(joker.original_file.height).to eq ["179"]
+    expect(joker_1_front.original_file.mime_type).to eq "image/tiff"
+    expect(joker_1_front.original_file.file_name).to eq ["Joker1-Recto.tiff"]
+    expect(joker_1_front.original_file.width).to eq ["120"]
+    expect(joker_1_front.original_file.height).to eq ["179"]
   end
-  # rubocop:enable RSpec/InstanceVariable
+
+  it 'sets thumbnails from attached files' do
+    expect(jokers.thumbnail).to eq joker_1_front
+  end
+
+  it 'sets thumbnails from attached works' do
+    nested_jokers = Work.where(primary_identifier_ssi: 'CARDS-JJ').first
+    expect(nested_jokers.thumbnail).to eq joker_1_front
+  end
+
+  it 'sets representative media' do
+    expect(jokers.representative).to eq joker_1_front
+  end
 end
