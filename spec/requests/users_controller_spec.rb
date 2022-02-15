@@ -32,6 +32,14 @@ RSpec.describe "/user", type: :request do
         expect(response).to render_template 'users/edit'
         expect(assigns(:user).email).to match user.email
       end
+
+      it "can update the username without a role" do
+        put user_modify_path(user.id, user: {display_name: 'frim fram'}) 
+        expect(response).to redirect_to hyrax.admin_users_path
+        user.reload
+        expect(user.display_name).to eq "frim fram"
+        expect(flash[:notice]).to eq "User updated"
+      end
     end
 
     describe "user index" do
