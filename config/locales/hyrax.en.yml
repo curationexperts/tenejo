@@ -54,13 +54,13 @@ en:
           add_sharing: Add Sharing
           add_user: Add user
           current_shared: Currently Shared With
-          depositor: Depositor
-          manager: Manager
+          depositor: Deposit
+          manager: Manage
           note: Regardless of the visibility settings of this collection, you can share this collection with specific groups and users.
-          search_for_a_group: Search for a role...
+          search_for_a_group: Select a role...
           search_for_a_user: Search for a user...
           select_a_role: Add a responsibility...
-          viewer: Viewer
+          viewer: View
     directory:
       suffix: "@example.org"
     footer:
