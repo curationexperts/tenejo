@@ -1,5 +1,7 @@
 # Tenejo
 [![CircleCI](https://circleci.com/gh/curationexperts/tenejo/tree/main.svg?style=svg)](https://circleci.com/gh/curationexperts/tenejo/tree/main)
+[![Coverage Status](https://coveralls.io/repos/github/curationexperts/tenejo/badge.svg?branch=main)](https://coveralls.io/github/curationexperts/tenejo?branch=main)
+
 # README
 
 The steps are necessary to get the
