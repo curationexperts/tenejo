@@ -16,6 +16,14 @@ RSpec.describe Role, type: :model do
     it "can be deleted" do
       expect(role.destroy).not_to eq false
     end
+    it "can have spaces and stuff in the name" do
+      role.name = "blah! de Blah? blah.$*@#)*$&T@)*^T@&00"
+      expect(role.save).to eq true
+    end
+    it "can be modified" do
+      role.name = 'bat'
+      expect(role.save).to eq true
+    end
   end
 
   context "an admin role" do

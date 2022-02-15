@@ -5,7 +5,7 @@ require 'active_fedora/cleaner'
 
 RSpec.describe Tenejo::CsvImporter do
   let(:job_owner) { FactoryBot.create(:user) }
-  let(:csv) { fixture_file_upload("./spec/fixtures/csv/structure_test.csv") }
+  let(:csv) { fixture_file_upload("./spec/fixtures/csv/nesting_test.csv") }
   let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
   let(:import_job)  { Import.create!(user: job_owner, parent_job: preflight) }
 
@@ -16,7 +16,8 @@ RSpec.describe Tenejo::CsvImporter do
       csv_import = described_class.new(import_job)
       expect(csv_import.preflight_errors).to eq ["No data was detected"]
       expect(csv_import).not_to receive(:instantiate)
-      expect(csv_import).not_to receive(:make_files)
+      expect(csv_import).not_to receive(:create_or_update_collection)
+      expect(csv_import).not_to receive(:create_or_update_work)
       csv_import.import
     end
   end
@@ -43,13 +44,11 @@ RSpec.describe Tenejo::CsvImporter do
     csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
     allow(csv_import).to receive(:create_or_update_collection)
     allow(csv_import).to receive(:create_or_update_work)
-    allow(csv_import).to receive(:create_or_update_file)
 
     csv_import.import
 
     expect(csv_import).to have_received(:create_or_update_collection).exactly(3).times
     expect(csv_import).to have_received(:create_or_update_work).exactly(12).times
-    expect(csv_import).to have_received(:create_or_update_file).exactly(31).times
   end
 
   context '.create_or_update_collection' do
