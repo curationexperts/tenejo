@@ -13,12 +13,12 @@ RSpec.describe Role, type: :model do
       expect(r.save).not_to be true
       expect(r.errors[:name]).to eq ["has already been taken"]
     end
+    it "can be deleted" do
+      expect(role.destroy).not_to eq false
+    end
     it "can have spaces and stuff in the name" do
       role.name = "blah! de Blah? blah.$*@#)*$&T@)*^T@&00"
       expect(role.save).to eq true
-    end
-    it "can be deleted" do
-      expect(role.destroy).not_to eq false
     end
     it "can be modified" do
       role.name = 'bat'
