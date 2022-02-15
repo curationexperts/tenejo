@@ -4,62 +4,70 @@
     <%= bootstrap_form_for @role, url: role_management.role_path(@role) do |f| %>
       <div class="row">
         <div class="col-xs-8">
-          <%= f.text_field :name, label: t('role-management.edit.field_name') %>
+          <% if @role.readonly? %>
+            <%= f.static_control :name, label: t('role-management.edit.field_name'), class: "form-control" %>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-8">
-          <%= f.submit t('role-management.edit.update') %>
-        </div>
-      </div>
-    <% end %>
-    <br>
-      <div class="row">
-        <div class="col-xs-8">
-          <%= bootstrap_form_tag url: role_management.role_users_path(@role) do |f| %>
-            <%= f.collection_select('user_key', (User.order('display_name ASC').reject(&:deactivated) - @role.users ), :user_key,  :display_name, {include_blank:'Please select a user…', label: t('role-management.edit.user'), class: "form-control"}) %>
+        <% elsif 
+           %>
+        <%= f.text_field :name, label: t('role-management.edit.field_name') %>
 
-            <%= f.submit t('role-management.edit.add') %>
-            <%= link_to t('role-management.edit.cancel'),  hyrax.admin_users_path(anchor: "roles"), class: 'btn btn-default' %>
-          <% end %>
-        </div>
       </div>
-      <hr>
-        <div class="row">
-          <div class="col-xs-12">
-            <h3><%= t('role-management.edit.accounts') %></h3>
+    </div>
+    <div class="row">
+      <div class="col-xs-8">
+        <%= f.submit t('role-management.edit.update') %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+<br>
+  <div class="row">
+    <div class="col-xs-8">
+      <%= bootstrap_form_tag url: role_management.role_users_path(@role) do |f| %>
+        <%= f.collection_select('user_key', (User.order('display_name ASC').reject(&:deactivated) - @role.users ), :user_key,  :display_name, {include_blank:'Please select a user…', label: t('role-management.edit.user'), class: "form-control"}) %>
 
-            <div class="table-responsive">
-              <table class="table table-striped datatable">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Display Name</th>
-                    <th>Status</th>
-                    <th data-orderable="false">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @role.users.each do |user| %>
-                    <tr>
-                      <td><%= user.user_key %></td>
-                      <td><%= user.display_name %></td>
+        <%= f.submit t('role-management.edit.add') %>
+        <%= link_to t('role-management.edit.cancel'),  hyrax.admin_users_path(anchor: "roles"), class: 'btn btn-default' %>
+      <% end %>
+    </div>
+  </div>
+  <hr>
+    <div class="row">
+      <div class="col-xs-12">
+        <h3><%= t('role-management.edit.accounts') %></h3>
+
+        <div class="table-responsive">
+          <table class="table table-striped datatable">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Display Name</th>
+                <th>Status</th>
+                <th data-orderable="false">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @role.users.each do |user| %>
+                <tr>
+                  <td><%= user.user_key %></td>
+                  <td><%= user.display_name %></td>
+                  <td>
+                    <% if user.deactivated %>
+                      <span class='label label-danger'>deactivated<span>
+                        <% end %>
+                      </td>
                       <td>
-                        <% if user.deactivated %>
-                          <span class='label label-danger'>deactivated<span>
-                            <% end %>
-                          </td>
-                          <td>
-                            <% if can? :remove_user, Role %>
-                              <%= link_to t('role-management.edit.remove'), role_management.role_user_path(@role, user.id), method: :delete, data: {confirm: 'Are you sure you want to remove this user?'} %>
-                            <% end %>
-                          </td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                        <% if can? :remove_user, Role %>
+                          <%= link_to t('role-management.edit.remove'), role_management.role_user_path(@role, user.id), method: :delete, data: {confirm: 'Are you sure you want to remove this user?'} %>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+      </div>
+    </div>
