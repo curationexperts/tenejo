@@ -59,12 +59,12 @@ gem 'rsolr', '>= 1.0', '< 3'
 gem 'whenever', group: 'production'
 
 group :test do
+  gem 'coveralls', require: false
   gem 'capybara'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
-  gem 'simplecov', require: false
   gem 'simplecov_json_formatter'
   gem 'webdrivers'
 end
