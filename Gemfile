@@ -56,7 +56,6 @@ gem 'honeybadger', group: 'production'
 gem 'jquery-rails'
 gem 'riiif', '~> 2.1'
 gem 'rsolr', '>= 1.0', '< 3'
-gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
 gem 'whenever', group: 'production'
 
 group :test do
