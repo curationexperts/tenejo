@@ -1,6 +1,8 @@
 # Tenejo
 [![CircleCI](https://circleci.com/gh/curationexperts/tenejo/tree/main.svg?style=svg)](https://circleci.com/gh/curationexperts/tenejo/tree/main)
 [![Coverage Status](https://coveralls.io/repos/github/curationexperts/tenejo/badge.svg?branch=main)](https://coveralls.io/github/curationexperts/tenejo?branch=main)
+<a href="https://codeclimate.com/github/curationexperts/tenejo/maintainability"><img src="https://api.codeclimate.com/v1/badges/15df0093a42d8012885a/maintainability" /></a>
+<a href="https://codeclimate.com/github/curationexperts/tenejo/test_coverage"><img src="https://api.codeclimate.com/v1/badges/15df0093a42d8012885a/test_coverage" /></a>
 
 # README
 
