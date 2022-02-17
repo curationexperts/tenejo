@@ -49,4 +49,14 @@ module ApplicationHelper
     f = ->(x, y) { x.display_name.downcase <=> y.display_name.downcase }
     yield(active.sort(&f), inactive.sort(&f))
   end
+
+  def collection_permission_template_form_for(form:)
+    case form
+    when Valkyrie::ChangeSet
+      template_model = Hyrax::PermissionTemplate.find_or_create_by(source_id: form.id.to_s)
+      Hyrax::Forms::PermissionTemplateForm.new(template_model)
+    else
+      form.permission_template
+    end
+  end
 end
