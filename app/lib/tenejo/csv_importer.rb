@@ -7,6 +7,7 @@ module Tenejo
       @job = import_job
       @graph = Tenejo::Preflight.process_csv(import_job.manifest.download, import_path)
       @depositor = import_job.user.user_key
+      @logger = Rails.logger
     end
 
     def csv_import_file_root
@@ -54,7 +55,11 @@ module Tenejo
     def ensure_thumbnails(node)
       return unless node.class == Tenejo::PFWork
       work = Work.where(primary_identifer_ssi: node.primary_identifier).first
-      return if work.id && work&.thumbnail_id && work&.representative_id
+      unless work
+        @logger.error "CSV Importer couldn't find Work with primary_id #{node&.primary_identifier} to attach thumbnail"
+        return
+      end
+      return if work&.thumbnail_id && work&.representative_id
       work.thumbnail_id ||= work.ordered_members.to_a.first&.thumbnail_id
       work.representative_id ||= work.ordered_members.to_a.first&.representative_id
       work.save!

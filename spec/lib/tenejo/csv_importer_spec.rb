@@ -228,6 +228,18 @@ RSpec.describe Tenejo::CsvImporter do
           expect(work.date_modified.in_time_zone).to be_within(1.minute).of Time.current
         end
       end
+
+      context 'with thumbnails' do
+        let(:csv) { fixture_file_upload("./spec/fixtures/csv/empty.csv") }
+        it 'log an error when missing' do
+          csv_import = described_class.new(import_job)
+          node = Tenejo::PFWork.new({ primary_identifier: 'ImNotHere' }, -1, nil, nil)
+
+          allow(Rails.logger).to receive(:error)
+          csv_import.ensure_thumbnails(node)
+          expect(Rails.logger).to have_received(:error).with(/ImNotHere/)
+        end
+      end
     end
   end
 end
