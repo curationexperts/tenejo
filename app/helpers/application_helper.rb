@@ -57,7 +57,7 @@ module ApplicationHelper
 
   def user_options
     users = User.order(Arel.sql("lower(display_name)"))
-    users.all.collect { |u| [u.user_key, u.display_name]}
+    users.all.collect { |u| [u.user_key, u.display_name] }
   end
 
   def collection_permission_template_form_for(form:)
