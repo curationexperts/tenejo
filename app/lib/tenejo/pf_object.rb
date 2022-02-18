@@ -82,20 +82,28 @@ module Tenejo
       rec.warnings[:resource_type] << "Resource type \"#{val}\" on line #{rec.lineno} is not recognized and will be left blank." unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
     end
 
-    def self.unpack(row, lineno, import_path)
+    def self.unpack(row, lineno, import_root)
       cp = row.dup
       files = row[:files].split("|~|").map do |f|
         cp[:files] = f
-        PFFile.new(cp, lineno, import_path)
+        PFFile.new(cp, lineno, import_root)
       end
       files
     end
 
-    def initialize(row, lineno, import_path)
-      f = row.to_h.delete(:files)
-      row[:file] = f if f
-      @import_path = import_path
+    def initialize(row, lineno, import_root, strict_paths: true)
+      file_name = row.to_h.delete(:files)
+      row[:file] = relative_path(file_name, import_root, strict_paths)
+      @import_path = import_root
       super row, lineno
+    end
+
+    def relative_path(file_name, import_root, strict_paths)
+      return file_name if strict_paths
+      base_name = File.basename(file_name)
+      Dir.chdir(import_root) do
+        Dir.glob(File.join('**', base_name)).first || "**/#{base_name}"
+      end
     end
 
     def self.singular_fields
