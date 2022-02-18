@@ -171,7 +171,31 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.valid?).to eq false # there are other errors in the example
       expect(rec.warnings[:resource_type]).to eq ["Resource type \"foo\" on line 1 is not recognized and will be left blank."]
     end
+
+    context "path checking" do
+      context "when strict" do
+        it "returns the original file_name" do
+          file_name = rec.relative_path('relative/path/to/file.ext', "./spec/fixtures/images", true)
+          expect(file_name).to eq 'relative/path/to/file.ext'
+        end
+      end
+      context "when not strict" do
+        it "returns the relative path if the file exists" do
+          file_name = rec.relative_path('Joker1-Recto.tiff', "./spec/fixtures/images", false)
+          expect(file_name).to eq 'structure_test/jokers/Joker1-Recto.tiff'
+        end
+        it "ignores any relative paths" do
+          file_name = rec.relative_path('ignore_this_path/Joker1-Recto.tiff', "./spec/fixtures/images", false)
+          expect(file_name).to eq 'structure_test/jokers/Joker1-Recto.tiff'
+        end
+        it "returns a placeholder value when file does not exist" do
+          file_name = rec.relative_path('relative/path/to/file.ext', "./spec/fixtures/images", false)
+          expect(file_name).to eq '**/file.ext'
+        end
+      end
+    end
   end
+
   describe Tenejo::PFWork do
     let(:rec) { described_class.new({}, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
     it "is not valid when blank" do

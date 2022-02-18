@@ -27,9 +27,13 @@ RSpec.describe Tenejo::CsvImporter do
       allow(URI).to receive(:decode) { |file_name| file_name }
       # Bypass calling FITS in CI environments
       allow_any_instance_of(Hydra::FileCharacterization::Characterizer).to receive(:call) {
-        File.read('spec/fixtures/images/structure_test/Joker1-Recto.fits.xml')
+        File.read('spec/fixtures/images/structure_test/jokers/Joker1-Recto.fits.xml')
       }
       @csv_import.import
+
+      # make all the tests fail if we've somehow broken the test setup
+      expect(@csv_import.preflight_errors).to be_empty
+      expect(@csv_import.preflight_warnings).to be_empty
     end
   end
 
