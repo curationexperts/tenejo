@@ -16,8 +16,8 @@
                 <label><%= t('.add_group') %></label>
                 <%= builder.hidden_field :agent_type %>
                 <%= builder.select :agent_id, 
-                                      Role.all.collect { |p| [ p.name, p.name ] }, 
-                                        { prompt: "Select a role …"},
+                                      roles_options, 
+                                        { prompt: "Please select a role …"},
                                         class: 'form-control' 
                                         %>
               </div>
