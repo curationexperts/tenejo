@@ -50,6 +50,16 @@ module ApplicationHelper
     yield(active.sort(&f), inactive.sort(&f))
   end
 
+  def roles_options
+    roles = Role.order(Arel.sql("lower(name)"))
+    roles.all.collect { |r| [r.name, r.name] }
+  end
+
+  def user_options
+    users = User.order(Arel.sql("lower(display_name)"))
+    users.all.collect { |u| [u.user_key, u.display_name] }
+  end
+
   def collection_permission_template_form_for(form:)
     case form
     when Valkyrie::ChangeSet
