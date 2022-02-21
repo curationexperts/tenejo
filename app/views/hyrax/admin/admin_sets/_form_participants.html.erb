@@ -45,8 +45,10 @@
                 <div class="form-group">
                   <label><%= t('.add_user') %></label>
                   <%= builder.hidden_field :agent_type %>
-                  <%= builder.text_field :agent_id,
-                                            placeholder: "Search for a user..." %>
+                  <%= builder.select :agent_id,
+                                    user_options,
+                                    { prompt: "Please select a user..."}, 
+                                    class: 'form-control' %>
                 </div>
                 <div class="form-group">
                   <label>can</label>
