@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
-    samvera: samvera/circleci-orb@0.3.1
+    samvera: samvera/circleci-orb@dev:8975953
+    browser-tools: circleci/browser-tools@1.2.4
 jobs:
     build:
         parameters:
@@ -32,6 +33,8 @@ jobs:
         parallelism: 1
         steps:
             - checkout
+            - run: sudo apt update
+            - run: sudo apt install imagemagick
 
             - samvera/bundle:
                 ruby_version: << parameters.ruby_version >>
@@ -79,7 +82,7 @@ jobs:
 
     coverage:
         docker:
-            - image: circleci/ruby:2.7.4
+            - image: cimg/ruby:2.7.4-browsers
         working_directory: ~/project
         parallelism: 1
         steps:
@@ -107,7 +110,7 @@ jobs:
                 type: string
                 default: 2.2.29
         docker:
-            - image: circleci/ruby:2.7.4
+            - image: cimg/ruby:2.7.4-browsers
         working_directory: ~/project
         steps:
             - checkout
