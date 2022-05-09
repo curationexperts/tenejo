@@ -299,7 +299,7 @@ Hyrax.config do |config|
 
   ##
   # Set the system-wide virus scanner
-  config.virus_scanner = Hyrax::VirusScanner
+  config.virus_scanner = Tenejo::VirusScanner
 
   ## Remote identifiers configuration
   # Add registrar implementations by uncommenting and adding to the hash below.

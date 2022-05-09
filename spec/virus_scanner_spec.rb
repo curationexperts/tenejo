@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require './app/lib/virus_scanner'
+require './app/lib/tenejo/virus_scanner'
 
 RSpec.describe Tenejo::VirusScanner do
   context "with clean file" do
