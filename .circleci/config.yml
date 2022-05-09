@@ -34,7 +34,7 @@ jobs:
         steps:
             - checkout
             - run: sudo apt update
-            - run: sudo apt install imagemagick
+            - run: sudo apt install imagemagick clamav
 
             - samvera/bundle:
                 ruby_version: << parameters.ruby_version >>
