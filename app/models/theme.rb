@@ -80,8 +80,8 @@ class Theme < ApplicationRecord
   def ensure_hero_image
     return if hero_image.attached?
     hero_image.attach(
-      io: File.open('app/assets/images/unsplash/jossuha-theophile-ZhVKeFCb6NE-unsplash.jpg'),
-      filename: 'jossuha-theophile-ZhVKeFCb6NE-unsplash.jpg',
+      io: File.open('app/assets/images/default_hero.jpg'),
+      filename: 'default_hero.jpg',
       content_type: 'image/jpg'
     )
     save if persisted?
