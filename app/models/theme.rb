@@ -19,12 +19,14 @@ class Theme < ApplicationRecord
   ).freeze
 
   has_one_attached :logo
-  after_initialize :merge_defaults, :ensure_logo, :reset_preview_to_defaults
+  has_one_attached :hero_image
+  after_initialize :merge_defaults, :ensure_logo, :ensure_hero_image, :reset_preview_to_defaults
 
   def self.current_theme
     @current_theme ||= Theme.find_or_create_by(id: 1) do |theme|
       theme.merge_defaults
       theme.ensure_logo
+      theme.ensure_hero_image
       theme.save
     end
   end
@@ -33,7 +35,9 @@ class Theme < ApplicationRecord
     self.attributes = attributes.merge(DEFAULTS)
     reset_preview_to_defaults
     logo.purge
+    hero_image.purge
     ensure_logo
+    ensure_hero_image
     save if persisted?
   end
 
@@ -69,6 +73,16 @@ class Theme < ApplicationRecord
       io: File.open('app/assets/images/default_logo.png'),
       filename: 'default_logo.png',
       content_type: 'image/svg+xml'
+    )
+    save if persisted?
+  end
+
+  def ensure_hero_image
+    return if hero_image.attached?
+    hero_image.attach(
+      io: File.open('app/assets/images/unsplash/jossuha-theophile-ZhVKeFCb6NE-unsplash.jpg'),
+      filename: 'jossuha-theophile-ZhVKeFCb6NE-unsplash.jpg',
+      content_type: 'image/jpg'
     )
     save if persisted?
   end

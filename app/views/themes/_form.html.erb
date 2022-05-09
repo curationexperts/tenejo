@@ -12,48 +12,54 @@
     </div>
   <% end %>
 
-  <div class="field form-group">
+  <div class="field">
     <h4>Configuration</h4>
     <div class="row">
       <div class="col-xs-12">
-        <%= form.label :site_title %>
-        <%= form.text_field :preview_site_title, class: 'form-control' %>
-        <%= form.hidden_field :site_title %>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <%= form.label :site_description %>
-        <%= form.text_field :preview_site_description, class: 'form-control' %>
-        <%= form.hidden_field :site_description %>
+        <div class="form-group">
+          <%= form.label :site_title %>
+          <%= form.text_field :preview_site_title, class: 'form-control' %>
+          <%= form.hidden_field :site_title %>
+        </div>
+        <div class="form-group">
+          <%= form.label :site_description %>
+          <%= form.text_field :preview_site_description, class: 'form-control' %>
+          <%= form.hidden_field :site_description %>
+        </div>
       </div>
     </div>
   </div>
   <hr/>
-  <div class="field form-group">
+  <div class="field">
     <h4>Images</h4>
     <div class="row">
       <div class="col-xs-12">
-
-        <%= form.label 'Change Logo' %>
-        <%= form.file_field :logo %>
-
+        <div class="form-group">
+          <%= form.label 'Change Logo' %>
+          <%= form.file_field :logo %>
+        </div>
+        <div class="form-group">
+          <%= form.label 'Add Hero Image' %>
+          <%= form.file_field :hero_image %>
+        </div>
       </div>
     </div>
   </div>
   <hr/>
-  <div class="field form-group">
+  <div class="field ">
     <h4>Colors</h4>
     <div class="row">
       <div class="col-xs-12">
-        <%= form.label :primary_color %>
-        <%= form.color_field :preview_primary_color, class: 'form-control' %>
-        <%= form.hidden_field :primary_color %>
-      </div>
-      <div class="col-xs-12">
-        <%= form.label :accent_color %>
-        <%= form.color_field :preview_accent_color, class: 'form-control' %>
-        <%= form.hidden_field :accent_color %>
+        <div class="form-group">
+          <%= form.label :primary_color %>
+          <%= form.color_field :preview_primary_color, class: 'form-control' %>
+          <%= form.hidden_field :primary_color %>
+        </div>
+        <div class="form-group">
+          <%= form.label :accent_color %>
+          <%= form.color_field :preview_accent_color, class: 'form-control' %>
+          <%= form.hidden_field :accent_color %>
+        </div>
       </div>
     </div>
   </div>
@@ -61,21 +67,23 @@
   <div class="field form-group">
     <div class="row">
       <div class="col-xs-12">
-        <%= form.label :primary_text_color %>
-        <%= form.color_field :preview_primary_text_color, class: 'form-control' %>
-        <%= form.hidden_field :primary_text_color %>
-      </div>
+        <div class="form-group">
+          <%= form.label :primary_text_color %>
+          <%= form.color_field :preview_primary_text_color, class: 'form-control' %>
+          <%= form.hidden_field :primary_text_color %>
+        </div>
 
-      <div class="col-xs-12">
-        <%= form.label :accent_text_color %>
-        <%= form.color_field :preview_accent_text_color, class: 'form-control' %>
-        <%= form.hidden_field :accent_text_color %>
-      </div>
+        <div class="form-group">
+          <%= form.label :accent_text_color %>
+          <%= form.color_field :preview_accent_text_color, class: 'form-control' %>
+          <%= form.hidden_field :accent_text_color %>
+        </div>
 
-      <div class="col-xs-12">
-        <%= form.label :background_color %>
-        <%= form.color_field :preview_background_color, class: 'form-control' %>
-        <%= form.hidden_field :background_color %>
+        <div class="form-group">
+          <%= form.label :background_color %>
+          <%= form.color_field :preview_background_color, class: 'form-control' %>
+          <%= form.hidden_field :background_color %>
+        </div>
       </div>
     </div>
   </div>
