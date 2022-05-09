@@ -43,6 +43,7 @@ class ThemesController < ApplicationController
     if params[:reset] == "true"
       params[:theme] = Theme::DEFAULTS
       @theme.logo.purge
+      @theme.hero_image.purge
       @theme.reset_preview_to_defaults
     end
 
@@ -75,6 +76,7 @@ class ThemesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def theme_params
     params.require(:theme).permit(Theme::DEFAULTS.keys << :logo)
+    params.require(:theme).permit(Theme::DEFAULTS.keys << :hero_image)
   end
 
   # Restrict theme access to admins
