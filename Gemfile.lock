@@ -1019,7 +1019,7 @@ DEPENDENCIES
   okcomputer
   pg (~> 1.0)
   puma (~> 4.3)
-  rails (~> 5.2.6)
+  rails (~> 5.2.7)
   rails-controller-testing
   redis (~> 4.0)
   riiif (~> 2.1)
