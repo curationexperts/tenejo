@@ -80,7 +80,6 @@ class Theme < ApplicationRecord
   def ensure_hero_image
     return if hero_image.attached?
     hero_image.attach(
-    hero_image_upload
       io: File.open('app/assets/images/default_hero.jpg'),
       filename: 'default_hero.jpg',
 
