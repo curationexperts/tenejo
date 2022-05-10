@@ -159,7 +159,8 @@ RSpec.describe Tenejo::Preflight do
   end
 
   describe Tenejo::PFFile do
-    let(:rec) { described_class.new({}, 1, 'tmp/uploads') }
+    let(:row) { {} }
+    let(:rec) { described_class.new(row, 1, 'tmp/uploads') }
     it "is ok when blank" do
       expect(rec.valid?).not_to eq true
       expect(rec.errors[:resource_type]).to be_empty
@@ -192,6 +193,42 @@ RSpec.describe Tenejo::Preflight do
           file_name = rec.relative_path('relative/path/to/file.ext', "./spec/fixtures/images", false)
           expect(file_name).to eq '**/file.ext'
         end
+      end
+    end
+  end
+
+  describe "assigns identifiers" do
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/file_id_test.csv", "tmp/uploads") }
+    let(:hearts) { graph.root.children[0] }
+    let(:diamonds) { graph.root.children[1] }
+    let(:clubs) { graph.root.children[2] }
+    let(:spades) { graph.root.children[3] }
+    before do
+      # Ignore file existence validations for these tests
+      allow(Tenejo::PFFile).to receive(:exist?).and_return(true)
+    end
+    context "when explicit in the CSV" do
+      example "for single files", :aggregate_failures do
+        ace_of_spades = spades.files[0]
+        expect(ace_of_spades.identifier).to eq ['CARDS-0001-S-A']
+      end
+      example "for files packed in a work", :aggregate_failures do
+        king_of_clubs = clubs.files[3] # Arrays start at 0
+        expect(king_of_clubs.identifier).to eq ['CARDS-0001-C.4'] # identifier indexes start at 1
+      end
+    end
+    context "automatically when absent" do
+      example "for single files" do
+        jack_of_diamonds = diamonds.files[2]
+        expect(jack_of_diamonds.identifier).to eq ['~tbd~']
+      end
+      example "for packed files" do
+        queen_of_diamonds_back = diamonds.files[4]
+        expect(queen_of_diamonds_back.identifier).to eq ['~tbd~.2']
+      end
+      example "for files packed in files" do
+        ace_of_hearts = hearts.children[0].files[0]
+        expect(ace_of_hearts.identifier).to eq ['CARDS-0001-H-A.1']
       end
     end
   end

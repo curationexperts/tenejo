@@ -70,22 +70,32 @@ module Tenejo
   end
 
   class PFFile < PreFlightObj
-    ALL_FIELDS = [:parent, :file, :files, :resource_type, :visibility].freeze
+    ALL_FIELDS = [:parent, :file, :files, :resource_type, :visibility, :identifier].freeze
     REQUIRED_FIELDS = [:parent, :file].freeze
     attr_accessor(*ALL_FIELDS)
     attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
     validates_each :file, allow_blank: true, allow_nil: true do |rec, att, val|
-      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") unless File.exist?(File.join(rec.import_path, val))
+      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") unless PFFile.exist?(rec, val)
     end
     validates_each :resource_type, allow_blank: true, allow_nil: true do |rec, _att, val|
       rec.warnings[:resource_type] << "Resource type \"#{val}\" on line #{rec.lineno} is not recognized and will be left blank." unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
     end
 
+    def self.exist?(rec, val)
+      File.exist?(File.join(rec.import_path, val))
+    end
+
     def self.unpack(row, lineno, import_root)
       cp = row.dup
+      index = 1
+      packed = row[:files].include?("|~|")
+      base_id = row[:identifier]
+      base_id = row[:identifier] = '~tbd~' if base_id.blank?
       files = row[:files].split("|~|").map do |f|
         cp[:files] = f
+        cp[:identifier] = "#{base_id}.#{index}" if packed
+        index += 1
         PFFile.new(cp, lineno, import_root)
       end
       files
@@ -147,7 +157,6 @@ module Tenejo
     def unpack_files_from_work(row, lineno, import_path)
       files = CSV::Row.new(row.headers, row.fields)
       files[:parent] = files[:identifier]
-      files[:identifier] = "auto"
       files[:object_type] = "file"
       PFFile.unpack(files, lineno, import_path)
     end
