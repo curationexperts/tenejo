@@ -218,13 +218,15 @@ RSpec.describe Tenejo::Preflight do
       end
     end
     context "automatically when absent" do
+      let(:a_noid_pattern) { /^[a-z0-9]{9}/ }
       example "for single files" do
         jack_of_diamonds = diamonds.files[2]
-        expect(jack_of_diamonds.identifier).to eq ['~tbd~']
+        expect(jack_of_diamonds.identifier.first).to match a_noid_pattern
       end
       example "for packed files" do
         queen_of_diamonds_back = diamonds.files[4]
-        expect(queen_of_diamonds_back.identifier).to eq ['~tbd~.2']
+        expect(queen_of_diamonds_back.identifier.first).to match a_noid_pattern
+        expect(queen_of_diamonds_back.identifier.first).to match(/\.2$/) # i.e. end in '.2'
       end
       example "for files packed in files" do
         ace_of_hearts = hearts.children[0].files[0]
