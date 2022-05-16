@@ -44,7 +44,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'hydra-role-management', '~> 1.0', '>= 1.0.3'
-gem 'hyrax', '3.1.0'
+gem 'hyrax'
 
 gem 'bootstrap-sass', '~> 3.0'
 gem 'devise'
