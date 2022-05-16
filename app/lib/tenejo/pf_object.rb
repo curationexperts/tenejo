@@ -91,7 +91,7 @@ module Tenejo
       index = 1
       packed = row[:files].include?("|~|")
       base_id = row[:identifier]
-      base_id = row[:identifier] = '~tbd~' if base_id.blank?
+      base_id = row[:identifier] = FileSet.new.assign_id if base_id.blank?
       files = row[:files].split("|~|").map do |f|
         cp[:files] = f
         cp[:identifier] = "#{base_id}.#{index}" if packed
