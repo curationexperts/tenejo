@@ -10,6 +10,7 @@ table.job {
   width: 100%;
   thead { font-weight: bold; }
   .identifier { width: 25%; }
+  .item_status { width: 10%; text-align: center; }
   .lineno { width: 5%; }
   .type { width: 5%;}
   .visibility { width: 8%; }
@@ -18,7 +19,7 @@ table.job {
   .file_count { width: 3%; }
   .index { width: 5%; text-align: center; }
   .title { width:26%; }
-  .filename { width:23%; }
+  .filename { width:13%; }
 }
 
 .file-name {
