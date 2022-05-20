@@ -48,7 +48,7 @@ RSpec.describe Tenejo::CsvImporter do
     csv_import.import
 
     expect(csv_import).to have_received(:create_or_update_collection).exactly(3).times
-    expect(csv_import).to have_received(:create_or_update_work).exactly(12).times
+    expect(csv_import).to have_received(:create_or_update_work).exactly(9).times
   end
 
   context '.create_or_update_collection' do
@@ -57,7 +57,7 @@ RSpec.describe Tenejo::CsvImporter do
     context "when collection doesn't exist" do
       # these tests are expensive, try to minimize how many we need to run
       before do
-        # Ensure a collection with the expected :identifier does not exist
+        # Ensure a collection with the expected :primary_identifier does not exist
         # Collection.where(primary_identifier_ssi: 'TEST0001').to_a.each { |c| c.destroy(eradicate: true) }
         ActiveFedora::Cleaner.clean!
         described_class.reset_default_collection_type!
@@ -144,6 +144,8 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   context '.create_or_update_work' do
+    let(:admin_set) { Hyrax::AdminSetCreateService.find_or_create_default_admin_set }
+
     context "when work doesn't exist" do
       before do
         # Ensure a work with the expected :identifier does not exist
@@ -159,13 +161,14 @@ RSpec.describe Tenejo::CsvImporter do
         expect(work.date_uploaded.in_time_zone).to be_within(1.minute).of Time.current
         expect(work.title).to eq pf_work.title
         expect(work.rights_statement).to eq ["http://rightsstatements.org/vocab/NKC/1.0/"]
+        expect(Sipity::Entity(work).workflow_state.name).to eq 'deposited'
       end
     end
 
     context "with pre-existing work" do
       before(:context) do
         ActiveFedora::Cleaner.clean!
-        # Ensure a  work with the expected :identifier exists -> 'WORK-0002'
+        # Ensure a work with the expected :identifier exists -> 'WORK-0002'
         work =
           Work.new(
             identifier: ['WORK-0002'],
@@ -181,11 +184,13 @@ RSpec.describe Tenejo::CsvImporter do
 
       it "uses the existing work instead of creating a new one" do
         csv_import = described_class.new(import_job)
+        allow(csv_import).to receive(:check_workflow)
         expect { csv_import.create_or_update_work(pf_work) }.not_to change { Work.where(primary_identifier_ssi: 'WORK-0002').count }
       end
 
       it "sets administrative data", :aggregate_failures do
         csv_import = described_class.new(import_job)
+        allow(csv_import).to receive(:check_workflow)
         csv_import.create_or_update_work(pf_work)
         work = Work.where(primary_identifier_ssi: 'WORK-0002').last
         expect(work.depositor).not_to be_nil
@@ -211,6 +216,7 @@ RSpec.describe Tenejo::CsvImporter do
 
         it "updates all of them", :aggregate_failures do
           csv_import = described_class.new(import_job)
+          allow(csv_import).to receive(:check_workflow)
           csv_import.create_or_update_work(pf_work)
           work = Work.where(primary_identifier_ssi: 'WORK-0002').last
 

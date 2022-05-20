@@ -136,6 +136,12 @@ module Tenejo
       update_work_attributes(work, pfwork)
       create_or_update_files(work, pfwork)
       save_work(work)
+      check_workflow(work)
+    end
+
+    # Sets the workflow on newly deposited works
+    def check_workflow(work)
+      Hyrax::Workflow::WorkflowFactory.create(work, {}, @job.user)
     end
 
     # Finds or creates a work by its user supplied identifier
@@ -146,7 +152,8 @@ module Tenejo
       Work.new(
         primary_identifier: primary_id.first,
         title: title,
-        depositor: job_owner
+        depositor: job_owner,
+        admin_set: admin_set_for_work
       )
     end
 
@@ -154,6 +161,7 @@ module Tenejo
       return unless work
       work_attributes_to_copy.each { |source, dest| work.send(dest, pfwork.send(source)) }
       set_work_parent(work, pfwork)
+      work.admin_set ||= admin_set_for_work
       work.rights_statement = [rights_statements.authority.search(pfwork.rights_statement.first).first["id"]]
 
       # these timestamps are the Hyrax managed fields, not rails timestamps
@@ -164,6 +172,12 @@ module Tenejo
         work.date_uploaded = Time.current
       end
       work.depositor ||= job_owner
+    end
+
+    # Returns the desired admin set for the work
+    # TODO: do something smarter than just returning the default admin set
+    def admin_set_for_work
+      @admin_set_for_work ||= AdminSet.find(Hyrax::AdminSetCreateService.find_or_create_default_admin_set.id.to_s)
     end
 
     def set_work_parent(work, pfwork)
