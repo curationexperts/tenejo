@@ -935,6 +935,8 @@ GEM
     temple (0.8.2)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
+    terser (1.1.9)
+      execjs (>= 0.3.0, < 3)
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
@@ -954,8 +956,6 @@ GEM
     tzinfo (1.2.9)
       thread_safe (~> 0.1)
     uber (0.1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8)
@@ -1037,9 +1037,9 @@ DEPENDENCIES
   sidekiq (~> 6.4)
   simplecov_json_formatter
   solr_wrapper (>= 0.3)
+  terser
   turbolinks (~> 5)
   tzinfo-data
-  uglifier (~> 4.2)
   webdrivers
   whenever
   xray-rails (~> 0.3.2)
@@ -1048,4 +1048,4 @@ RUBY VERSION
    ruby 2.7.4p191
 
 BUNDLED WITH
-   2.2.33
+   2.3.14
