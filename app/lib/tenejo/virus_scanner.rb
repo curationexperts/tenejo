@@ -6,6 +6,7 @@ module Tenejo
   #
   # @see https://github.com/kobaltz/clamby/blob/master/README.md
   class VirusScanner < Hydra::Works::VirusScanner
+    Clamby.config[:daemonize] = true if Rails.env.production?
     def infected?
       Clamby.virus?(file)
     end
