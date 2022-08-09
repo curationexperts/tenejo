@@ -108,7 +108,7 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.works[1].children.map(&:identifier)).to eq [["MPC008"]]
     end
     it "warns about disconnected  works" do
-      expect(graph.warnings).to include "Could not find parent work or collection \"NONA\" for work or collection \"MPC009\" on line 10"
+      expect(graph.warnings).to include "Could not find parent \"NONA\" on line 10; work \"MPC009\" will be created without a parent if you continue."
     end
     it "connects works and collections with parents" do
       expect(graph.collections.size).to eq 2
@@ -116,7 +116,7 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.collections.last.children.map(&:identifier)).to be_empty
     end
     it "warns when work has no parent" do
-      expect(graph.warnings).to include "Could not find parent work or collection \"NONEXISTENT\" for work or collection \"NONACOLLECTION\" on line 3"
+      expect(graph.warnings).to include "Could not find parent \"NONEXISTENT\" on line 3; collection \"NONACOLLECTION\" will be created without a parent if you continue."
     end
     it "warns files without parent in sheet" do
       expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6 - the file will be ignored"

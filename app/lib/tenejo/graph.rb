@@ -64,13 +64,24 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].children << f
       elsif f.parent.present?
-        @warnings << %/Could not find parent work or collection "#{f.parent}" for work or collection "#{f.identifier.first}" on line #{f.lineno}/
+        @warnings << %/Could not find parent "#{f.parent}" on line #{f.lineno}; #{simple_class(f)} "#{f.identifier.first}" will be created without a parent if you continue./
         @root.children << f
       else
         @root.children << f
       end
     end
     self
+  end
+
+  def simple_class(pf_obj)
+    case pf_obj
+    when Tenejo::PFWork
+      'work'
+    when Tenejo::PFCollection
+      'collection'
+    else
+      'unexpected class #{pf_obj.class}'
+    end
   end
 
   def index(c, key: :identifier)

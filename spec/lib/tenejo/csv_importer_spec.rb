@@ -26,16 +26,17 @@ RSpec.describe Tenejo::CsvImporter do
     let(:csv) { fixture_file_upload("./spec/fixtures/csv/fancy.csv") }
     # rubocop:disable RSpec/MessageSpies
     it "returns warnings" do
-      allow(File).to receive(:exist?).and_return(true)
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with(/png/).and_return(true)
       csv_import = described_class.new(import_job)
       expect(csv_import.preflight_errors).to eq []
       expect(csv_import.invalid_rows).to eq []
       expect(csv_import.preflight_warnings)
         .to contain_exactly(
               'The column "deduplication_key" is unknown, and will be ignored',
-              'Could not find parent work or collection "NONEXISTENT" for work or collection "NONACOLLECTION" on line 3',
+              'Could not find parent "NONEXISTENT" on line 3; collection "NONACOLLECTION" will be created without a parent if you continue.',
               'Could not find parent work "WHUT?" for file "MN-02 2.png" on line 6 - the file will be ignored',
-              'Could not find parent work or collection "NONA" for work or collection "MPC009" on line 10'
+              'Could not find parent "NONA" on line 10; work "MPC009" will be created without a parent if you continue.'
             )
     end
   end
