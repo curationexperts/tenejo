@@ -15,6 +15,7 @@ class Tenejo::InviteController < Devise::InvitationsController
   private
 
   def resolve_layout
-    action_name == 'edit' ? 'hyrax' : 'hyrax/dashboard'
+    # if we're accepting an invitation, don't use the dashboard layout
+    params[:user][:invitation_token] ? 'hyrax' : 'hyrax/dashboard'
   end
 end
