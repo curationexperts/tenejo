@@ -132,12 +132,6 @@ module Tenejo
       update_work_attributes(work, pfwork)
       create_or_update_files(work, pfwork)
       save_work(work)
-      check_workflow(work)
-    end
-
-    # Sets the workflow on newly deposited works
-    def check_workflow(work)
-      Hyrax::Workflow::WorkflowFactory.create(work, {}, @job.user)
     end
 
     # Finds or creates a work by its user supplied identifier
@@ -227,7 +221,10 @@ module Tenejo
     def save_work(work)
       return unless work
       begin
-        work.save! # do we need to go through the actor stack?
+        newly_created = !work.persisted?
+        work.save!
+        # Add Sipity workflow to newly created works
+        Hyrax::Workflow::WorkflowFactory.create(work, {}, @job.user) if newly_created
         # update job status table - work creation successful
       rescue
         # update job status table - work creation failed - save error to table
