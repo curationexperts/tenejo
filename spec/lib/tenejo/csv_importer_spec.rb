@@ -19,6 +19,9 @@ RSpec.describe Tenejo::CsvImporter do
       expect(csv_import).not_to receive(:create_or_update_collection)
       expect(csv_import).not_to receive(:create_or_update_work)
       csv_import.import
+
+      expect(import_job.status).to eq 'errored'
+      expect(import_job.completed_at).to be_within(1.second).of Time.current
     end
   end
 
@@ -29,6 +32,7 @@ RSpec.describe Tenejo::CsvImporter do
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with(/png/).and_return(true)
       csv_import = described_class.new(import_job)
+      expect(import_job.status).to eq 'submitted'
       expect(csv_import.preflight_errors).to eq []
       expect(csv_import.invalid_rows).to eq []
       expect(csv_import.preflight_warnings)
@@ -50,6 +54,12 @@ RSpec.describe Tenejo::CsvImporter do
 
     expect(csv_import).to have_received(:create_or_update_collection).exactly(3).times
     expect(csv_import).to have_received(:create_or_update_work).exactly(9).times
+
+    expect(import_job.status).to eq 'completed'
+    expect(import_job.collections).to eq 3
+    expect(import_job.works).to eq 9
+    expect(import_job.files).to eq 17
+    expect(import_job.completed_at).to be_within(1.second).of Time.current
   end
 
   context '.create_or_update_collection' do
