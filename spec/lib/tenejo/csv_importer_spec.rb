@@ -19,6 +19,9 @@ RSpec.describe Tenejo::CsvImporter do
       expect(csv_import).not_to receive(:create_or_update_collection)
       expect(csv_import).not_to receive(:create_or_update_work)
       csv_import.import
+
+      expect(import_job.status).to eq 'errored'
+      expect(import_job.completed_at).to be_within(1.second).of Time.current
     end
   end
 
@@ -29,6 +32,7 @@ RSpec.describe Tenejo::CsvImporter do
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with(/png/).and_return(true)
       csv_import = described_class.new(import_job)
+      expect(import_job.status).to eq 'submitted'
       expect(csv_import.preflight_errors).to eq []
       expect(csv_import.invalid_rows).to eq []
       expect(csv_import.preflight_warnings)
@@ -50,6 +54,12 @@ RSpec.describe Tenejo::CsvImporter do
 
     expect(csv_import).to have_received(:create_or_update_collection).exactly(3).times
     expect(csv_import).to have_received(:create_or_update_work).exactly(9).times
+
+    expect(import_job.status).to eq 'completed'
+    expect(import_job.collections).to eq 3
+    expect(import_job.works).to eq 9
+    expect(import_job.files).to eq 17
+    expect(import_job.completed_at).to be_within(1.second).of Time.current
   end
 
   context '.create_or_update_collection' do
@@ -185,13 +195,11 @@ RSpec.describe Tenejo::CsvImporter do
 
       it "uses the existing work instead of creating a new one" do
         csv_import = described_class.new(import_job)
-        allow(csv_import).to receive(:check_workflow)
         expect { csv_import.create_or_update_work(pf_work) }.not_to change { Work.where(primary_identifier_ssi: 'WORK-0002').count }
       end
 
       it "sets administrative data", :aggregate_failures do
         csv_import = described_class.new(import_job)
-        allow(csv_import).to receive(:check_workflow)
         csv_import.create_or_update_work(pf_work)
         work = Work.where(primary_identifier_ssi: 'WORK-0002').last
         expect(work.depositor).not_to be_nil
@@ -217,7 +225,6 @@ RSpec.describe Tenejo::CsvImporter do
 
         it "updates all of them", :aggregate_failures do
           csv_import = described_class.new(import_job)
-          allow(csv_import).to receive(:check_workflow)
           csv_import.create_or_update_work(pf_work)
           work = Work.where(primary_identifier_ssi: 'WORK-0002').last
 
