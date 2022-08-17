@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   resources :checks,       only: [:index]
   resources :preflights, only: [:index, :new, :create, :show]
   resources :imports,    only: [:index, :new, :create, :show]
-  resources :users,    only: [:edit]
 
   resource :dashboard, only: [:show], controller: 'tenejo/dashboard' do
     collection do
@@ -28,6 +27,7 @@ Rails.application.routes.draw do
   devise_scope  :users do
     put "activate", to: "users#activate"
   end
+  resources :users,    only: [:edit]
 
   mount Hydra::RoleManagement::Engine => '/'
 
