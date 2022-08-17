@@ -12,7 +12,8 @@
         <% end %>
         <%= node.identifier.first %>
       </td>
-      <td class="item_status"> -- </td>
+      <% status = WorkState.where("job_id=? and row_identifier=?", @job.id, node.lineno).first %>
+      <td class="item_status"> <%=status&.status%> </td>
       <td class="lineno"><%= node.lineno %></td>
       <td class="type"><%= node.class.to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "") %></td>
       <td class="visibility"><%= node.visibility %></td>

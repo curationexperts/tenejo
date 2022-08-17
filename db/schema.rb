@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_14_174107) do
+ActiveRecord::Schema.define(version: 2022_08_17_195136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -626,6 +626,14 @@ ActiveRecord::Schema.define(version: 2022_02_14_174107) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "work_states", force: :cascade do |t|
+    t.integer "row_identifier"
+    t.string "status"
+    t.bigint "job_id"
+    t.datetime "finished_at"
+    t.index ["job_id"], name: "index_work_states_on_job_id"
+  end
+
   create_table "work_view_stats", force: :cascade do |t|
     t.datetime "date"
     t.integer "work_views"
@@ -648,4 +656,5 @@ ActiveRecord::Schema.define(version: 2022_02_14_174107) do
   add_foreign_key "permission_template_accesses", "permission_templates"
   add_foreign_key "qa_local_authority_entries", "qa_local_authorities", column: "local_authority_id"
   add_foreign_key "uploaded_files", "users"
+  add_foreign_key "work_states", "jobs"
 end

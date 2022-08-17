@@ -89,6 +89,7 @@ module Tenejo
     end
 
     def create_or_update_collection(pfcollection)
+      ws = WorkState.create!(job: @job, row_identifier: pfcollection.lineno, status: 'started')
       # put all the expensive stuff here
       # and unit test the heck out of it
       collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
@@ -98,6 +99,7 @@ module Tenejo
         collection.member_of_collections << parent
       end
       save_collection(collection)
+      ws.update(status: 'complete')
     end
 
     # Finds or creates a collection by its user supplied identifier
@@ -142,11 +144,13 @@ module Tenejo
     end
 
     def create_or_update_work(pfwork)
+      ws = WorkState.create!(job: @job, row_identifier: pfwork.lineno, status: 'started')
       # expensive stuff here
       work = find_or_new_work(pfwork.identifier, pfwork.title)
       update_work_attributes(work, pfwork)
       create_or_update_files(work, pfwork)
       save_work(work)
+      ws.update(status: 'complete')
     end
 
     # Finds or creates a work by its user supplied identifier
@@ -212,6 +216,7 @@ module Tenejo
       # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
       file_sets = pfwork.files.map do |pffile|
+        ws = WorkState.create!(job: @job, row_identifier: pffile.lineno, status: 'started')
         file_set = FileSet.new
         file_set.label = File.basename(pffile.file)
         file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
@@ -219,6 +224,7 @@ module Tenejo
         file_set.save!
         local_path = File.join(pffile.import_path, pffile.file)
         IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+        ws.update(status: 'complete')
         file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
