@@ -27,6 +27,8 @@ Rails.application.routes.draw do
   devise_scope  :users do
     put "activate", to: "users#activate"
   end
+  # This must be defined after the devise routes, or it will shadow various
+  # important routes
   resources :users,    only: [:edit]
 
   mount Hydra::RoleManagement::Engine => '/'
