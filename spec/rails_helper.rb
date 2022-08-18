@@ -46,11 +46,10 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :system
   config.include Devise::Test::IntegrationHelpers, type: :request
 
-  # Stub out anti-virus checks
   config.before do |_example|
-    class_double("Clamby")
-    allow(Clamby).to receive(:virus?).and_return(false)
-    allow(Clamby).to receive(:safe?).and_return(true)
+    class_double(Tenejo::VirusScanner)
+    allow(Tenejo::VirusScanner).to receive(:infected?).and_return(false)
+    allow(Tenejo::VirusScanner).to receive(:infected?).and_return(true)
   end
 
   # Ensure a default Theme exists for all tests

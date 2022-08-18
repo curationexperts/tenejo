@@ -24,7 +24,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active-fedora (13.2.7)
+    active-fedora (13.3.0)
       active-triples (>= 0.11.0, < 2.0.0)
       activemodel (>= 5.1)
       activesupport (>= 5.1)
@@ -179,7 +179,6 @@ GEM
       ssrf_filter (~> 1.0)
     childprocess (4.1.0)
     chronic (0.10.2)
-    clamby (1.6.6)
     clipboard-rails (1.7.1)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -482,7 +481,7 @@ GEM
       signet
       tinymce-rails
       valkyrie (~> 2, >= 2.1.1)
-    i18n (1.10.0)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     iiif-image-api (0.2.0)
@@ -506,13 +505,13 @@ GEM
       railties (>= 3.2.16)
     json (2.6.2)
     json-canonicalization (0.3.0)
-    json-ld (3.2.1)
+    json-ld (3.2.3)
       htmlentities (~> 4.3)
       json-canonicalization (~> 0.3)
       link_header (~> 0.0, >= 0.0.8)
       multi_json (~> 1.15)
       rack (~> 2.2)
-      rdf (~> 3.2)
+      rdf (~> 3.2, >= 3.2.9)
     json-ld-preloaded (3.2.0)
       json-ld (~> 3.2)
       rdf (~> 3.2)
@@ -608,11 +607,11 @@ GEM
     mime-types-data (3.2022.0105)
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    minitest (5.15.0)
+    minitest (5.16.3)
     msgpack (1.4.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
-    multipart-post (2.1.1)
+    multipart-post (2.2.3)
     nest (3.2.0)
       redic
     net-http-persistent (4.0.1)
@@ -661,7 +660,7 @@ GEM
       rails (>= 5.0, < 6.2)
       rdf
     racc (1.6.0)
-    rack (2.2.3.1)
+    rack (2.2.4)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (5.2.8)
@@ -699,7 +698,7 @@ GEM
     rb-fsevent (0.11.1)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rdf (3.2.7)
+    rdf (3.2.9)
       link_header (~> 0.0, >= 0.0.8)
     rdf-aggregate-repo (3.2.0)
       rdf (~> 3.2)
@@ -754,7 +753,7 @@ GEM
     rdf-trix (3.2.0)
       rdf (~> 3.2)
       rdf-xsd (~> 3.2)
-    rdf-turtle (3.2.0)
+    rdf-turtle (3.2.1)
       ebnf (~> 2.3)
       rdf (~> 3.2)
     rdf-vocab (3.2.1)
@@ -1007,7 +1006,6 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capybara
-  clamby
   coffee-rails (~> 4.2)
   coveralls
   devise
