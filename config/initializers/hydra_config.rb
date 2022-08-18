@@ -2,7 +2,7 @@
 require 'hydra/head' unless defined? Hydra
 require './lib/servlet_characterization_service'
 
-CharacterizeJob.characterization_service = ServletCharacterizationService
+CharacterizeJob.characterization_service = ServletCharacterizationService if ENV['FITS_SERVLET_URL']
 
 Hydra.configure do |config|
   # This specifies the solr field names of permissions-related fields.
