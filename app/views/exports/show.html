@@ -1,0 +1,67 @@
+<%# Sample Breadcrumb %>
+<nav class="breadcrumb" role="navigation">
+	<ol>
+		<li><a href="/?locale=en">Home</a></li>
+		<li><a href="/dashboard?locale=en">Dashboard</a></li>
+		<li><a href="/dashboard/jobs?locale=en">Export</a></li>
+	</ol>
+</nav>
+
+<div class="card card--job">
+	<h2 class="card-header">
+		Exports Job #<%= @job&.id %>
+		<span class="badge rounded-pill bg-success bg-warning bg-danger"
+			><%= @job&.status || 'Unknown'%></span
+		>
+	</h2>
+
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="row">
+					<dl class="col-md-4">
+						<dt>User</dt>
+						<dd><%= @job&.user %></dd>
+					</dl>
+					<dl class="col-md-4">
+						<dt>Submitted At</dt>
+						<dd><%= @job&.created_at %></dd>
+					</dl>
+					<dl class="col-md-4">
+						<dt>Completed at</dt>
+
+						<dd><%= @job&.completed_at || '--' %></dd>
+
+						<dd></dd>
+					</dl>
+				</div>
+				<div class="row">
+					<dl class="col-md-12 filename">
+						<dt>File</dt>
+						<dd>
+							<% if @job&.manifest&.attached? %> <%=
+							link_to(@job.manifest.filename, rails_blob_path(@job.manifest,
+							disposition: 'attachment')) %> <% else %> -- <% end %>
+						</dd>
+					</dl>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<dl class="row">
+					<span class="col-md-4">
+						<dt>Collections</dt>
+						<dd class="job-number"><%= @job&.collections || 'N/A' %></dd>
+					</span>
+					<span class="col-md-4">
+						<dt>Works</dt>
+						<dd class="job-number"><%= @job&.works || 'N/A' %></dd>
+					</span>
+					<span class="col-md-4">
+						<dt>Files</dt>
+						<dd class="job-number"><%= @job&.files || 'N/A' %></dd>
+					</span>
+				</dl>
+			</div>
+		</div>
+	</div>
+</div>

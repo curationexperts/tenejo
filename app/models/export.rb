@@ -1,0 +1,2 @@
+class Export < Job
+end
