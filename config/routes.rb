@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'sidekiq/web'
 Rails.application.routes.draw do
+  resources :exports, only:[:index, :new, :create, :show]
   resource :theme, only: [:edit, :update]
   resources :jobs,       only: [:index, :new, :show]
   resources :checks,       only: [:index]
