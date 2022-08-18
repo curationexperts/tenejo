@@ -27,8 +27,9 @@
             <dt>Submitted At</dt>
             <dd><%= @job&.created_at %></dd>
           </dl>
-          <dt>Completed at</dt>
           <dl class="col-md-4">
+            <dt>Completed at</dt>
+          
             <dd>
               <%= @job&.completed_at || '--' %>
               <dd></dl>
@@ -47,7 +48,6 @@
             </div>
           </div>
           <div class="col-md-4">
-
             <dl class="row">
               <span class="col-md-4">
                 <dt>Collections</dt>
