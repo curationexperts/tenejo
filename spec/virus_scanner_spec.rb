@@ -5,28 +5,21 @@ require './app/lib/tenejo/virus_scanner'
 
 RSpec.describe Tenejo::VirusScanner do
   context "with clean file" do
-    let(:goodfile) { './spec/fixtures/images/cat.jpg' }
+    let(:scanner) {Tenejo::VirusScanner.new('./spec/fixtures/images/cat.jpg', "clamscan")}
     it "does not freak out" do
-      expect(described_class.new(goodfile).infected?).to be false
+      expect(scanner.infected?).to be false
     end
   end
   context "with nonexistent file" do
-    let(:badfile) { './nothere' }
-    before do
-      allow(Clamby).to receive(:virus?).and_raise(Clamby::FileNotFound)
-    end
+    let(:scanner) {Tenejo::VirusScanner.new('nofile', "clamscan")}
     it "raises" do
-      expect { described_class.new(badfile).infected? }.to raise_error Clamby::FileNotFound
+      expect { scanner.infected? }.to raise_error Exception
     end
   end
   context "with virus file" do
-    let(:badfile) { './spec/fixtures/virus_check.txt' }
-    before do
-      allow(Clamby).to receive(:virus?).and_return(true)
-    end
-
+    let(:scanner) { Tenejo::VirusScanner.new('./spec/fixtures/virus_check.txt', "clamscan") }
     it "freaks out" do
-      expect(described_class.new(badfile).infected?).to be_truthy
+      expect(scanner.infected?).to be_truthy
     end
   end
 end
