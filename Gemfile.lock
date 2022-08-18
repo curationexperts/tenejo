@@ -179,7 +179,6 @@ GEM
       ssrf_filter (~> 1.0)
     childprocess (4.1.0)
     chronic (0.10.2)
-    clamby (1.6.6)
     clipboard-rails (1.7.1)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -1007,7 +1006,6 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capybara
-  clamby
   coffee-rails (~> 4.2)
   coveralls
   devise

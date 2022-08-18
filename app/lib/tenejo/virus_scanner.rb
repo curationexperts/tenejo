@@ -1,14 +1,26 @@
 # frozen_string_literal: true
-require 'clamby/error'
 module Tenejo
   ##
-  # A Clamby based virus scanner
-  #
-  # @see https://github.com/kobaltz/clamby/blob/master/README.md
+  # This implementation simply calls out to clamdscan (or whatever else you pass in to the executable arg)
+  ##
   class VirusScanner < Hydra::Works::VirusScanner
-    Clamby.config[:daemonize] = true if Rails.env.production?
+    def initialize(file, executable = "clamdscan")
+      super file
+      @executable = executable
+    end
+
     def infected?
-      Clamby.virus?(file)
+      system(format("%s --no-summary --quiet '%s'", @executable, file))
+      case $CHILD_STATUS.exitstatus
+      when 0 # no vir
+        false
+      when 1 # vir found
+        true
+      when 2 # something else
+        raise "File not found `#{file}`"
+      else
+        raise "Unknown exit code #{$CHILD_STATUS.exitstatus}" # Very something else
+      end
     end
   end
 end

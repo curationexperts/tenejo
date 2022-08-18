@@ -4,29 +4,24 @@ require 'rails_helper'
 require './app/lib/tenejo/virus_scanner'
 
 RSpec.describe Tenejo::VirusScanner do
+  executable = ENV.fetch('CLAMSCAN_EXEC', "clamscan")
+  puts "executable: #{executable}"
   context "with clean file" do
-    let(:goodfile) { './spec/fixtures/images/cat.jpg' }
+    let(:scanner) { described_class.new('./spec/fixtures/images/cat.jpg', executable) }
     it "does not freak out" do
-      expect(described_class.new(goodfile).infected?).to be false
+      expect(scanner.infected?).to be false
     end
   end
   context "with nonexistent file" do
-    let(:badfile) { './nothere' }
-    before do
-      allow(Clamby).to receive(:virus?).and_raise(Clamby::FileNotFound)
-    end
+    let(:scanner) { described_class.new('nofile', executable) }
     it "raises" do
-      expect { described_class.new(badfile).infected? }.to raise_error Clamby::FileNotFound
+      expect { scanner.infected? }.to raise_error Exception
     end
   end
   context "with virus file" do
-    let(:badfile) { './spec/fixtures/virus_check.txt' }
-    before do
-      allow(Clamby).to receive(:virus?).and_return(true)
-    end
-
+    let(:scanner) { described_class.new('./spec/fixtures/virus_check.txt', executable) }
     it "freaks out" do
-      expect(described_class.new(badfile).infected?).to be_truthy
+      expect(scanner.infected?).to be_truthy
     end
   end
 end
