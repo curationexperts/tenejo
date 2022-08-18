@@ -12,6 +12,9 @@ require_relative 'support/controller_macros'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'capybara/rails'
 
+# use this in specs to avoid actually using a working virus scanner during tests (very slow)
+Hyrax.config.virus_scanner = Hyrax::VirusScanner
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -42,6 +45,12 @@ RSpec.configure do |config|
   # Enable sign_in and sign_out functionality in specs
   config.include Devise::Test::IntegrationHelpers, type: :system
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  config.before do |_example|
+    class_double(Tenejo::VirusScanner)
+    allow(Tenejo::VirusScanner).to receive(:infected?).and_return(false)
+    allow(Tenejo::VirusScanner).to receive(:infected?).and_return(true)
+  end
 
   # Ensure a default Theme exists for all tests
   config.before(:suite) { Theme.where(id: 1).first_or_create! }
