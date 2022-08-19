@@ -2,12 +2,31 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+#jobs-index {
+  td, th { padding: 5px; }
+}
+
+table.job {
+  width: 100%;
+  .identifier { width: 25%; }
+  .item_status { width: 10%; text-align: center; }
+  .lineno { width: 5%; }
+  .type { width: 5%;}
+  .visibility { width: 8%; }
+  .collection_count { width: 3%; }
+  .work_count { width: 3%; }
+  .file_count { width: 3%; }
+  .index { width: 5%; text-align: center; }
+  .title { width:26%; }
+  .filename { width:13%; }
+}
 .file-name {
   padding-left: 1.5rem;
   font-style: italic;
 }
 
-.card.card--job {
+.card.card--job,
+.card.card-default {
   border: 1px solid rgba(98, 105, 118, 0.16);
   box-shadow: 0px 2px 4px rgba(30, 41, 59, 0.04);
   margin-bottom: 3rem;
@@ -19,6 +38,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 0;
   }
   .badge {
     padding: 0.7rem 1.2rem;
@@ -38,14 +58,20 @@
     background-color: rgba(254, 216, 0, 0.1);
     color: #927c00;
   }
+  .bg-info{
+    color: #000!important;
+    background-color: rgba(217, 237, 247, 0.5)!important;
+  }
   .card-body {
     padding: 2rem;
+  }
+  h1,h2,h3,h4,h5,h6{
+    margin-top: 0;
   }
   h2 {
     font-weight: 600;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    margin-top: 0;
 
     color: #1e293b;
   }
