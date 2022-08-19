@@ -228,7 +228,7 @@ module Tenejo
       #       Hyrax.publisher.publish('file.set.attached', file_set: file_set, user: user)
       #       Hyrax.publisher.publish('object.metadata.updated', object: file_set, user: user)
       #     end"
-      work.ordered_members = file_sets
+      work.ordered_members.concat(file_sets)
       work.thumbnail ||= file_sets.first
       work.representative ||= file_sets.first
     end
