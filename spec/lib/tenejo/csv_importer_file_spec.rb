@@ -88,7 +88,7 @@ RSpec.describe Tenejo::CsvImporter do
     ace_of_hearts = Work.where(primary_identifier_ssi: 'CARDS-AH').last
     expect(ace_of_hearts.title).to eq ['Ace of Hearts']
     expect(ace_of_hearts.description).to eq ['No Jokers here'] # changed from 'A pre-existing work'
-    expect(ace_of_hearts.file_sets.count).to eq 3 # added 2 file_sets during import
+    expect(ace_of_hearts.ordered_members.to_a.size).to eq 2 # started with 1 and added 1 during import
     expect(ace_of_hearts.modified_date).not_to eq ace_of_hearts.create_date # modified_date should have been modified by the importer
   end
 end
