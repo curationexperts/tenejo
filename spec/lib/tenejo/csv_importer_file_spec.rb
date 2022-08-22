@@ -14,6 +14,9 @@ RSpec.describe Tenejo::CsvImporter do
     ActiveJob::Base.queue_adapter = :test
     @old_perform_enqueued_jobs = ActiveJob::Base.queue_adapter.perform_enqueued_jobs
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = true
+    ace_of_hearts = Work.new(title: ['Ace of Hearts'], primary_identifier: 'CARDS-AH', description: ['A pre-existing work'], rights_statement: ["http://rightsstatements.org/vocab/NoC-OKLR/1.0/"])
+    ace_of_hearts.ordered_members << FileSet.create!
+    ace_of_hearts.save!
 
     job_owner = User.find_by(email: 'admin@example.org') || User.create(email: 'admin@example.org', password: 'abcd5678')
     csv = fixture_file_upload("./spec/fixtures/csv/file_test.csv")
@@ -79,5 +82,13 @@ RSpec.describe Tenejo::CsvImporter do
 
   it 'sets representative media' do
     expect(jokers.representative).to eq joker_1_front
+  end
+
+  it 'adds files to existing works', :aggregate_failures do
+    ace_of_hearts = Work.where(primary_identifier_ssi: 'CARDS-AH').last
+    expect(ace_of_hearts.title).to eq ['Ace of Hearts']
+    expect(ace_of_hearts.description).to eq ['No Jokers here'] # changed from 'A pre-existing work'
+    expect(ace_of_hearts.ordered_members.to_a.size).to eq 2 # started with 1 and added 1 during import
+    expect(ace_of_hearts.modified_date).not_to eq ace_of_hearts.create_date # modified_date should have been modified by the importer
   end
 end

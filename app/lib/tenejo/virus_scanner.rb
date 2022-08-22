@@ -4,7 +4,7 @@ module Tenejo
   # This implementation simply calls out to clamdscan (or whatever else you pass in to the executable arg)
   ##
   class VirusScanner < Hydra::Works::VirusScanner
-    def initialize(file, executable = "clamdscan")
+    def initialize(file, executable = ENV.fetch('CLAMSCAN_EXEC', 'clamscan'))
       super file
       @executable = executable
     end

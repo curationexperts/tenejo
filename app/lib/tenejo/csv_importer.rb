@@ -69,12 +69,12 @@ module Tenejo
 
     def ensure_thumbnails(node)
       return unless node.class == Tenejo::PFWork
-      work = Work.where(primary_identifer_ssi: node.primary_identifier).first
+      work = Work.where(primary_identifier_ssi: node.identifier.first).last
       unless work
-        @logger.error "CSV Importer couldn't find Work with primary_id #{node&.primary_identifier} to attach thumbnail"
+        @logger.error "CSV Importer couldn't find Work with primary_id #{node&.identifier} to attach thumbnail"
         return
       end
-      return if work&.thumbnail_id && work&.representative_id
+      return if work&.thumbnail_id && work&.representative_id # bypasses re-saving if there are no changes
       work.thumbnail_id ||= work.ordered_members.to_a.first&.thumbnail_id
       work.representative_id ||= work.ordered_members.to_a.first&.representative_id
       work.save!
@@ -234,7 +234,7 @@ module Tenejo
       #       Hyrax.publisher.publish('file.set.attached', file_set: file_set, user: user)
       #       Hyrax.publisher.publish('object.metadata.updated', object: file_set, user: user)
       #     end"
-      work.ordered_members = file_sets
+      work.ordered_members.concat(file_sets)
       work.thumbnail ||= file_sets.first
       work.representative ||= file_sets.first
     end
