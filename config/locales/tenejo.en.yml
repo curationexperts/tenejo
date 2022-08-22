@@ -5,4 +5,6 @@ en:
       sidebar:
         jobs: Jobs
         preflight: Preflight
+        imports: Import
+        exports: Export
         theme: Theme

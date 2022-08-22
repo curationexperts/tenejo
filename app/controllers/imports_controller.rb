@@ -7,12 +7,15 @@ class ImportsController < JobsController
   end
 
   def new
+    super
     redirect_to new_preflight_path
   end
 
   def show
+    super
     import_graph = Tenejo::Preflight.process_csv(@job.manifest.download)
     @root = import_graph.root
+    add_breadcrumb (I18n.t('tenejo.admin.sidebar.imports' ) + ' #' + params[:id].to_s), @job
   end
 
   def create
