@@ -1,12 +1,3 @@
-<%# Sample Breadcrumb %>
-<nav class="breadcrumb" role="navigation">
-  <ol>
-    <li><a href="/?locale=en">Home</a></li>
-    <li><a href="/dashboard?locale=en">Dashboard</a></li>
-    <li><a href="/dashboard/jobs?locale=en">Preflight</a></li>
-  </ol>
-</nav>
-
 <div class="card card--job">
   <h2 class="card-header">Preflight Job #<%= @job&.id %>
     <span class="badge rounded-pill bg-success bg-warning bg-danger"><%= @job&.status || 'Unknown'%></span>
