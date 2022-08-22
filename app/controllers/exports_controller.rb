@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExportsController < JobsController
   with_themed_layout 'dashboard'
 
@@ -11,6 +13,4 @@ class ExportsController < JobsController
 
   def show
   end
-
-  
 end
