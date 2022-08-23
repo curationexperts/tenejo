@@ -1,69 +1,88 @@
-<h1>Import Job #<%= @job&.id %></h1>
+<%# Sample Breadcrumb %>
+<nav class="breadcrumb" role="navigation">
+  <ol>
+    <li><a href="/?locale=en">Home</a></li>
+    <li><a href="/dashboard?locale=en">Dashboard</a></li>
+    <li><a href="/dashboard/jobs?locale=en">Jobs</a></li>
+  </ol>
+</nav>
 
-<%# JOB OVERVIEW %>
-<div id="import-user"><p>
-  <strong>User:</strong>
-  <%= @job&.user %>
-</p></div>
+<div class="card card--job">
+  <h2 class="card-header">Import Job #<%= @job&.id %>
+    <span class="jobs-status badge rounded-pill bg-success bg-warning bg-danger"><%= @job&.status || 'Unknown'%></span>
+  </h2>
 
-<div id="import-manifest"><p>
-  <strong>File:</strong>
-  <% if @job&.parent_job&.manifest&.attached? %>
-    <%= link_to(@job&.parent_job.manifest.filename, rails_blob_path(@job&.parent_job.manifest, disposition: 'attachment')) %>
-  <% else %>
-    --
-  <% end %>
-</p></div>
+  <div class="card-body">
 
-<div id="import-created_at"><p>
-  <strong>Submitted:</strong>
-  <%= @job&.created_at %>
-</p></div>
+    <div class="row">
 
-<div id="import-status"><p>
-  <strong>Status:</strong>
-  <%= @job&.status || 'Unknown'%>
-</p></div>
+      <div class="col-md-8">
+        <div class="row">
 
-<div id="import-completed_at"><p>
-  <strong>Completed at:</strong>
-  <%= @job&.completed_at || '--' %>
-</p></div>
-
-<div id="import-collections"><p>
-  <strong>Collections:</strong>
-  <%= @job&.collections || '--' %>
-</p></div>
-
-<div id="import-works"><p>
-  <strong>Works:</strong>
-  <%= @job&.works || '--' %>
-</p></div>
-
-<div id="import-files"><p>
-  <strong>Files:</strong>
-  <%= @job&.files || '--' %>
-</p></div>
-
-<table class="job">
-  <thead>
-    <td class="identifier">Identifier</td>
-    <td class="item_status">Status</td>
-    <td class="lineno">Row</td>
-    <td class="type">Type</td>
-    <td class="visibility">Visibility</td>
-    <td class="collection_count">cs</td>
-    <td class="work_count">ws</td>
-    <td class="file_count">fs</td>
-    <td class="index">Order</td>
-    <td class="title">title <span class="file-name">/ filename</span></td>
-    <td class="filename">filename</td>
-  </thead>
-  <tbody></tbody>
-</table>
+          <dl class="col-md-4">
+            <dt>User</dt>
+            <dd class="jobs-user"><%= @job&.user %></dd>
+          </dl>
+          <dl class="col-md-4">
+            <dt>Submitted At</dt>
+            <dd class="jobs-created_at"><%= @job&.created_at %></dd>
+          </dl>
+          <dl class="col-md-4">
+            <dt>Completed at</dt>
+          
+            <dd class="jobs-completed_at">
+              <%= @job&.completed_at || '--' %>
+              <dd></dl>
+            </div>
+            <div class="row">
+              <dl class="col-md-12 filename">
+                <dt>File</dt>
+                <dd class="job-manifest">
+                  <% if @job&.parent_job&.manifest&.attached? %>
+                    <%= link_to(@job&.parent_job.manifest.filename, rails_blob_path(@job&.parent_job.manifest, disposition: 'attachment'), class: "card-link") %>
+                  <% else %>
+                    --
+                  <% end %>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <dl class="row">
+              <span class="col-md-4">
+                <dt>Collections</dt>
+                <dd class="job-number jobs-collections"><%= @job&.collections || 'N/A' %></dd>
+              </span>
+              <span class="col-md-4">
+                <dt>Works</dt>
+                <dd class="job-number jobs-works"><%= @job&.works || 'N/A' %></dd>
+              </span>
+              <span class="col-md-4">
+                <dt>Files</dt>
+                <dd class="job-number jobs-files"><%= @job&.files || 'N/A' %></dd>
+              </span>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+    <table class="table table-responsive table-striped job">
+      <thead>
+        <th class="item_status">Status</th>
+        <th class="lineno">Row</th>
+        <th class="type">Type</th>
+        <th class="visibility">Visibility</th>
+        <th class="collection_count">cs</th>
+        <th class="work_count">ws</th>
+        <th class="file_count">fs</th>
+        <th class="index">Order</th>
+        <th class="title">title
+          <span class="file-name">/ filename</span>
+        </th>
+        <th class="filename">filename</th>
+      </thead>
+      <tbody></tbody>
+    </table>
     <% @root.children.each do |child| %>
       <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
     <% end %>
-
-<br/>
-<%= link_to 'Back', jobs_path, class: 'btn btn-default ' %>
