@@ -10,6 +10,7 @@ class JobsController < ApplicationController
     @jobs = Job.order(id: :desc)
     add_breadcrumb I18n.t('hyrax.controls.home'), hyrax.root_path
     add_breadcrumb I18n.t('hyrax.dashboard.title'), hyrax.dashboard_path if user_signed_in?
+    add_breadcrumb I18n.t('tenejo.admin.sidebar.jobs'), jobs_path
   end
 
   # GET /jobs/1 or /jobs/1.json
