@@ -5,7 +5,6 @@ RSpec.describe "imports/show", type: :view do
   let(:admin) { FactoryBot.create(:user) }
   let(:tempfile) { fixture_file_upload('csv/empty.csv') }
   let(:completion_time) { Time.current.round }
-  let(:import_job) { Import.new(user: admin, parent_job: preflight) }
   let(:preflight) {
     Preflight.new(
       id: 8_675_309,
@@ -17,10 +16,11 @@ RSpec.describe "imports/show", type: :view do
       files: 17
     )
   }
+  let(:import_job) { Import.create!(user: admin, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download)) }
 
   it "renders attributes", :aggregate_failures do
     @job = import_job
-    @root = Tenejo::Graph.new.root
+    @root = {}
     render
     expect(rendered).to have_selector('#import-user', text: admin)
     expect(rendered).to have_selector('#import-manifest', text: 'empty.csv')
@@ -35,7 +35,7 @@ RSpec.describe "imports/show", type: :view do
 
   it "handles missing attributes gracefully" do
     @job = nil
-    @root = Tenejo::Graph.new.root
+    @root = {}
     expect { render }.not_to raise_error
   end
 

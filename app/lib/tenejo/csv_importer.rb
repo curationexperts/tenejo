@@ -9,10 +9,11 @@ module Tenejo
       t
     end
 
-    def initialize(import_job, _import_path = csv_import_file_root)
+    def initialize(import_job)
       @job = import_job
       @graph = Tenejo::Graph.new
       @graph.attributes = @job.graph # comes out of db as hash
+      @job.graph = @graph
       @root = Tenejo::PreFlightObj.new
       @root.attributes = @graph.root
       @children = @root.children.map { |x| typify(x) }
@@ -46,7 +47,7 @@ module Tenejo
     def import
       return if fatal_errors(@graph)
       @job.status = :in_progress
-      @job.save
+      @job.save!
       @children.each do |child|
         instantiate(child)
       end
@@ -79,7 +80,7 @@ module Tenejo
 
     def ensure_thumbnails(node)
       return unless node.class == Tenejo::PFWork
-      work = Work.where(primary_identifier_ssi: node.identifier.first).last
+      work = Work.where(primary_identifier_ssi: node.identifier.first)&.last
       unless work
         @logger.error "CSV Importer couldn't find Work with primary_id #{node&.identifier} to attach thumbnail"
         return
@@ -110,6 +111,7 @@ module Tenejo
 
     def update_child(child_id, status)
       child = search(@root, child_id)
+      return unless child
       child['status'] = status
       @job.graph = @graph
       @job.save!
@@ -237,12 +239,6 @@ module Tenejo
       # save the ordered list of children all at once.
     end
 
-    # this has to exist because files don't have identifiers
-    def update_file_state(filename, status)
-      child = @job.graph['children'].find { |x| x['file'] == filename }
-      child['status'] = status
-      @job.save!
-    end
 
     def create_or_update_files(work, pfwork)
       # Cases
@@ -250,8 +246,7 @@ module Tenejo
       # - existing work, update files - NOT IMPLEMENTED YET
       # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
-      file_sets = pfwork.files.map do |pffile|
-        update_filestate(pffile.file, 'started')
+      file_sets = pfwork.files.map{|x| typify(x)}.map do |pffile|
         file_set = FileSet.new
         file_set.label = File.basename(pffile.file)
         file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
@@ -259,7 +254,6 @@ module Tenejo
         file_set.save!
         local_path = File.join(pffile.import_path, pffile.file)
         IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
-        update_filestate(pffile.file, 'complete')
         file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications

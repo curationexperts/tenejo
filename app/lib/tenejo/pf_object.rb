@@ -27,7 +27,7 @@ module Tenejo
       { lineno: nil, children: [], visibility: nil, warnings: [], type: nil, status: 'not_started' }
     end
 
-    def initialize(row = [], lineno = 0, type: self.class.name)
+    def initialize(row = {}, lineno = 0, type: self.class.name)
       self.lineno = lineno
       @type = type
       row.delete(:object_type)
@@ -107,6 +107,9 @@ module Tenejo
       a[:import_path] = nil
       a
     end
+    def import_path=(path)
+      @import_path=path
+    end
 
     def self.exist?(rec, val)
       File.exist?(File.join(rec.import_path, val))
@@ -127,7 +130,7 @@ module Tenejo
       files
     end
 
-    def initialize(row, lineno, import_root, strict_paths: true)
+    def initialize(row={}, lineno=0, import_root=true, strict_paths= true)
       file_name = row.to_h.delete(:files)
       row[:file] = relative_path(file_name, import_root, strict_paths)
       @import_path = import_root
@@ -158,7 +161,7 @@ module Tenejo
     end
     validates_presence_of(*REQUIRED_FIELDS)
 
-    def initialize(row = [], lineno = 0, import_path = nil, graph = nil)
+    def initialize(row = {}, lineno = 0, import_path = nil, graph = nil)
       @files = []
       @import_path = import_path
       return unless graph

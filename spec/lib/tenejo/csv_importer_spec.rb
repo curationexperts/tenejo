@@ -7,7 +7,10 @@ RSpec.describe Tenejo::CsvImporter do
   let(:job_owner) { FactoryBot.create(:user) }
   let(:csv) { fixture_file_upload("./spec/fixtures/csv/nesting_test.csv") }
   let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
-  let(:import_job)  { Import.create!(user: job_owner, parent_job: preflight) }
+  let(:import_job)  { 
+    import = Import.create!(user: job_owner, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download))
+    import
+  }
 
   context "with fatal errors", :aggregate_failures do
     let(:csv) { fixture_file_upload("./spec/fixtures/csv/empty.csv") }
@@ -46,7 +49,7 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'calls modules', :aggregate_failures do
-    csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
+    csv_import = described_class.new(import_job)
     allow(csv_import).to receive(:create_or_update_collection)
     allow(csv_import).to receive(:create_or_update_work)
 
@@ -63,7 +66,7 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   context '.create_or_update_collection' do
-    before { allow(Tenejo::Preflight).to receive(:process_csv) } # skip creating the preflight graph
+#    before { allow(Tenejo::Preflight).to receive(:process_csv) } # skip creating the preflight graph
 
     context "when collection doesn't exist" do
       # these tests are expensive, try to minimize how many we need to run
@@ -247,7 +250,8 @@ RSpec.describe Tenejo::CsvImporter do
         let(:csv) { fixture_file_upload("./spec/fixtures/csv/empty.csv") }
         it 'log an error when missing' do
           csv_import = described_class.new(import_job)
-          node = Tenejo::PFWork.new({ identifier: ['ImNotHere'] }, -1, nil, nil)
+          node = Tenejo::PFWork.new({} , -1, nil, nil)
+          node.identifier = ['ImNotHere']
 
           allow(Rails.logger).to receive(:error)
           csv_import.ensure_thumbnails(node)

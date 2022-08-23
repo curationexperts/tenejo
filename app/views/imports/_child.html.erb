@@ -14,7 +14,7 @@
       </td>
       <td class="item_status"> <%= node['status'] || '-'%> </td>
       <td class="lineno"><%= node['lineno'] %></td>
-      <td class="type"><%= node['class'].to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "shiz") %></td>
+      <td class="type"><%= node['class'].to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "") %></td>
       <td class="visibility"><%= node['visibility'] %></td>
       <td class="collection_count"> -</td>
       <td class="work_count"> -</td>

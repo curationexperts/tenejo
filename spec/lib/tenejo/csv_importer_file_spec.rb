@@ -21,8 +21,8 @@ RSpec.describe Tenejo::CsvImporter do
     job_owner = User.find_by(email: 'admin@example.org') || User.create(email: 'admin@example.org', password: 'abcd5678')
     csv = fixture_file_upload("./spec/fixtures/csv/file_test.csv")
     preflight = Preflight.create!(user: job_owner, manifest: csv)
-    import_job = Import.create!(user: job_owner, parent_job: preflight)
-    @csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
+    import_job = Import.create!(user: job_owner, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download, './spec/fixtures/images/structure_test'))
+    @csv_import = described_class.new(import_job)
     RSpec::Mocks.with_temporary_scope do
       # Suppress a legacy ActiveFedora warning: URI.escape is obsolete
       allow(URI).to receive(:encode) { |file_name| file_name }
