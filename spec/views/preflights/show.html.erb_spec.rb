@@ -13,6 +13,7 @@ RSpec.describe "preflights/show", type: :view do
       manifest: tempfile,
       status: :completed,
       completed_at: completion_time,
+      collections: 'N/A',
       works: 13,
       files: 17
     )
@@ -22,14 +23,14 @@ RSpec.describe "preflights/show", type: :view do
     assign(:job, job)
     @preflight_graph = Tenejo::Graph.new
     render
-    expect(rendered).to have_selector('#preflight-user', text: user)
-    expect(rendered).to have_selector('#preflight-manifest', text: 'empty.csv')
-    expect(rendered).to have_selector('#preflight-status', text: 'completed')
-    expect(rendered).to have_selector('#preflight-created_at', text: job.created_at)
-    expect(rendered).to have_selector('#preflight-completed_at', text: completion_time)
-    expect(rendered).to have_selector('#preflight-collections', text: '--')
-    expect(rendered).to have_selector('#preflight-works', text: '13')
-    expect(rendered).to have_selector('#preflight-files', text: '17')
+    expect(rendered).to have_selector('.job-user', text: user)
+    expect(rendered).to have_selector('.job-manifest', text: 'empty.csv')
+    expect(rendered).to have_selector('.job-status', text: 'completed')
+    expect(rendered).to have_selector('.job-created_at', text: job.created_at)
+    expect(rendered).to have_selector('.job-completed_at', text: completion_time)
+    expect(rendered).to have_selector('.job-collections', text: 'N/A')
+    expect(rendered).to have_selector('.job-works', text: '13')
+    expect(rendered).to have_selector('.job-files', text: '17')
     expect(rendered).to have_link(text: 'empty.csv')
   end
 
