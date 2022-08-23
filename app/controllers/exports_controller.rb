@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExportsController < JobsController
   with_themed_layout 'dashboard'
 
@@ -14,6 +16,4 @@ class ExportsController < JobsController
     super
     add_breadcrumb (I18n.t('tenejo.admin.sidebar.exports' ) + ' #' + params[:id].to_s), @job
   end
-
-  
 end

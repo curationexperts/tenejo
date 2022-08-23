@@ -22,14 +22,13 @@ RSpec.describe "imports/show", type: :view do
     @job = import_job
     @root = Tenejo::Graph.new.root
     render
-    expect(rendered).to have_selector('#import-user', text: admin)
-    expect(rendered).to have_selector('#import-manifest', text: 'empty.csv')
-    expect(rendered).to have_selector('#import-status', text: 'Unknown')
-    expect(rendered).to have_selector('#import-created_at', text: import_job.created_at)
-    expect(rendered).to have_selector('#import-completed_at', text: '--')
-    expect(rendered).to have_selector('#import-collections', text: '--')
-    expect(rendered).to have_selector('#import-works', text: '--')
-    expect(rendered).to have_selector('#import-files', text: '--')
+    expect(rendered).to have_selector('.jobs-user', text: admin)
+    expect(rendered).to have_selector('.jobs-status', text: 'Unknown')
+    expect(rendered).to have_selector('.jobs-created_at', text: import_job.created_at)
+    expect(rendered).to have_selector('.jobs-completed_at', text: '--')
+    expect(rendered).to have_selector('.jobs-collections', text: 'N/A')
+    expect(rendered).to have_selector('.jobs-works', text: 'N/A')
+    expect(rendered).to have_selector('.jobs-files', text: 'N/A')
     expect(rendered).to have_link(text: 'empty.csv')
   end
 

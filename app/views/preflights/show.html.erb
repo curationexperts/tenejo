@@ -1,6 +1,6 @@
 <div class="card card--job">
   <h2 class="card-header">Preflight Job #<%= @job&.id %>
-    <span class="badge rounded-pill bg-success bg-warning bg-danger"><%= @job&.status || 'Unknown'%></span>
+    <span class="job-status badge rounded-pill bg-success bg-warning bg-danger"><%= @job&.status || 'Unknown'%></span>
   </h2>
   <%# End Card Header %>
   <div class="card-body">
@@ -9,20 +9,20 @@
         <div class="row">
           <dl class="col-md-4">
             <dt>User</dt>
-            <dd><%= @job&.user %></dd>
+            <dd class="job-user"><%= @job&.user %></dd>
           </dl>
           <dl class="col-md-4">
             <dt>Submitted At</dt>
-            <dd><%= @job&.created_at %></dd>
+            <dd class="job-created_at"><%= @job&.created_at %></dd>
           </dl>
           <dl class="col-md-4">
             <dt>Completed at</dt>
-            <dd><%= @job&.completed_at || '--' %><dd></dl>
+            <dd class="job-completed_at"><%= @job&.completed_at || '--' %><dd></dl>
             </div>
             <div class="row">
               <dl class="col-md-12 filename">
                 <dt>File</dt>
-                <dd>
+                <dd class="job-manifest">
                   <% if @job&.manifest&.attached? %>
                     <%= link_to(@job.manifest.filename, rails_blob_path(@job.manifest, disposition: 'attachment')) %>
                   <% else %>
@@ -37,15 +37,15 @@
             <dl class="row">
               <span class="col-md-4">
                 <dt>Collections</dt>
-                <dd class="job-number"><%= @job&.collections || 'N/A' %></dd>
+                <dd class="job-number job-collections"><%= @job&.collections || 'N/A' %></dd>
               </span>
               <span class="col-md-4">
                 <dt>Works</dt>
-                <dd class="job-number"><%= @job&.works || 'N/A' %></dd>
+                <dd class="job-number job-works"><%= @job&.works || 'N/A' %></dd>
               </span>
               <span class="col-md-4">
                 <dt>Files</dt>
-                <dd class="job-number"><%= @job&.files || 'N/A' %></dd>
+                <dd class="job-number job-files"><%= @job&.files || 'N/A' %></dd>
               </span>
             </dl>
           </div>
