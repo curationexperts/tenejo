@@ -193,6 +193,7 @@ ActiveRecord::Schema.define(version: 2022_08_17_195136) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "parent_job_id"
+    t.jsonb "graph"
     t.index ["completed_at"], name: "index_jobs_on_completed_at"
     t.index ["parent_job_id"], name: "index_jobs_on_parent_job_id"
     t.index ["status"], name: "index_jobs_on_status"
@@ -626,14 +627,6 @@ ActiveRecord::Schema.define(version: 2022_08_17_195136) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "work_states", force: :cascade do |t|
-    t.integer "row_identifier"
-    t.string "status"
-    t.bigint "job_id"
-    t.datetime "finished_at"
-    t.index ["job_id"], name: "index_work_states_on_job_id"
-  end
-
   create_table "work_view_stats", force: :cascade do |t|
     t.datetime "date"
     t.integer "work_views"
@@ -656,5 +649,4 @@ ActiveRecord::Schema.define(version: 2022_08_17_195136) do
   add_foreign_key "permission_template_accesses", "permission_templates"
   add_foreign_key "qa_local_authority_entries", "qa_local_authorities", column: "local_authority_id"
   add_foreign_key "uploaded_files", "users"
-  add_foreign_key "work_states", "jobs"
 end

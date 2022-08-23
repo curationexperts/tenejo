@@ -6,13 +6,30 @@ module Tenejo
 
   class PreFlightObj
     include ActiveModel::Validations
-    attr_accessor :lineno, :children, :visibility
+    include ActiveModel::Serializers::JSON
+    attr_accessor :lineno, :children, :visibility, :type, :status
+
     def warnings
       @warnings ||= Hash.new { |h, k| h[k] = [] }
     end
 
-    def initialize(row, lineno)
+    def warnings=(hash)
+      @warnings = warnings.merge(hash)
+    end
+
+    def attributes=(hash)
+      hash.each do |k, v|
+        send("#{k}=", v)
+      end
+    end
+
+    def attributes
+      { lineno: nil, children: [], visibility: nil, warnings: [], type: nil, status: 'not_started' }
+    end
+
+    def initialize(row = [], lineno = 0, type: self.class.name)
       self.lineno = lineno
+      @type = type
       row.delete(:object_type)
       row.each do |field_name, value|
         set_attribute(field_name, value, lineno)
@@ -64,6 +81,10 @@ module Tenejo
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
 
+    def attributes
+      ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
+    end
+
     def self.singular_fields
       @singular_fields ||= (ALL_FIELDS - Collection.properties.select { |_k, v| v["multiple"] }.keys.map(&:to_sym)).sort
     end
@@ -80,6 +101,11 @@ module Tenejo
     end
     validates_each :resource_type, allow_blank: true, allow_nil: true do |rec, _att, val|
       rec.warnings[:resource_type] << "Resource type \"#{val}\" on line #{rec.lineno} is not recognized and will be left blank." unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
+    end
+    def attributes
+      a = ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
+      a[:import_path] = nil
+      a
     end
 
     def self.exist?(rec, val)
@@ -126,11 +152,16 @@ module Tenejo
     REQUIRED_FIELDS = (Work.required_terms + [:identifier, :visibility]).uniq.freeze
 
     attr_accessor(*ALL_FIELDS)
+
+    def attributes
+      ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
+    end
     validates_presence_of(*REQUIRED_FIELDS)
 
-    def initialize(row, lineno, import_path, graph)
+    def initialize(row = [], lineno = 0, import_path = nil, graph = nil)
       @files = []
       @import_path = import_path
+      return unless graph
       graph.files += unpack_files_from_work(row, lineno, import_path) if row[:files]
       row.delete(:files)
       super(row, lineno)

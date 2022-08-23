@@ -2,6 +2,7 @@
 require 'tenejo/pf_object'
 require 'csv'
 class Tenejo::Graph
+  include ActiveModel::Serializers::JSON
   attr_accessor :works, :collections, :files, :warnings, :invalids, :fatal_errors, :root
   def initialize
     @fatal_errors = []
@@ -11,6 +12,16 @@ class Tenejo::Graph
     @warnings = []
     @invalids = []
     @root = Tenejo::PreFlightObj.new(CSV::Row.new([:object_type], ["root"]), 0)
+  end
+
+  def attributes
+    { works: [], collections: [], files: [], warnings: [], invalids: [], fatal_errors: [], root: {} }
+  end
+
+  def attributes=(hash)
+    hash.each do |k, v|
+      send("#{k}=", v)
+    end
   end
 
   def finalize

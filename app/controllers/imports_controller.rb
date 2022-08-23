@@ -11,13 +11,16 @@ class ImportsController < JobsController
   end
 
   def show
-    import_graph = Tenejo::Preflight.process_csv(@job.manifest.download)
-    @root = import_graph.root
+    job = Job.find(params[:id])
+    g = Tenejo::Graph.new
+    g.attributes = job.graph
+    @root = g.root
   end
 
   def create
     @job = Import.new(job_params)
     @job.user = current_user
+    @job.graph = Tenejo::Preflight.process_csv(@job.manifest.download)
 
     respond_to do |format|
       if @job.save
