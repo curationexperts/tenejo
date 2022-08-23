@@ -51,15 +51,15 @@
             <dl class="row">
               <span class="col-md-4">
                 <dt>Collections</dt>
-                <dd class="job-number jobs-collections"><%= @job&.collections.nil? || 'N/A' %></dd>
+                <dd class="job-number jobs-collections"><%= @job&.collections || 'N/A' %></dd>
               </span>
               <span class="col-md-4">
                 <dt>Works</dt>
-                <dd class="job-number jobs-works"><%= @job&.works.nil? || 'N/A' %></dd>
+                <dd class="job-number jobs-works"><%= @job&.works || 'N/A' %></dd>
               </span>
               <span class="col-md-4">
                 <dt>Files</dt>
-                <dd class="job-number jobs-files"><%= @job&.files.nil? || 'N/A' %></dd>
+                <dd class="job-number jobs-files"><%= @job&.files || 'N/A' %></dd>
               </span>
             </dl>
           </div>
