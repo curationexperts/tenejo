@@ -61,7 +61,7 @@
   </thead>
   <tbody></tbody>
 </table>
-    <% @root.dig(:children)&.each do |child| %>
+    <% @root.dig('children')&.each do |child| %>
       <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
     <% end %>
 
