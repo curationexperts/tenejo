@@ -3,9 +3,19 @@
 # rubocop:todo Metrics/ClassLength
 module Tenejo
   class CsvImporter
-    def initialize(import_job, import_path = csv_import_file_root)
+    def typify(hash)
+      t = hash['type'].constantize.new
+      t.attributes = hash
+      t
+    end
+
+    def initialize(import_job)
       @job = import_job
-      @graph = Tenejo::Preflight.process_csv(import_job.manifest.download, import_path)
+      @graph = Tenejo::Graph.new
+      @graph.attributes = @job.graph # comes out of db as hash
+      @root = Tenejo::PreFlightObj.new
+      @root.attributes = @graph.root
+      @children = @root.children.map { |x| typify(x) }
       @depositor = import_job.user.user_key
       @logger = Rails.logger
       if preflight_errors.present?
@@ -36,8 +46,8 @@ module Tenejo
     def import
       return if fatal_errors(@graph)
       @job.status = :in_progress
-      @job.save
-      @graph.root.children.each do |child|
+      @job.save!
+      @children.each do |child|
         instantiate(child)
       end
       @job.collections = @graph.collections.count
@@ -50,7 +60,7 @@ module Tenejo
 
     def instantiate(node)
       create_or_update(node)
-      node.children.each do |child|
+      node.children.map { |x| typify(x) }.each do |child|
         instantiate(child)
       end
       ensure_thumbnails(node)
@@ -69,7 +79,7 @@ module Tenejo
 
     def ensure_thumbnails(node)
       return unless node.class == Tenejo::PFWork
-      work = Work.where(primary_identifier_ssi: node.identifier.first).last
+      work = Work.where(primary_identifier_ssi: node.identifier.first)&.last
       unless work
         @logger.error "CSV Importer couldn't find Work with primary_id #{node&.identifier} to attach thumbnail"
         return
@@ -88,16 +98,36 @@ module Tenejo
       @depositor
     end
 
+    def search(item, child_id)
+      found = item.children.find { |x| x['identifier'] == child_id }
+      if !found && !item.children.empty?
+        item.children.each do |x|
+          found = search(typify(x), child_id)
+        end
+      end
+      found
+    end
+
+    def update_child(child_id, status)
+      child = search(@root, child_id)
+      return unless child
+      child['status'] = status
+      @job.graph = @graph
+      @job.save!
+    end
+
     def create_or_update_collection(pfcollection)
       # put all the expensive stuff here
       # and unit test the heck out of it
+      update_child(pfcollection.identifier, 'started')
       collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
       update_collection_attributes(collection, pfcollection)
       if pfcollection.parent
         parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
-        collection.member_of_collections << parent
+        collection.member_of_collections << parent if parent
       end
       save_collection(collection)
+      update_child(pfcollection.identifier, 'complete')
     end
 
     # Finds or creates a collection by its user supplied identifier
@@ -126,8 +156,13 @@ module Tenejo
       collection.depositor ||= job_owner
 
       # set the collection parent relationship
+      update_parent(collection, pfcollection)
+    end
+
+    def update_parent(collection, pfcollection)
       return unless pfcollection.parent
       parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
+      return unless parent
       collection.member_of_collections << parent
     end
 
@@ -143,10 +178,12 @@ module Tenejo
 
     def create_or_update_work(pfwork)
       # expensive stuff here
+      update_child(pfwork.identifier, 'started')
       work = find_or_new_work(pfwork.identifier, pfwork.title)
       update_work_attributes(work, pfwork)
       create_or_update_files(work, pfwork)
       save_work(work)
+      update_child(pfwork.identifier, 'complete')
     end
 
     # Finds or creates a work by its user supplied identifier
@@ -211,7 +248,7 @@ module Tenejo
       # - existing work, update files - NOT IMPLEMENTED YET
       # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
-      file_sets = pfwork.files.map do |pffile|
+      file_sets = pfwork.files.map { |x| typify(x) }.map do |pffile|
         file_set = FileSet.new
         file_set.label = File.basename(pffile.file)
         file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]

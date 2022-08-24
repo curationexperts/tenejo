@@ -17,12 +17,10 @@ RSpec.describe BatchImportJob, type: :job do
       # This test creates a fake preflight error which causes the fastest possible import
       graph = Tenejo::Graph.new
       graph.add_fatal_error('No data was detected')
-      ActiveJob::Base.queue_adapter = :test
       import_job = Import.create!(user: user)
-      allow(import_job).to receive_message_chain('manifest.download') { 'csv placeholder' }
-      allow(Tenejo::Preflight).to receive(:process_csv).and_return(graph)
+      import_job.graph = graph
+      import_job.save!
       described_class.perform_now(import_job)
-      expect(Tenejo::Preflight).to have_received(:process_csv)
     end
   end
 end

@@ -17,8 +17,8 @@ RSpec.describe Tenejo::CsvImporter do
     job_owner = User.find_by(email: 'admin@example.org') || User.create(email: 'admin@example.org', password: 'abcd5678')
     csv = fixture_file_upload("./spec/fixtures/csv/nesting_test.csv")
     preflight = Preflight.create!(user: job_owner, manifest: csv)
-    import_job = Import.create!(user: job_owner, parent_job: preflight)
-    @csv_import = described_class.new(import_job, './spec/fixtures/images/structure_test')
+    import_job = Import.create!(user: job_owner, graph: Tenejo::Preflight.process_csv(preflight.manifest.download, './spec/fixtures/images/structure_test'), parent_job: preflight)
+    @csv_import = described_class.new(import_job)
     RSpec::Mocks.with_temporary_scope do
       # Stub file creation - test this separately in an import with fewer elements
       # This cuts the test time from over 3.5 minutes down to around 30 seconds.

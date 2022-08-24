@@ -66,6 +66,7 @@ group :test do
   gem 'webdrivers'
 end
 
+gem 'web-console', group: :development
 group :development, :test do
   gem 'bixby', '~> 3.0'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]

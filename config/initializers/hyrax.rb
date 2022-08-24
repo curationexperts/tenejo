@@ -306,7 +306,7 @@ Hyrax.config do |config|
   # See app/services/hyrax/identifier/registrar.rb for the registrar interface
   # config.identifier_registrars = {}
 end
-
+require './app/lib/hydra/file_characterization/characterizers/fits_servlet'
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"
 
 Qa::Authorities::Local.register_subauthority('subjects', 'Qa::Authorities::Local::TableBasedAuthority')
