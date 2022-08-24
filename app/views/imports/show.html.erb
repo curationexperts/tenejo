@@ -1,21 +1,10 @@
-<%# Sample Breadcrumb %>
-<nav class="breadcrumb" role="navigation">
-  <ol>
-    <li><a href="/?locale=en">Home</a></li>
-    <li><a href="/dashboard?locale=en">Dashboard</a></li>
-    <li><a href="/dashboard/jobs?locale=en">Jobs</a></li>
-  </ol>
-</nav>
-
 <div class="card card--job">
   <h2 class="card-header">Import Job #<%= @job&.id %>
     <span class="jobs-status badge rounded-pill bg-success bg-warning bg-danger"><%= @job&.status || 'Unknown'%></span>
   </h2>
 
   <div class="card-body">
-
     <div class="row">
-
       <div class="col-md-8">
         <div class="row">
 
@@ -29,7 +18,6 @@
           </dl>
           <dl class="col-md-4">
             <dt>Completed at</dt>
-          
             <dd class="jobs-completed_at">
               <%= @job&.completed_at || '--' %>
               <dd></dl>
@@ -66,23 +54,27 @@
         </div>
       </div>
     </div>
-    <table class="table table-responsive table-striped job">
-      <thead>
-        <th class="item_status">Status</th>
-        <th class="lineno">Row</th>
-        <th class="type">Type</th>
-        <th class="visibility">Visibility</th>
-        <th class="collection_count">cs</th>
-        <th class="work_count">ws</th>
-        <th class="file_count">fs</th>
-        <th class="index">Order</th>
-        <th class="title">title
-          <span class="file-name">/ filename</span>
-        </th>
-        <th class="filename">filename</th>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <% @root.children.each do |child| %>
-      <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
-    <% end %>
+    <div class="card card--job">
+      <div class="card-body">
+        <table class="table table-responsive table-striped job">
+          <thead>
+            <th class="item_status">Status</th>
+            <th class="lineno">Row</th>
+            <th class="type">Type</th>
+            <th class="visibility">Visibility</th>
+            <th class="collection_count">cs</th>
+            <th class="work_count">ws</th>
+            <th class="file_count">fs</th>
+            <th class="index">Order</th>
+            <th class="title">title
+              <span class="file-name">/ filename</span>
+            </th>
+            <th class="filename">filename</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <% @root.children.each do |child| %>
+          <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
+        <% end %>
+      </div>
+    </div>

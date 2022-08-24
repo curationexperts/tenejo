@@ -1,5 +1,3 @@
-<table class="table table-responsive job">
-  <tbody>
     <tr>
       <td class="identifier" style="padding-left: <%= depth * 2 %>rem;">
         <% if node.children.any? || node.try(:files).try(:any?) %>
@@ -23,8 +21,7 @@
       <td class="title"><%= node.title.first unless node.is_a? Tenejo::PFFile %><span class="file-name"> <%= node.files if node.is_a? Tenejo::PFFile %></span></td></td>
       <td class="filename"></td>
     </tr>
-  </tbody>
-</table>
+
 <div class="job collapse in child-of-<%= node.lineno %>">
   <% node.children.each do |child| %>
     <%= render "child", node: child, parent: node.lineno, depth: depth + 1, order: nil %>
