@@ -8,7 +8,6 @@
 
 table.job {
   width: 100%;
-  thead { font-weight: bold; }
   .identifier { width: 25%; }
   .item_status { width: 10%; text-align: center; }
   .lineno { width: 5%; }
@@ -21,8 +20,82 @@ table.job {
   .title { width:26%; }
   .filename { width:13%; }
 }
-
 .file-name {
   padding-left: 1.5rem;
   font-style: italic;
+}
+
+.card.card--job,
+.card.card-default {
+  border: 1px solid rgba(98, 105, 118, 0.16);
+  box-shadow: 0px 2px 4px rgba(30, 41, 59, 0.04);
+  margin-bottom: 3rem;
+  border-radius: 4px;
+  .card-header {
+    background-color: #fff;
+    padding: 1rem 2rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+  }
+  .badge {
+    padding: 0.7rem 1.2rem;
+  }
+  .rounded-pill {
+    border-radius: 50rem !important;
+  }
+  .bg-success {
+    background-color: rgba(47, 179, 68, 0.1);
+    color: #2fb344;
+  }
+  .bg-danger {
+    background-color: rgba(211, 58, 53, 0.1);
+    color: #d33a35;
+  }
+  .bg-warning {
+    background-color: rgba(254, 216, 0, 0.1);
+    color: #927c00;
+  }
+  .bg-info{
+    color: #000!important;
+    background-color: rgba(217, 237, 247, 0.5)!important;
+  }
+  .card-body {
+    padding: 2rem;
+  }
+  h1,h2,h3,h4,h5,h6{
+    margin-top: 0;
+  }
+  h2 {
+    font-weight: 600;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+
+    color: #1e293b;
+  }
+  dl.filename{
+    margin-bottom: 0;
+  }
+  dt {
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.6rem;
+    /* identical to box height, or 160% */
+
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+
+    color: #626976;
+  }
+ 
+  .job-number {
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 20px;
+    margin-top: .5rem;
+
+    color: #1e293b;
+  }
 }
