@@ -2,7 +2,6 @@
 require 'hydra/file_characterization/characterizer'
 require 'hydra/file_characterization/characterizers/fits_servlet'
 Hydra::FileCharacterization::Characterizers::FitsServlet.class_eval do
-
   protected
 
   def command
