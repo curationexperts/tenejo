@@ -99,10 +99,10 @@ module Tenejo
     end
 
     def search(item, child_id)
-      found = item.children.find { |x| x['identifier'] == child_id } unless item.children.empty?
+      found = item.children.find { |x| x['identifier'] == child_id }
       if !found && !item.children.empty?
-        item.children.map { |x| typify(x) }.each do |x|
-          found = search(x, child_id) unless x.children.empty?
+        item.children.each do |x|
+          found = search(typify(x), child_id)
         end
       end
       found
