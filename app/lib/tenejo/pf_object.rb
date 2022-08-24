@@ -107,9 +107,8 @@ module Tenejo
       a[:import_path] = nil
       a
     end
-    def import_path=(path)
-      @import_path=path
-    end
+
+    attr_writer :import_path
 
     def self.exist?(rec, val)
       File.exist?(File.join(rec.import_path, val))
@@ -130,7 +129,7 @@ module Tenejo
       files
     end
 
-    def initialize(row={}, lineno=0, import_root=true, strict_paths= true)
+    def initialize(row = {}, lineno = 0, import_root = true, strict_paths = true)
       file_name = row.to_h.delete(:files)
       row[:file] = relative_path(file_name, import_root, strict_paths)
       @import_path = import_root

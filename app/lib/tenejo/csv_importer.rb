@@ -13,7 +13,6 @@ module Tenejo
       @job = import_job
       @graph = Tenejo::Graph.new
       @graph.attributes = @job.graph # comes out of db as hash
-      @job.graph = @graph
       @root = Tenejo::PreFlightObj.new
       @root.attributes = @graph.root
       @children = @root.children.map { |x| typify(x) }
@@ -239,14 +238,13 @@ module Tenejo
       # save the ordered list of children all at once.
     end
 
-
     def create_or_update_files(work, pfwork)
       # Cases
       # - new work, new files
       # - existing work, update files - NOT IMPLEMENTED YET
       # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
-      file_sets = pfwork.files.map{|x| typify(x)}.map do |pffile|
+      file_sets = pfwork.files.map { |x| typify(x) }.map do |pffile|
         file_set = FileSet.new
         file_set.label = File.basename(pffile.file)
         file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]

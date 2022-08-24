@@ -7,7 +7,9 @@ RSpec.describe Tenejo::CsvImporter do
   let(:job_owner) { FactoryBot.create(:user) }
   let(:csv) { fixture_file_upload("./spec/fixtures/csv/nesting_test.csv") }
   let(:preflight) { Preflight.create!(user: job_owner, manifest: csv) }
-  let(:import_job)  { 
+  let(:import_job)  {
+    allow(File).to receive(:exist?).and_call_original
+    allow(File).to receive(:exist?).with(/png/).and_return(true)
     import = Import.create!(user: job_owner, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download))
     import
   }
@@ -32,8 +34,6 @@ RSpec.describe Tenejo::CsvImporter do
     let(:csv) { fixture_file_upload("./spec/fixtures/csv/fancy.csv") }
     # rubocop:disable RSpec/MessageSpies
     it "returns warnings" do
-      allow(File).to receive(:exist?).and_call_original
-      allow(File).to receive(:exist?).with(/png/).and_return(true)
       csv_import = described_class.new(import_job)
       expect(import_job.status).to eq 'submitted'
       expect(csv_import.preflight_errors).to eq []
@@ -61,12 +61,12 @@ RSpec.describe Tenejo::CsvImporter do
     expect(import_job.status).to eq 'completed'
     expect(import_job.collections).to eq 3
     expect(import_job.works).to eq 9
-    expect(import_job.files).to eq 17
+    expect(import_job.files).to eq 2
     expect(import_job.completed_at).to be_within(1.second).of Time.current
   end
 
   context '.create_or_update_collection' do
-#    before { allow(Tenejo::Preflight).to receive(:process_csv) } # skip creating the preflight graph
+    #    before { allow(Tenejo::Preflight).to receive(:process_csv) } # skip creating the preflight graph
 
     context "when collection doesn't exist" do
       # these tests are expensive, try to minimize how many we need to run
@@ -250,7 +250,7 @@ RSpec.describe Tenejo::CsvImporter do
         let(:csv) { fixture_file_upload("./spec/fixtures/csv/empty.csv") }
         it 'log an error when missing' do
           csv_import = described_class.new(import_job)
-          node = Tenejo::PFWork.new({} , -1, nil, nil)
+          node = Tenejo::PFWork.new({}, -1, nil, nil)
           node.identifier = ['ImNotHere']
 
           allow(Rails.logger).to receive(:error)
