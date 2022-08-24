@@ -41,15 +41,10 @@ RSpec.describe "/jobs", type: :request do
 
     it 'displays with the dashboard sidebar & layout' do
       get jobs_url
+      expect(response).to be_successful
       expect(response).to render_template('layouts/hyrax/dashboard')
     end
 
-    it 'displays jobs sorted by ID in descending order' do
-      3.times { Job.create! valid_attributes }
-      list = JobsController.new.index
-      expect(list.first.id).to eq Job.last.id
-      expect(list.last.id).to eq Job.first.id
-    end
   end
 
   describe "GET /show" do
