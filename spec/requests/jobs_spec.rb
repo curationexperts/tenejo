@@ -44,7 +44,6 @@ RSpec.describe "/jobs", type: :request do
       expect(response).to be_successful
       expect(response).to render_template('layouts/hyrax/dashboard')
     end
-
   end
 
   describe "GET /show" do
