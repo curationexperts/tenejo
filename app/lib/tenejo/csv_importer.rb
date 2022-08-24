@@ -156,6 +156,10 @@ module Tenejo
       collection.depositor ||= job_owner
 
       # set the collection parent relationship
+      update_parent(collection, pfcollection)
+    end
+
+    def update_parent(collection, pfcollection)
       return unless pfcollection.parent
       parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
       return unless parent
