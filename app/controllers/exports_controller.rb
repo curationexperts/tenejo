@@ -14,6 +14,6 @@ class ExportsController < JobsController
 
   def show
     super
-    add_breadcrumb (I18n.t('tenejo.admin.sidebar.exports') + ' #' + params[:id].to_s), @job
+    add_breadcrumb "##{@job.id} - #{I18n.t('tenejo.admin.sidebar.exports')}", @job
   end
 end

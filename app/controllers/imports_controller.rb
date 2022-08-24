@@ -17,7 +17,7 @@ class ImportsController < JobsController
     g = Tenejo::Graph.new
     g.attributes = job.graph
     @root = g.root
-    add_breadcrumb (I18n.t('tenejo.admin.sidebar.imports') + ' #' + params[:id].to_s), @job
+    add_breadcrumb "##{@job.id} - #{I18n.t('tenejo.admin.sidebar.imports')}", @job
   end
 
   def create
