@@ -8,9 +8,12 @@ class ExportsController < JobsController
   end
 
   def new
+    super
     redirect_to new_export_path
   end
 
   def show
+    super
+    add_breadcrumb (I18n.t('tenejo.admin.sidebar.exports') + ' #' + params[:id].to_s), @job
   end
 end

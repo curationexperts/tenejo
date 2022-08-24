@@ -7,14 +7,17 @@ class ImportsController < JobsController
   end
 
   def new
+    super
     redirect_to new_preflight_path
   end
 
   def show
+    super
     job = Job.find(params[:id])
     g = Tenejo::Graph.new
     g.attributes = job.graph
     @root = g.root
+    add_breadcrumb (I18n.t('tenejo.admin.sidebar.imports') + ' #' + params[:id].to_s), @job
   end
 
   def create
