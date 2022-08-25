@@ -1,6 +1,7 @@
 <div class="card card--job">
-  <h2 class="card-header">Job #<%= @job&.id %> - Import 
-    <span class="jobs-status badge rounded-pill bg-success bg-warning bg-danger"><%= @job&.status || 'Unknown'%></span>
+  <h2 class="card-header">Job #<%= @job&.id %>
+    - Import
+    <span class="jobs-status badge rounded-pill"><%= @job&.status || 'Unknown'%></span>
   </h2>
 
   <div class="card-body">
@@ -55,25 +56,29 @@
     </div>
     <div class="card card--job">
       <div class="card-body">
-        <table class="table table-responsive table-striped job">
+        <table class="table table-responsive table--job">
           <thead>
-            <th class="item_status">Status</th>
-            <th class="lineno">Row</th>
-            <th class="type">Type</th>
-            <th class="visibility">Visibility</th>
-            <th class="collection_count">cs</th>
-            <th class="work_count">ws</th>
-            <th class="file_count">fs</th>
-            <th class="index">Order</th>
-            <th class="title">title
-              <span class="file-name">/ filename</span>
+            <th width="15%" class="identifier">Identifier</th>
+            <th width="26%" colspan="2" class="title">title /
+              <em>filename</em>
             </th>
-            <th class="filename">filename</th>
+            <th width="10%" class="item_status">Status</th>
+            <th width="5%" class="lineno">Row</th>
+            <th width="5%" class="type">Type</th>
+            <th width="8%" class="visibility">Visibility</th>
+            <th width="3%" class="collection_count">cs</th>
+            <th width="3%" class="work_count">ws</th>
+            <th width="3%" class="file_count">fs</th>
+            <th width="5%" class="index">Order</th>
           </thead>
-          <tbody></tbody>
+          <tbody>
+           
+  
+
+          </tbody>
         </table>
-    <% @root.dig('children')&.each do |child| %>
-          <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
-        <% end %>
+            <% @root.dig('children')&.each do |child| %>
+                <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
+              <% end %>
       </div>
     </div>
