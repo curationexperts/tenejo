@@ -5,20 +5,45 @@
 .table--job {
   width: 100%;
   margin-bottom: 0;
-  .identifier { width: 15%; }
-  .item_status { width: 10%; text-align: center; }
-  .lineno { width: 5%; text-align: center;}
-  .type { width: 5%;}
-  .visibility { width: 8%; }
-  .collection_count { width: 3%; }
-  .work_count { width: 3%; }
-  .file_count { width: 3%; }
-  .index { width: 5%; text-align: center; }
-  .title { width:26%; }
-  .filename { width:13%; }
+  .identifier {
+    width: 15%;
+  }
+  .item_status {
+    width: 10%;
+    text-align: center;
+  }
+  .lineno {
+    width: 5%;
+    text-align: center;
+  }
+  .type {
+    width: 5%;
+  }
+  .visibility {
+    width: 8%;
+  }
+  .collection_count {
+    width: 3%;
+  }
+  .work_count {
+    width: 3%;
+  }
+  .file_count {
+    width: 3%;
+  }
+  .index {
+    width: 5%;
+    text-align: center;
+  }
+  .title {
+    width: 26%;
+  }
+  .filename {
+    width: 13%;
+  }
 }
 .file-name {
-
+  display: block;
   font-style: italic;
 }
 
@@ -37,32 +62,19 @@
     align-items: center;
     margin-top: 0;
   }
-  .badge {
-    padding: 0.7rem 1.2rem;
-  }
   .rounded-pill {
     border-radius: 50rem !important;
   }
-  .bg-success {
-    background-color: rgba(47, 179, 68, 0.1);
-    color: #2fb344;
-  }
-  .bg-danger {
-    background-color: rgba(211, 58, 53, 0.1);
-    color: #d33a35;
-  }
-  .bg-warning {
-    background-color: rgba(254, 216, 0, 0.1);
-    color: #927c00;
-  }
-  .bg-info{
-    color: #000!important;
-    background-color: rgba(217, 237, 247, 0.5)!important;
-  }
+
   .card-body {
     padding: 2rem;
   }
-  h1,h2,h3,h4,h5,h6{
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin-top: 0;
   }
   h2 {
@@ -72,7 +84,7 @@
 
     color: #1e293b;
   }
-  dl.filename{
+  dl.filename {
     margin-bottom: 0;
   }
   dt {
@@ -86,13 +98,40 @@
 
     color: #626976;
   }
- 
+
   .job-number {
     font-weight: 400;
     font-size: 32px;
     line-height: 20px;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
 
     color: #1e293b;
+  }
+}
+
+.badge {
+  padding: 0.7rem 1.2rem;
+
+  &.bg-success {
+    background-color: rgba(47, 179, 68, 0.1) !important;
+    color: #2fb344;
+  }
+  &.bg-danger {
+    background-color: rgba(211, 58, 53, 0.1) !important;
+    color: #d33a35;
+  }
+  .bg-warning {
+    background-color: rgba(254, 216, 0, 0.1) !important;
+    color: #927c00;
+  }
+  &.bg-info {
+    color: #000 !important;
+    background-color: rgba(217, 237, 247, 0.5) !important;
+  }
+}
+
+#jobs-index {
+  .badge {
+    padding: 0.35rem 0.6rem;
   }
 }

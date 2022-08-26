@@ -60,6 +60,23 @@ module ApplicationHelper
     users.all.collect { |u| [u.user_key, u.display_name] }
   end
 
+  def status_span_generator(status)
+    case status
+        when 'submitted'
+          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-default')
+        when 'errored'
+          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-danger')
+        when 'completed'
+          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-success')
+        when 'in_progress'
+          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-warning')
+        when 'Unknown'
+          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill')
+        else
+          content_tag(:span, '📖 Banana', class: 'job-status badge rounded-pill bg-info' )
+    end
+  end
+
   def collection_permission_template_form_for(form:)
     case form
     when Valkyrie::ChangeSet

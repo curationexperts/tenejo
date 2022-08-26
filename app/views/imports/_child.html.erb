@@ -1,38 +1,63 @@
-<table class="table table--job">
+<table class="table table--job <%= node['files'].try(:any?) ? " " : " table-condensed" %>">
   <tbody>
-  <tr>
-  <td width="15%" class="identifier" style="padding-left: <%= depth * 2 %>rem;">
-    <% if node['children'].any? || node['files'].try(:any?) %>
-      <button class="btn btn-info btn-xs import_expand" type="button" data-toggle="collapse" data-target=".child-of-<%= node['lineno'] %>" aria-expanded="false" aria-controls=".children-#{node['lineno']}">
-        +
-      </button>
-    <% end %>
-    <% if node['type'] == 'Tenejo::PFFile' %>
-      <i class="fa fa-file-o" aria-hidden="true"></i>
-    <% end %>
-    <%= node['identifier'].first %>
-  </td>
-  <td width="26%" colspan="2" class="title"><%= node['title'].first unless node['type'] == 'Tenejo::PFFile' %><br/>
-    <span class="file-name">
-      <%= node['files'] if node['type'] == 'Tenejo::PFFile' %></span>
-  </td>
-  <td width="10%" class="item_status">
-    <%= node['status'] || '-'%>
-  </td>
-  <td width="5%" class="lineno"><%= node['lineno'] %></td>
-  <td width="5%" class="type"><%= node['class'].to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "") %></td>
-  <td width="8%" class="visibility"><%= node['visibility'] %></td>
-  <td width="3%" class="collection_count">
-    -</td>
-  <td width="3%" class="work_count">
-    -</td>
-  <td width="3%" class="file_count">
-    -</td>
-  <td width="5%" class="index"><%= order || '-' %></td>
-</tr>
+    <tr>
+      <td width="25%" colspan="2" class="title" style="padding-left: <%= depth * 2 %>rem;">
+        <% if node['children'].any? || node['files'].try(:any?) %>
+          <button class="btn btn-info btn-xs import_expand" type="button" data-toggle="collapse" data-target=".child-of-<%= node['lineno'] %>" aria-expanded="false" aria-controls=".children-#{node['lineno']}">
+            +
+          </button>
+        <% end %>
+        <%= node['title'].first unless node['type'] == 'Tenejo::PFFile' %>
+        <% if node['type'] == 'Tenejo::PFFile' %>
+          <span class="file-name">
+            <i class="fa fa-file-o" aria-hidden="true"></i>
+            <%= node['files'] if node['type'] == 'Tenejo::PFFile' %>
+          </span>
+        <% end %>
+      </td>
+      <td width="5%" class="item_status">
+        <%= node['status'] || '-'%>
+      </td>
+      <td width="15%" class="identifier" style="padding-left: <%= depth * 2 %>rem;">
+
+        <% if node['type'] == 'Tenejo::PFFile' %>
+          <i class="fa fa-file-o" aria-hidden="true"></i>
+        <% end %>
+        <%= node['identifier'].first %>
+      </td>
+
+      <td width="5%" class="lineno"><%= node['lineno'] %></td>
+
+
+      <td width="5%" class="type"><%= node['class'].to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "") %></td>
+      <td width="8%" class="visibility"><%= node['visibility'] %></td>
+      <td width="3%" class="collection_count">
+        <% if node['type'] == 'Tenejo::PFCollection' %>
+          na
+        <% else %>
+          <%= node.dig('collections')&.count %>
+        <% end %>
+      </td>
+      <td width="3%" class="work_count">
+        <% if node['type'] == 'Tenejo::PFWork' %>
+          <%= node.dig('works')&.count %>
+        <% else %>
+          na
+        <% end %>
+      </td>
+      <td width="3%" class="file_count">
+        <% if node['type'] == 'Tenejo::PFFile' %>
+          -
+        <% else %>
+          <%= node.dig('files')&.count %>
+        <% end %>
+      </td>
+
+      <td width="5%" class="index"><%= order || '-' %></td>
+    </tr>
 
   </tbody>
-</table>   
+</table>
 
 <div class="job-child collapse in child-of-<%= node['lineno'] %>">
   <% node['children'].each do |child| %>

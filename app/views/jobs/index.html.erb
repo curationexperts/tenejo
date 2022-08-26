@@ -9,8 +9,9 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
-    <table id="jobs-index" class="table table-responsive table-striped">
+    <table id="jobs-index" class="table table-responsive dataTable datatable table-striped">
       <thead>
+        
         <tr>
           <th>ID</th>
           <th>Type</th>
@@ -20,27 +21,37 @@
           <th>Collections</th>
           <th>Works</th>
           <th>Files</th>
-          <th colspan="3">Actions</th>
+          <th data-orderable="false">Actions</th>
         </tr>
       </thead>
 
       <tbody>
         <% @jobs.each do |job| %>
+          <%#= raise "job looks like this: #{job}" %>
           <tr>
             <td><%= link_to job.id, job %></td>
             <td><%= job.type %></td>
             <td><%= job.user %></td>
-            <td><%= job.status %></td>
+            <td>
+              <%= status_span_generator(job.status) %>
+            </td>
             <td><%= job.completed_at %></td>
             <td><%= job.collections %></td>
             <td><%= job.works %></td>
             <td><%= job.files %></td>
             <td><%= link_to 'Show', job %></td>
-            <td><%# link_to 'Edit', edit_job_path(job) %></td>
-            <td><%# link_to 'Destroy', job, method: :delete, data: { confirm: 'Are you sure?' } %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
 </div>
+
+
+<script>
+
+  $('#jobs-index').dataTable({
+    "pageLength": 25,  
+    order: [[ 0, 'desc' ]]
+    });
+</script>
