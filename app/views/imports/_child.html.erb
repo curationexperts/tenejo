@@ -2,7 +2,7 @@
   <tbody>
   <tr>
   <td width="15%" class="identifier" style="padding-left: <%= depth * 2 %>rem;">
-    <% if node['children'].any? || node.try(:files).try(:any?) %>
+    <% if node['children'].any? || node['files'].try(:any?) %>
       <button class="btn btn-info btn-xs import_expand" type="button" data-toggle="collapse" data-target=".child-of-<%= node['lineno'] %>" aria-expanded="false" aria-controls=".children-#{node['lineno']}">
         +
       </button>
@@ -38,7 +38,7 @@
   <% node['children'].each do |child| %>
     <%= render "child", node: child, parent: node['lineno'], depth: depth + 1, order: nil %>
   <% end %>
-  <% if node.try(:files).try(:any?) %>
+  <% if node['files'].try(:any?) %>
     <% node['files'].each_with_index do |file, index| %>
       <%= render "child", node: file, parent: node['lineno'], depth: depth + 1, order: index + 1 %>
     <% end %>
