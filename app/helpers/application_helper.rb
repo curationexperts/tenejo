@@ -62,18 +62,18 @@ module ApplicationHelper
 
   def status_span_generator(status)
     case status
-        when 'submitted'
-          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-default')
-        when 'errored'
-          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-danger')
-        when 'completed'
-          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-success')
-        when 'in_progress'
-          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-warning')
-        when 'Unknown'
-          content_tag(:span, status.titleize, class: 'job-status badge rounded-pill')
-        else
-          content_tag(:span, '📖 Banana', class: 'job-status badge rounded-pill bg-info' )
+    when 'submitted'
+      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-default')
+    when 'errored'
+      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-danger')
+    when 'completed'
+      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-success')
+    when 'in_progress'
+      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-warning')
+    when 'Unknown'
+      tag(:span, status.titleize, class: 'job-status badge rounded-pill')
+    else
+      tag(:span, '📖 Banana', class: 'job-status badge rounded-pill bg-info')
     end
   end
 
