@@ -67,7 +67,7 @@ module ApplicationHelper
       status_classes = 'status-submitted'
     when 'Errored'
       status_classes = 'status-errored'
-    when 'Completed'
+    when 'Completed', 'Complete'
       status_classes = 'status-completed'
     when 'In Progress'
       status_classes = 'status-in-progress'
