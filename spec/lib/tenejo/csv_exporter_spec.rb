@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'csv'
 require 'rails_helper'
 
 RSpec.describe Tenejo::CsvExporter do
@@ -36,7 +35,7 @@ RSpec.describe Tenejo::CsvExporter do
       export.save
       described_class.new(export).run
       rows = CSV.parse(export.manifest.download, headers: true)
-      expect(rows.first['identifier']).to eq 'invalid_id'
+      expect(rows.first['primary_identifier']).to eq 'invalid_id'
       expect(rows.first['error']).to eq 'No match for identifier'
     end
 
@@ -49,13 +48,13 @@ RSpec.describe Tenejo::CsvExporter do
       rows = CSV.parse(export.manifest.download, headers: true)
 
       # Collection COL001
-      expect(rows[0]['identifier']).to eq 'COL001'
+      expect(rows[0]['primary_identifier']).to eq 'COL001'
       expect(rows[0]['error']).to be_nil
       expect(rows[0]['title']).to include 'Test collection'
       expect(rows[0]['class']).to eq "Collection"
 
       # Work WRK001
-      expect(rows[1]['identifier']).to eq 'WRK001'
+      expect(rows[1]['primary_identifier']).to eq 'WRK001'
       expect(rows[1]['error']).to be_nil
       expect(rows[1]['title']).to include 'Test work'
       expect(rows[1]['class']).to eq "Work"
@@ -99,28 +98,25 @@ RSpec.describe Tenejo::CsvExporter do
     end
 
     it "returns a string" do
-      expect(serialized).to be_a String
+      expect(serialized).to be_a CSV::Row
     end
 
     it "handles all the fields" do
       # Just check for one value deep in the array
       # Otherwise we need to check the whole exact string and the test becomes fragile
-      expect(serialized).to include 'use freely'
+      expect(serialized[:rights_notes]).to include 'use freely'
     end
 
     it "handles multi-valued fields" do
-      # ActiveTriples does not guarantee order, so we have to test for either order
-      match1 = serialized.match?('सर्वाणि क्षेत्राणि\|\~\|Alle Felder')
-      match2 = serialized.match?('Alle Felder\|\~\|सर्वाणि क्षेत्राणि')
-      expect(match1 || match2).to be true
+      expect(serialized[:alternative_title].split('|~|')).to contain_exactly('Alle Felder', 'सर्वाणि क्षेत्राणि')
     end
 
     it "handles embedded quotes" do
-      expect(serialized).to include %q(Here's some mixed ""s & quotes')
+      expect(serialized[:description]).to eq %q(Here's some mixed "s & quotes')
     end
 
     it "handles embedded commas" do
-      expect(serialized).to include 'Anon., 16th Century'
+      expect(serialized[:creator]).to eq 'Anon., 16th Century'
     end
   end
 end
