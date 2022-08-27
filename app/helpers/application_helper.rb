@@ -61,20 +61,23 @@ module ApplicationHelper
   end
 
   def status_span_generator(status)
-    case status
-    when 'submitted'
-      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-default')
-    when 'errored'
-      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-danger')
-    when 'completed'
-      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-success')
-    when 'in_progress'
-      tag(:span, status.titleize, class: 'job-status badge rounded-pill bg-warning')
+    status_text = status.to_s.titleize
+    case status_text
+    when 'Submitted'
+      status_classes = 'status-submitted'
+    when 'Errored'
+      status_classes = 'status-errored'
+    when 'Completed'
+      status_classes = 'status-completed'
+    when 'In Progress'
+      status_classes = 'status-in-progress'
     when 'Unknown'
-      tag(:span, status.titleize, class: 'job-status badge rounded-pill')
+      status_classes = 'status-unknown'
     else
-      tag(:span, '📖 Banana', class: 'job-status badge rounded-pill bg-info')
+      status_classes = 'status-unrecognized'
+      status_text = 'Unrecognized Status'
     end
+    tag.span(status_text, class: 'job-status badge rounded-pill ' + status_classes)
   end
 
   def collection_permission_template_form_for(form:)

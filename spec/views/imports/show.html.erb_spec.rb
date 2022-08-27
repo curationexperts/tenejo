@@ -16,14 +16,14 @@ RSpec.describe "imports/show", type: :view do
       files: 17
     )
   }
-  let(:import_job) { Import.create!(user: admin, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download)) }
+  let(:import_job) { Import.create!(user: admin, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download), status: :submitted) }
 
   it "renders attributes", :aggregate_failures do
     @job = import_job
     @root = {}
     render
     expect(rendered).to have_selector('.jobs-user', text: admin)
-    expect(rendered).to have_selector('.jobs-status', text: 'Unknown')
+    expect(rendered).to have_selector('.job-status', text: 'Submitted')
     expect(rendered).to have_selector('.jobs-created_at', text: import_job.created_at)
     expect(rendered).to have_selector('.jobs-completed_at', text: '--')
     expect(rendered).to have_selector('.jobs-collections', text: 'N/A')
