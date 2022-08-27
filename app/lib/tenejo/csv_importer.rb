@@ -146,7 +146,7 @@ module Tenejo
 
     def update_collection_attributes(collection, pfcollection)
       return unless collection
-      collection_attributes_to_copy.each { |source, dest| collection.send(dest, pfcollection.send(source)) }
+      Tenejo::CsvImporter.collection_attributes_to_copy.each { |source, dest| collection.send(dest, pfcollection.send(source)) }
 
       collection.primary_identifier = pfcollection.identifier.first
 
@@ -201,7 +201,7 @@ module Tenejo
 
     def update_work_attributes(work, pfwork)
       return unless work
-      work_attributes_to_copy.each { |source, dest| work.send(dest, pfwork.send(source)) }
+      Tenejo::CsvImporter.work_attributes_to_copy.each { |source, dest| work.send(dest, pfwork.send(source)) }
       set_work_parent(work, pfwork)
       update_timestamp(work)
       work.admin_set ||= admin_set_for_work
@@ -298,23 +298,23 @@ module Tenejo
       @rights_statements ||= Hyrax.config.rights_statement_service_class.new
     end
 
-    def collection_attributes_to_copy
+    def self.collection_attributes_to_copy
       @collection_attributes_to_copy ||=
         ((Collection.terms & Tenejo::PFCollection::ALL_FIELDS) - collection_fields_to_exclude + [:visibility]
         ).map { |key| [key, "#{key}=".to_sym] }.to_h
     end
 
-    def collection_fields_to_exclude
+    def self.collection_fields_to_exclude
       [:collection_type_gid, :depositor, :has_model, :date_uploaded, :create_date, :modified_date, :head, :tail]
     end
 
-    def work_attributes_to_copy
+    def self.work_attributes_to_copy
       @work_attributes_to_copy ||=
         ((Work.terms & Tenejo::PFWork::ALL_FIELDS) - work_fields_to_exclude + [:visibility]
         ).map { |key| [key, "#{key}=".to_sym] }.to_h
     end
 
-    def work_fields_to_exclude
+    def self.work_fields_to_exclude
       [:depositor, :has_model, :date_uploaded, :create_date, :modified_date, :head, :tail]
     end
   end
