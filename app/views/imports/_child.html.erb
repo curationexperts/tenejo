@@ -16,7 +16,7 @@
         <% end %>
       </td>
       <td width="5%" class="item_status">
-        <%= node['status'] || '-'%>
+        <%= status_span_generator(node['status']) %>
       </td>
       <td width="15%" class="identifier" style="padding-left: <%= depth * 2 %>rem;">
 
