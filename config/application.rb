@@ -14,7 +14,6 @@ module Tenejo
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
     config.active_job.queue_adapter = :sidekiq
-    config.autoload_paths += Dir[Rails.root.join('app', 'models', '**/')]
     Rails.application.routes.default_url_options[:host] = ENV['URL_HOST']
     config.exceptions_app = self.routes
 

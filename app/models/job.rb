@@ -7,5 +7,5 @@ class Job < ApplicationRecord
   has_many :child_jobs, class_name: 'Job', foreign_key: 'parent_job_id', dependent: :nullify
   belongs_to :parent_job, class_name: 'Job', optional: true
 
-  Dir.glob('app/models/batch_job/*.rb').each { |f| require File.basename(f, '.rb') }
+  [Preflight, Import, Export] if Rails.env.development? # preload subclasses in development so STI doesn't break
 end
