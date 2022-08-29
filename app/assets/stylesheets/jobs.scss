@@ -5,13 +5,22 @@
 .table--job {
   width: 100%;
   margin-bottom: 0;
-  .identifier {
-    width: 15%;
+  .collapse-button{
+    width: 3%;
+    .btn-xs{
+      font-size: 10px;
+    }
+  }
+  .title {
+    width: 25%;
   }
   .item_status {
     width: 10%;
-    text-align: center;
   }
+  .identifier {
+    width: 15%;
+  }
+
   .lineno {
     width: 5%;
     text-align: center;
@@ -20,30 +29,21 @@
     width: 5%;
   }
   .visibility {
-    width: 8%;
+    width: 10%;
   }
-  .collection_count {
-    width: 3%;
-  }
-  .work_count {
-    width: 3%;
-  }
+  .collection_count,
+  .work_count,
   .file_count {
-    width: 3%;
+    width: 5%;
+    text-align: center;
   }
   .index {
     width: 5%;
     text-align: center;
   }
-  .title {
-    width: 26%;
-  }
-  .filename {
-    width: 13%;
-  }
+
 }
 .file-name {
-  display: block;
   font-style: italic;
 }
 
