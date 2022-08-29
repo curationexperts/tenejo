@@ -49,5 +49,11 @@ RSpec.describe "/exports", type: :request do
       post exports_path, params: { export: { identifiers: [] } }
       expect(response).to redirect_to Export.last
     end
+
+    it "omits blank identifiers" do
+      # Check that we ignore empty strings, nil, and things that evaluate to either
+      post exports_path, params: { export: { identifiers: ["", nil, "DummyID", %q(), {}[:field]] } } # rubocop:disable Style/RedundantPercentQ
+      expect(Export.last.identifiers).to eq ['DummyID']
+    end
   end
 end
