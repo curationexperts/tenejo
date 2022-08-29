@@ -67,7 +67,7 @@ module ApplicationHelper
       status_classes = 'status-submitted'
     when 'Errored'
       status_classes = 'status-errored'
-    when 'Completed'
+    when 'Completed', 'Complete'
       status_classes = 'status-completed'
     when 'In Progress'
       status_classes = 'status-in-progress'
@@ -75,7 +75,7 @@ module ApplicationHelper
       status_classes = 'status-unknown'
     else
       status_classes = 'status-unrecognized'
-      status_text = 'Unrecognized Status'
+      status_text = 'Unk'
     end
     tag.span(status_text, class: 'job-status badge rounded-pill ' + status_classes)
   end

@@ -13,7 +13,7 @@ describe ApplicationHelper do
     end
 
     example "for unrecognized statuses" do
-      expect(helper.status_span_generator("it's complicated")).to include "Unrecognized"
+      expect(helper.status_span_generator("it's complicated")).to include "Unk"
     end
 
     example "accepts symbols" do
