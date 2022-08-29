@@ -1,6 +1,7 @@
 <div class="card card--job">
   <h2 class="card-header">Job #<%= @job&.id %> - Preflight 
-    <span class="job-status badge rounded-pill bg-success bg-warning bg-danger"><%= @job&.status || 'Unknown'%></span>
+    <span class="job-status badge rounded-pill"><%= @job&.status || 'Unknown'%></span>
+    
   </h2>
   <%# End Card Header %>
   <div class="card-body">

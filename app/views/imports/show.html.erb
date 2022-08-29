@@ -1,7 +1,7 @@
 <div class="card card--job">
   <h2 class="card-header">Job #<%= @job&.id %>
     - Import
-    <span class="jobs-status badge rounded-pill"><%= @job&.status || 'Unknown'%></span>
+    <%= status_span_generator(@job&.status) %>
   </h2>
 
   <div class="card-body">
@@ -39,7 +39,9 @@
             <dl class="row">
               <span class="col-md-4">
                 <dt>Collections</dt>
-                <dd class="job-number jobs-collections"><%= @job&.collections || 'N/A' %></dd>
+                <dd class="job-number jobs-collections">
+                  <%= @job&.collections || 'N/A' %>
+                </dd>
               </span>
               <span class="col-md-4">
                 <dt>Works</dt>
@@ -58,12 +60,14 @@
       <div class="card-body">
         <table class="table table-responsive table--job">
           <thead>
-            <th width="15%" class="identifier">Identifier</th>
-            <th width="26%" colspan="2" class="title">title /
+                 <th width="25%" colspan="2" class="title">title /
               <em>filename</em>
             </th>
-            <th width="10%" class="item_status">Status</th>
+            <th width="5%" class="item_status">Status</th>
+            <th width="15%" class="identifier">Identifier</th>
+           
             <th width="5%" class="lineno">Row</th>
+     
             <th width="5%" class="type">Type</th>
             <th width="8%" class="visibility">Visibility</th>
             <th width="3%" class="collection_count">cs</th>
@@ -71,14 +75,10 @@
             <th width="3%" class="file_count">fs</th>
             <th width="5%" class="index">Order</th>
           </thead>
-          <tbody>
-           
-  
-
-          </tbody>
+          <tbody></tbody>
         </table>
-            <% @root.dig('children')&.each do |child| %>
-                <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
-              <% end %>
+        <% @root.dig('children')&.each do |child| %>
+          <%= render "child", node: child, parent: "0", depth: 0, order: nil %>
+        <% end %>
       </div>
     </div>
