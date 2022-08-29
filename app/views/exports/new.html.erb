@@ -1,0 +1,32 @@
+<h1>New <%= @job.class %></h1>
+
+<%= form_with(model: @job, local: true) do |form| %>
+  <% if @job.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@job.errors.count, "error") %> prohibited this job from being saved:</h2>
+
+      <ul>
+        <% @job.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :identifiers %>
+    <%= form.text_field :identifiers, id: 'export_identifiers_0', value: @job.identifiers[0], multiple: true %>
+  </div>
+  <div class="field">
+    <%= form.label :identifiers %>
+    <%= form.text_field :identifiers, id: 'export_identifiers_1', value: @job.identifiers[1], multiple: true %>
+  </div>
+  <div class="field">
+    <%= form.label :identifiers %>
+    <%= form.text_field :identifiers, id: 'export_identifiers_2', value: @job.identifiers[2], multiple: true %>
+  </div>
+  <br/>
+  <div class="actions">
+    <%= form.submit 'Submit', type: 'submit' %>
+  </div>
+<% end %>

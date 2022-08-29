@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe "/user", type: :request do
   context "logged in but not admin" do
-    let(:user) { User.create(email: 'test@example.com', password: "123457") }
+    let(:user) { FactoryBot.create(:user) }
     before do
       sign_in user
     end

@@ -35,7 +35,7 @@ RSpec.describe Tenejo::CsvExporter do
       export.save
       described_class.new(export).run
       rows = CSV.parse(export.manifest.download, headers: true)
-      expect(rows.first['primary_identifier']).to eq 'invalid_id'
+      expect(rows.first['identifier']).to eq 'invalid_id'
       expect(rows.first['error']).to eq 'No match for identifier'
     end
 
@@ -48,16 +48,16 @@ RSpec.describe Tenejo::CsvExporter do
       rows = CSV.parse(export.manifest.download, headers: true)
 
       # Collection COL001
-      expect(rows[0]['primary_identifier']).to eq 'COL001'
+      expect(rows[0]['identifier']).to eq 'COL001'
       expect(rows[0]['error']).to be_nil
       expect(rows[0]['title']).to include 'Test collection'
-      expect(rows[0]['class']).to eq "Collection"
+      expect(rows[0]['object type']).to eq "Collection"
 
       # Work WRK001
-      expect(rows[1]['primary_identifier']).to eq 'WRK001'
+      expect(rows[1]['identifier']).to eq 'WRK001'
       expect(rows[1]['error']).to be_nil
       expect(rows[1]['title']).to include 'Test work'
-      expect(rows[1]['class']).to eq "Work"
+      expect(rows[1]['object type']).to eq "Work"
     end
   end
 

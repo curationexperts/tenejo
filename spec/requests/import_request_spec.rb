@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe "/imports", type: :request do
   let(:tempfile) { fixture_file_upload('csv/empty.csv') }
-  let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }
+  let(:admin) { FactoryBot.create(:user, :admin) }
   let(:preflight) { Preflight.create!(user: admin, manifest: tempfile) }
   let(:import) { Import.new(user: admin, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download)) }
 
