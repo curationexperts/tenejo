@@ -75,7 +75,7 @@ module ApplicationHelper
       status_classes = 'status-unknown'
     else
       status_classes = 'status-unrecognized'
-      status_text = 'Unrecognized Status'
+      status_text = 'Unk'
     end
     tag.span(status_text, class: 'job-status badge rounded-pill ' + status_classes)
   end
