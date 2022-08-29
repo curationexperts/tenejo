@@ -112,21 +112,31 @@
 .badge {
   padding: 0.7rem 1.2rem;
 
-  &.bg-success {
-    background-color: rgba(47, 179, 68, 0.1) !important;
+  &.status-submitted {
+    background-color: lightblue;
+    color: darkblue;
+  }
+  &.status-completed {
+    background-color: rgba(47, 179, 68, 0.1);
     color: #2fb344;
   }
-  &.bg-danger {
-    background-color: rgba(211, 58, 53, 0.1) !important;
+  &.status-errored {
+    background-color: rgba(211, 58, 53, 0.1);
     color: #d33a35;
   }
-  .bg-warning {
-    background-color: rgba(254, 216, 0, 0.1) !important;
+  &.status-in-progress {
+    background-color: rgba(254, 216, 0, 0.1);
     color: #927c00;
   }
-  &.bg-info {
-    color: #000 !important;
+  &.status-unknown {
     background-color: rgba(217, 237, 247, 0.5) !important;
+    color: black;
+  }
+
+  &.status-unrecognized {
+    ::before { content: '⚠️' };
+    background-color: lightgoldenrodyellow;
+    color: black;
   }
 }
 
