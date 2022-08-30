@@ -18,6 +18,7 @@ class ExportsController < JobsController
 
   def create
     @job = Export.new(job_params.merge({ user: current_user, status: :submitted }))
+    @job.identifiers.reject!(&:blank?)
     respond_to do |format|
       if @job.save
         BatchExportJob.perform_later(@job)
