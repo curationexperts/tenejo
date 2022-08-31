@@ -28,12 +28,11 @@
 
       <tbody>
         <% @jobs.each do |job| %>
-          <%#= raise "job looks like this: #{job}" %>
           <tr>
             <td><%= link_to job.id, job %></td>
             <td><%= job.type %></td>
             <td>
-              <% if job&.manifest&.attached? %>
+              <% if job&.try(:manifest)&.attached? %>
                 <%= job&.manifest.filename %>
               <% else %>
                 --
