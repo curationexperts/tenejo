@@ -1,16 +1,35 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Tenejo::CsvExporter do
   let(:job_owner) { FactoryBot.create(:user) }
-  let(:export) { Export.create(user: job_owner) }
+  let(:export) { Export.new(user: job_owner, status: :submitted) }
 
-  after do
-    # active storage files are not deleted automatically
-    export.manifest.purge
+  context '#run' do
+    it 'attaches a CSV file to the job', :aggregate_failures do
+      expect(export.manifest.attached?).to be false
+      described_class.new(export).run
+      expect(export.manifest.attached?).to be true
+    end
+
+    it 'sets the job status', :aggregate_failures do
+      expect(export.status).to eq 'submitted'
+      expect(export.completed_at).to be_nil
+      described_class.new(export).run
+      expect(export.status).to eq 'completed'
+      expect(export.completed_at).to be_within(1.second).of Time.current
+    end
+
+    it 'calls #generate_csv' do
+      exporter = described_class.new(export)
+      allow(exporter).to receive(:generate_csv).and_return('')
+      exporter.run
+      expect(exporter).to have_received(:generate_csv).once
+    end
   end
 
-  context 'CSV' do
+  context "#generate_csv" do
     let(:col001) {
       Collection.new(title: ['Test collection'], primary_identifier: 'COL001',
                      collection_type_gid: Hyrax::CollectionType.find_or_create_default_collection_type.gid)
@@ -18,23 +37,16 @@ RSpec.describe Tenejo::CsvExporter do
 
     let(:work001) { Work.new(title: ['Test work'], primary_identifier: 'WRK001') }
 
-    it 'gets attached on export', :aggregate_failures do
-      expect(export.manifest.attached?).to be false
-      described_class.new(export).run
-      expect(export.manifest.attached?).to be true
-    end
-
     it 'includes error message if no identifiers were provided' do
-      described_class.new(export).run
-      rows = CSV.parse(export.manifest.download, headers: true)
+      csv_string = described_class.new(export).generate_csv
+      rows = CSV.parse(csv_string, headers: true)
       expect(rows.first['error']).to eq 'No identifiers provided'
     end
 
     it 'includes row-level errors' do
       export.identifiers = ['invalid_id']
-      export.save
-      described_class.new(export).run
-      rows = CSV.parse(export.manifest.download, headers: true)
+      csv_string = described_class.new(export).generate_csv
+      rows = CSV.parse(csv_string, headers: true)
       expect(rows.first['identifier']).to eq 'invalid_id'
       expect(rows.first['error']).to eq 'No match for identifier'
     end
@@ -43,9 +55,8 @@ RSpec.describe Tenejo::CsvExporter do
       allow(ActiveFedora::Base).to receive(:where).and_return([col001], [work001])
 
       export.identifiers = ['COL001', 'WRK001']
-      export.save
-      described_class.new(export).run
-      rows = CSV.parse(export.manifest.download, headers: true)
+      csv_string = described_class.new(export).generate_csv
+      rows = CSV.parse(csv_string, headers: true)
 
       # Collection COL001
       expect(rows[0]['identifier']).to eq 'COL001'
@@ -66,7 +77,7 @@ RSpec.describe Tenejo::CsvExporter do
       Work.new(
         title: ['Work with all the fields'],
         primary_identifier: 'MAX-WORK',
-        identifier: ['DOI:xxxxxxx', 'http://hdl.handle.net/ooooo/iiiiiiiii'],
+        identifier: ['DOI:xxxxxxx', 'https://hdl.handle.net/ooooo/iiiiiiiii'],
         alternative_title: ['Alle Felder', 'सर्वाणि क्षेत्राणि'],
         resource_type: ["Image"],
         creator: ["Anon., 16th Century"],
@@ -97,7 +108,7 @@ RSpec.describe Tenejo::CsvExporter do
       allow(ActiveFedora::Base).to receive(:where).and_return([max_work])
     end
 
-    it "returns a string" do
+    it "returns a CSV::Row object" do
       expect(serialized).to be_a CSV::Row
     end
 
