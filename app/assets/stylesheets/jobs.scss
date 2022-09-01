@@ -5,9 +5,9 @@
 .table--job {
   width: 100%;
   margin-bottom: 0;
-  .collapse-button{
+  .collapse-button {
     width: 3%;
-    .btn-xs{
+    .btn-xs {
       font-size: 10px;
     }
   }
@@ -41,7 +41,6 @@
     width: 5%;
     text-align: center;
   }
-
 }
 .file-name {
   font-style: italic;
@@ -101,40 +100,59 @@
 
   .job-number {
     font-weight: 400;
-    font-size: 32px;
-    line-height: 20px;
+    font-size: 3rem;
+    line-height: 1.5rem;
     margin-top: 0.5rem;
 
     color: #1e293b;
   }
 }
 
+.card--preflight {
+  .card-header {
+    &.preflight-errors {
+      background-color: rgba(254, 226, 226, 1);
+      color: rgba(127, 29, 29, 1);
+    }
+    &.preflight-warning {
+      background-color: rgba(254, 243, 199, 0.6);
+      color: rgba(120, 53, 15, 1);
+    }
+    &.preflight-info {
+      background-color: lightblue;
+      color: darkblue;
+    }
+  }
+}
+
 .badge {
   padding: 0.7rem 1.2rem;
-
+  // Statuses
   &.status-submitted {
     background-color: lightblue;
     color: darkblue;
   }
   &.status-completed {
-    background-color: rgba(47, 179, 68, 0.1);
-    color: #2fb344;
+    background-color: rgba(209, 250, 229, 1);
+    color: rgba(6, 95, 70, 1);
   }
   &.status-errored {
-    background-color: rgba(211, 58, 53, 0.1);
-    color: #d33a35;
+    background-color: rgba(254, 226, 226, 1);
+    color: rgba(127, 29, 29, 1);
   }
   &.status-in-progress {
-    background-color: rgba(254, 216, 0, 0.1);
-    color: #927c00;
+    background-color: rgba(254, 243, 199, 0.6);
+    color: rgba(120, 53, 15, 1);
   }
   &.status-unknown {
     background-color: rgba(217, 237, 247, 0.5);
-    color: black;
+    color: rgba(17, 24, 39, 1);
   }
 
   &.status-unrecognized {
-    ::before { content: '⚠️' };
+    ::before {
+      content: "⚠️";
+    }
     background-color: lightgoldenrodyellow;
     color: black;
   }
