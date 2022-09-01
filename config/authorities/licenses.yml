@@ -1,5 +1,5 @@
 terms:
-    - id: http://www.europeana.eu/portal/rights/rr-r.html
+    - id: https://www.europeana.eu/portal/rights/rr-r.html
       term: All rights reserved
       active: true
     - id: https://creativecommons.org/licenses/by/4.0/
