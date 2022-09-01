@@ -1,26 +1,27 @@
-<div class="card card--job">
-  <h2 class="card-header">Job #<%= @job&.id %>
-    - Import
-    <%= status_span_generator(@job&.status) %>
-  </h2>
+<div class="row">
+  <div class="col-xs-12 col-lg-10">
+    <div class="card card--job">
+      <h2 class="card-header">Job #<%= @job&.id %>
+        - Import
+        <%= status_span_generator(@job&.status) %>
+      </h2>
 
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-8">
+      <div class="card-body">
         <div class="row">
-          <dl class="col-md-4">
-            <dt>User</dt>
-            <dd class="jobs-user"><%= @job&.user %></dd>
-          </dl>
-          <dl class="col-md-4">
-            <dt>Submitted At</dt>
-            <dd class="jobs-created_at"><%= @job&.created_at %></dd>
-          </dl>
-          <dl class="col-md-4">
-            <dt>Completed at</dt>
-            <dd class="jobs-completed_at">
-              <%= @job&.completed_at || '--' %>
-              <dd></dl>
+          <div class="col-md-8">
+            <div class="row">
+              <dl class="col-md-4">
+                <dt>User</dt>
+                <dd class="jobs-user"><%= @job&.user %></dd>
+              </dl>
+              <dl class="col-md-4">
+                <dt>Submitted At</dt>
+                <dd class="jobs-created_at"><%= @job&.created_at %></dd>
+              </dl>
+              <dl class="col-md-4">
+                <dt>Completed at</dt>
+                <dd class="jobs-completed_at"><%= @job&.completed_at || '--' %><dd>
+              </dl>
             </div>
             <div class="row">
               <dl class="col-md-12 filename">
@@ -28,6 +29,7 @@
                 <dd class="job-manifest">
                   <% if @job&.parent_job&.manifest&.attached? %>
                     <%= link_to(@job&.parent_job.manifest.filename, rails_blob_path(@job&.parent_job.manifest, disposition: 'attachment'), class: "card-link") %>
+                    <span class="fa fa-download"></span>
                   <% else %>
                     --
                   <% end %>
@@ -35,23 +37,23 @@
               </dl>
             </div>
           </div>
-          <div class="col-md-4">
-            <dl class="row">
-              <span class="col-md-4">
+          <div class="col-md-4 card-text">
+            <div class="row">
+              <dl class="col-xs-4">
                 <dt>Collections</dt>
                 <dd class="job-number jobs-collections">
                   <%= @job&.collections || 'N/A' %>
                 </dd>
-              </span>
-              <span class="col-md-4">
+              </dl>
+              <dl class="col-xs-4">
                 <dt>Works</dt>
                 <dd class="job-number jobs-works"><%= @job&.works || 'N/A' %></dd>
-              </span>
-              <span class="col-md-4">
+              </dl>
+              <dl class="col-xs-4">
                 <dt>Files</dt>
                 <dd class="job-number jobs-files"><%= @job&.files || 'N/A' %></dd>
-              </span>
-            </dl>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
@@ -60,7 +62,6 @@
       <div class="card-body">
         <table class="table table-responsive table--job">
           <thead>
-            <th class="collapse-button"></th>
             <th class="title">title /
               <em>filename</em>
             </th>
@@ -81,3 +82,5 @@
         <% end %>
       </div>
     </div>
+  </div>
+</div>

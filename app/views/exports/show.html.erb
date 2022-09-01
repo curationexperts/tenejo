@@ -1,130 +1,65 @@
-<div class="card card--job">
-  <h2 class="card-header">
-    Job #<%= @job&.id %> - Exports 
-    <span class="badge rounded-pill "><%= @job&.status || 'Unknown'%></span>
-  </h2>
+<div class="row">
+  <div class="col-xs-12 col-lg-10">
+    <div class="card card--job">
+      <h2 class="card-header">
+        Job #<%= @job&.id %>
+        - Exports
+        <%= status_span_generator(@job&.status) %>
+      </h2>
 
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-8">
+      <div class="card-body">
         <div class="row">
-          <dl class="col-md-4">
-            <dt>User</dt>
-            <dd><%= @job&.user %></dd>
-          </dl>
-          <dl class="col-md-4">
-            <dt>Submitted At</dt>
-            <dd><%= @job&.created_at %></dd>
-          </dl>
-          <dl class="col-md-4">
-            <dt>Completed at</dt>
+          <div class="col-md-8">
+            <div class="row">
+              <dl class="col-md-4">
+                <dt>User</dt>
+                <dd><%= @job&.user %></dd>
+              </dl>
+              <dl class="col-md-4">
+                <dt>Submitted At</dt>
+                <dd><%= @job&.created_at %></dd>
+              </dl>
+              <dl class="col-md-4">
+                <dt>Completed at</dt>
 
-            <dd><%= @job&.completed_at || '--' %></dd>
+                <dd><%= @job&.completed_at || '--' %></dd>
 
-            <dd></dd>
-          </dl>
-        </div>
-        <div class="row">
-          <dl class="col-md-12 filename">
-            <dt>File</dt>
-            <dd>
-              <% if @job&.manifest&.attached? %>
-                <%=
+                <dd></dd>
+              </dl>
+            </div>
+            <div class="row">
+              <dl class="col-md-12 filename">
+                <dt>File</dt>
+                <dd>
+                  <% if @job&.manifest&.attached? %>
+                    <%=
 							link_to(@job.manifest.filename, rails_blob_path(@job.manifest,
 							disposition: 'attachment')) %>
-              <% else %>
-                --
-              <% end %>
-            </dd>
-
-
-          </dl>
+                    <span class="fa fa-download"></span>
+                  <% else %>
+                    --
+                  <% end %>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+              <dl class="col-xs-4">
+                <dt>Collections</dt>
+                <dd class="job-number"><%= @job&.collections.nil? || 'N/A' %></dd>
+              </dl>
+              <dl class="col-xs-4">
+                <dt>Works</dt>
+                <dd class="job-number"><%= @job&.works.nil? || 'N/A' %></dd>
+              </dl>
+              <dl class="col-xs-4">
+                <dt>Files</dt>
+                <dd class="job-number"><%= @job&.files.nil? || 'N/A' %></dd>
+              </dl>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <dl class="row">
-          <span class="col-md-4">
-            <dt>Collections</dt>
-            <dd class="job-number"><%= @job&.collections.nil? || 'N/A' %></dd>
-          </span>
-          <span class="col-md-4">
-            <dt>Works</dt>
-            <dd class="job-number"><%= @job&.works.nil? || 'N/A' %></dd>
-          </span>
-          <span class="col-md-4">
-            <dt>Files</dt>
-            <dd class="job-number"><%= @job&.files.nil? || 'N/A' %></dd>
-          </span>
-        </dl>
-      </div>
-    </div>
-  </div>
-  <div class="card-footer">
-    <div class="pull-right">
-      <button class="btn btn-primary" disabled>Download CSV</button>
-    </div>
-  </div>
-</div>
-
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <table class="table table-responsive table-striped">
-          <thead>
-            <thead>
-              <th class="item_status">Status</th>
-              <th class="lineno">Row</th>
-              <th class="type">Type</th>
-              <th class="visibility">Visibility</th>
-              <th class="collection_count">cs</th>
-              <th class="work_count">ws</th>
-              <th class="file_count">fs</th>
-              <th class="index">Order</th>
-              <th class="title">title / filename</th>
-              <th class="filename">filename</th>
-            </thead>
-          </thead>
-          <tbody>
-            <tr>
-              <td>a</td>
-              <td>b</td>
-              <td>c</td>
-              <td>d</td>
-              <td>e</td>
-              <td>f</td>
-              <td>g</td>
-              <td>h</td>
-              <td>i</td>
-              <td>j</td>
-            </tr>
-            <tr>
-              <td>a</td>
-              <td>b</td>
-              <td>c</td>
-              <td>d</td>
-              <td>e</td>
-              <td>f</td>
-              <td>g</td>
-              <td>h</td>
-              <td>i</td>
-              <td>j</td>
-            </tr>
-            <tr>
-              <td>a</td>
-              <td>b</td>
-              <td>c</td>
-              <td>d</td>
-              <td>e</td>
-              <td>f</td>
-              <td>g</td>
-              <td>h</td>
-              <td>i</td>
-              <td>j</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
