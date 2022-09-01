@@ -9,12 +9,13 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
-    <table id="jobs-index" class="table table-responsive dataTable datatable table-striped">
+    <table id="jobs-index" class="table table-responsive table-striped">
       <thead>
-        
+
         <tr>
           <th>ID</th>
           <th>Type</th>
+          <th>Filename</th>
           <th>User</th>
           <th>Status</th>
           <th>Completed at</th>
@@ -27,10 +28,16 @@
 
       <tbody>
         <% @jobs.each do |job| %>
-          <%#= raise "job looks like this: #{job}" %>
           <tr>
             <td><%= link_to job.id, job %></td>
             <td><%= job.type %></td>
+            <td>
+              <% if job&.try(:manifest)&.attached? %>
+                <%= job&.manifest.filename %>
+              <% else %>
+                --
+              <% end %>
+            </td>
             <td><%= job.user %></td>
             <td>
               <%= status_span_generator(job.status) %>
@@ -48,10 +55,18 @@
 </div>
 
 
-<script>
 
-  $('#jobs-index').dataTable({
-    "pageLength": 25,  
-    order: [[ 0, 'desc' ]]
-    });
+<script>
+  var dataTable = $('#jobs-index').DataTable({
+    "pageLength": 25,
+    order: [
+      [0, 'desc']
+    ]
+  });
+  document.addEventListener("turbolinks:before-cache", function () {
+    if (dataTable !== null) {
+      dataTable.destroy();
+      dataTable = null;
+    }
+  });
 </script>
