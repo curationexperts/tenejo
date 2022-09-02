@@ -62,7 +62,8 @@ group :test do
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
-  gem 'simplecov_json_formatter'
+  gem 'simplecov'
+  gem 'simplecov_json_formatter', '0.1.3'
   gem 'webdrivers'
 end
 

@@ -1038,7 +1038,8 @@ DEPENDENCIES
   rspec_junit_formatter
   sass-rails (~> 5.0)
   sidekiq (~> 6.4)
-  simplecov_json_formatter
+  simplecov
+  simplecov_json_formatter (= 0.1.3)
   solr_wrapper (>= 0.3)
   terser
   turbolinks (~> 5)
