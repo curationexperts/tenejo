@@ -14,9 +14,9 @@ RSpec.describe "jobs/index", type: :view do
     expect(rendered).to have_selector('tr th', text: 'User')
     expect(rendered).to have_selector('tr th', text: 'Status')
     expect(rendered).to have_selector('tr th', text: 'Completed')
-    expect(rendered).to have_selector('tr th', text: 'Collections')
-    expect(rendered).to have_selector('tr th', text: 'Works')
-    expect(rendered).to have_selector('tr th', text: 'Files')
+    expect(rendered).to have_selector('tr th', text: 'CS')
+    expect(rendered).to have_selector('tr th', text: 'WS')
+    expect(rendered).to have_selector('tr th', text: 'FS')
   end
 
   it "links the id to the show view" do

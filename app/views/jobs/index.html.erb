@@ -17,13 +17,11 @@
             <tr>
               <th>ID</th>
               <th>Type</th>
-              <th>Filename</th>
+              <th width="33%">Filename</th>
               <th>User</th>
               <th>Status</th>
-              <th>Completed at</th>
-              <th>Collections</th>
-              <th>Works</th>
-              <th>Files</th>
+              <th width="15%">Completed at</th>
+              <th width="10%" data-orderable="false" title="Collections • Works • Files">CS • WS • FS</th>
               <th data-orderable="false">Actions</th>
             </tr>
           </thead>
@@ -45,9 +43,13 @@
                   <%= status_span_generator(job.status) %>
                 </td>
                 <td><%= job.completed_at %></td>
-                <td><%= job.collections %></td>
-                <td><%= job.works %></td>
-                <td><%= job.files %></td>
+                <td>
+                  <%= job.collections || raw("&ndash;") %>
+                  |
+                  <%= job.works || raw("&ndash;") %>
+                  |
+                  <%= job.files || raw("&ndash;") %>
+                </td>
                 <td><%= link_to 'Show', job, 'aria-label': "Show Job ##{job.id} - #{job.type}" %></td>
               </tr>
             <% end %>
