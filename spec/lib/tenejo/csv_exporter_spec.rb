@@ -37,6 +37,8 @@ RSpec.describe Tenejo::CsvExporter do
 
     let(:work001) { Work.new(title: ['Test work'], primary_identifier: 'WRK001') }
 
+    let(:work002) { Work.new(title: ['Another Test work'], primary_identifier: 'WRK002') }
+
     it 'includes error message if no identifiers were provided' do
       csv_string = described_class.new(export).generate_csv
       rows = CSV.parse(csv_string, headers: true)
@@ -70,6 +72,23 @@ RSpec.describe Tenejo::CsvExporter do
       expect(rows[1]['title']).to include 'Test work'
       expect(rows[1]['object type']).to eq "Work"
     end
+
+    it 'includes children', :aggregate_failures do
+      allow(ActiveFedora::Base).to receive(:where).and_return([col001], [work001], [work002])
+      allow(col001).to receive(:child_works).and_return([work001])
+      allow(work001).to receive(:child_works).and_return([work002])
+
+      export.identifiers = ['COL001']
+      csv_string = described_class.new(export).generate_csv
+      rows = CSV.parse(csv_string, headers: true)
+
+      expect(rows[0]['parent']).to be_blank
+      expect(rows[0]['identifier']).to eq 'COL001'
+      expect(rows[1]['parent']).to eq 'COL001'
+      expect(rows[1]['identifier']).to eq 'WRK001'
+      expect(rows[2]['parent']).to eq 'WRK001'
+      expect(rows[2]['identifier']).to eq 'WRK002'
+    end
   end
 
   context "#serialize" do
@@ -102,14 +121,14 @@ RSpec.describe Tenejo::CsvExporter do
       )
     }
 
-    let(:serialized) { described_class.new(user: job_owner).send(:serialize, 'MAX-WORK') }
+    let(:serialized) { described_class.new(export).send(:serialize, max_work, 'PARENT_ID') }
 
-    before do
-      allow(ActiveFedora::Base).to receive(:where).and_return([max_work])
+    it "returns a CSV::Row" do
+      expect(serialized).to be_a CSV::Row
     end
 
-    it "returns a CSV::Row object" do
-      expect(serialized).to be_a CSV::Row
+    it "includes a parent id" do
+      expect(serialized[:parent]).to eq 'PARENT_ID'
     end
 
     it "handles all the fields" do
