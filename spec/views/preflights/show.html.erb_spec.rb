@@ -25,7 +25,7 @@ RSpec.describe "preflights/show", type: :view do
     render
     expect(rendered).to have_selector('.job-user', text: user)
     expect(rendered).to have_selector('.job-manifest', text: 'empty.csv')
-    expect(rendered).to have_selector('.job-status', text: 'completed')
+    expect(rendered).to have_selector('.job-status', text: 'Completed')
     expect(rendered).to have_selector('.job-created_at', text: job.created_at)
     expect(rendered).to have_selector('.job-completed_at', text: completion_time)
     expect(rendered).to have_selector('.job-collections', text: '0')
@@ -63,7 +63,7 @@ RSpec.describe "preflights/show", type: :view do
     graph.add_fatal_error "No data was detected"
     assign(:preflight_graph, graph)
     render
-    expect(rendered).to have_selector('.preflight-errors', text: 'No data was detected')
+    expect(rendered).to have_selector('#preflight-errors li', text: 'No data was detected')
   end
 
   it "shows any warnings", :aggregate_failures do
@@ -72,7 +72,7 @@ RSpec.describe "preflights/show", type: :view do
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('.preflight-warnings', text: 'Warnings')
+    expect(rendered).to have_selector('#preflight-warnings', text: 'Warnings')
     expect(rendered).to have_selector('li', text: 'Could not find parent work', count: 2)
   end
 
@@ -83,7 +83,7 @@ RSpec.describe "preflights/show", type: :view do
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('.preflight-collections', text: 'Collections')
+    expect(rendered).to have_selector('#preflight-collections', text: 'Collections')
     expect(rendered).to have_selector('tr td', text: 'Collection 2')
   end
 
@@ -94,7 +94,7 @@ RSpec.describe "preflights/show", type: :view do
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('.preflight-works', text: 'Works')
+    expect(rendered).to have_selector('#preflight-works', text: 'Works')
     expect(rendered).to have_selector('tr td', text: 'Work 2')
   end
 
@@ -105,7 +105,7 @@ RSpec.describe "preflights/show", type: :view do
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('.preflight-files', text: 'Files')
+    expect(rendered).to have_selector('#preflight-files', text: 'Files')
     expect(rendered).to have_selector('tr td', text: 'hydra.tiff', count: 2)
   end
 end

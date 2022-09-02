@@ -110,15 +110,15 @@
 
 .card--preflight {
   .card-header {
-    &.preflight-errors {
+    &.card-header--errors {
       background-color: rgba(254, 226, 226, 1);
       color: rgba(127, 29, 29, 1);
     }
-    &.preflight-warning {
+    &.card-header--warnings {
       background-color: rgba(254, 243, 199, 0.6);
       color: rgba(120, 53, 15, 1);
     }
-    &.preflight-info {
+    &.card-header--info {
       background-color: lightblue;
       color: darkblue;
     }
