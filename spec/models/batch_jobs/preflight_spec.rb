@@ -23,7 +23,5 @@ RSpec.describe Preflight, type: :model do
     found_job = described_class.find(job.id)
     expect(found_job.manifest).to be_a_kind_of ActiveStorage::Attached::One
     expect(found_job.manifest.filename).to eq 'empty.csv'
-    # active storage files are not deleted automatically
-    found_job.manifest.purge
   end
 end

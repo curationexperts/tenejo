@@ -55,6 +55,9 @@ RSpec.configure do |config|
   # Ensure a default Theme exists for all tests
   config.before(:suite) { Theme.where(id: 1).first_or_create! }
 
+  # Delete any ActiveStorage files created during test runs
+  config.after(:suite) { FileUtils.rm_rf(ActiveStorage::Blob.service.root) }
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.include Devise::Test::ControllerHelpers, type: :controller

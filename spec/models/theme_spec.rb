@@ -74,7 +74,5 @@ RSpec.describe Theme, type: :model do
     found_theme = described_class.find(theme.id)
     expect(found_theme.logo).to be_a_kind_of ActiveStorage::Attached::One
     expect(found_theme.logo.filename).to eq 'Noun Project Bank.png'
-    # active storage files are not deleted automatically
-    found_theme.logo.purge
   end
 end

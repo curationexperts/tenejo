@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'tenejo/pf_object'
 require 'csv'
 
@@ -17,7 +18,15 @@ module Tenejo
     def run
       @export.status = :in_progress
       @export.save
-      output = CSV.generate(encoding: 'UTF-8', write_headers: true) do |csv|
+      output = StringIO.new(generate_csv)
+      @export.manifest.attach(io: output, filename: export_name, content_type: 'text/csv')
+      @export.status = :completed
+      @export.completed_at = Time.current
+      @export.save
+    end
+
+    def generate_csv
+      csv_string = CSV.generate(encoding: 'UTF-8', write_headers: true) do |csv|
         csv << HEADER_ROW
         csv << CSV::Row.new([:primary_identifier, :error], ["missing", "No identifiers provided"]) if @export.identifiers.empty?
         @export.identifiers.each do |id|
@@ -26,12 +35,8 @@ module Tenejo
       end
 
       # TODO: remove this after refactoring Tenejo metadata to rename primary_identifier and identifer
-      output.gsub!('primary_identifier,error,class,', 'identifier,error,object type,')
-
-      @export.manifest.attach(io: StringIO.new(output), filename: export_name, content_type: 'text/csv')
-      @export.status = :complete
-      @export.completed_at = Time.current
-      @export.save
+      csv_string.gsub!('primary_identifier,error,class,', 'identifier,error,object type,')
+      csv_string
     end
 
     private
