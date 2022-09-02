@@ -57,7 +57,7 @@ gem 'whenever', group: 'production'
 
 group :test do
   gem 'capybara'
-  gem 'coveralls', require: false
+  gem 'coveralls_reborn', '~> 0.25.0', require: false
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
