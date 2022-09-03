@@ -309,6 +309,8 @@ end
 require './app/lib/hydra/file_characterization/characterizers/fits_servlet'
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"
 
+Hyrax::Engine.routes.default_url_options = Rails.application.routes.default_url_options
+
 Qa::Authorities::Local.register_subauthority('subjects', 'Qa::Authorities::Local::TableBasedAuthority')
 Qa::Authorities::Local.register_subauthority('languages', 'Qa::Authorities::Local::TableBasedAuthority')
 Qa::Authorities::Local.register_subauthority('genres', 'Qa::Authorities::Local::TableBasedAuthority')

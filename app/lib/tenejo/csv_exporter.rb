@@ -5,8 +5,8 @@ require 'csv'
 
 module Tenejo
   class CsvExporter
-    EXCLUDE_FROM_EXPORT = [:date_modified, :identifier, :label, :arkivo_checksum, :state].freeze
-    HEADER_ROW = (([:primary_identifier, :error, :class, :parent, :title] \
+    EXCLUDE_FROM_EXPORT = [:date_modified, :label, :arkivo_checksum, :state].freeze
+    HEADER_ROW = (([:identifier, :error, :object_type, :visibility, :parent, :title, :file_url] \
                   + Tenejo::CsvImporter.collection_attributes_to_copy.keys \
                   + Tenejo::CsvImporter.work_attributes_to_copy.keys).uniq \
                   - EXCLUDE_FROM_EXPORT).freeze
@@ -28,14 +28,11 @@ module Tenejo
     def generate_csv
       csv_string = CSV.generate(encoding: 'UTF-8', write_headers: true) do |csv|
         csv << HEADER_ROW
-        csv << CSV::Row.new([:primary_identifier, :error], ["missing", "No identifiers provided"]) if @export.identifiers.empty?
+        csv << CSV::Row.new([:identifier, :error], ["missing", "No identifiers provided"]) if @export.identifiers.empty?
         @export.identifiers.each do |id|
           find_and_export(id, csv)
         end
       end
-
-      # TODO: remove this after refactoring Tenejo metadata to rename primary_identifier and identifer
-      csv_string.gsub!('primary_identifier,error,class,', 'identifier,error,object type,')
       csv_string
     end
 
@@ -53,7 +50,7 @@ module Tenejo
     # @param csv[CSV] a CSV IO object to append the metadata to
     def find_and_export(id, csv)
       obj = ActiveFedora::Base.where(primary_identifier_ssi: id).last
-      csv << CSV::Row.new([:primary_identifier, :error], [id, "No match for identifier"]) unless obj
+      csv << CSV::Row.new([:identifier, :error], [id, "No match for identifier"]) unless obj
       serialize_with_descendants(obj, nil, csv)
     end
 
@@ -72,13 +69,23 @@ module Tenejo
       parent_id = obj.primary_identifier
       obj.try(:child_collections)&.map { |child| serialize_with_descendants(child, parent_id, csv) }
       obj.try(:child_works)&.map { |child| serialize_with_descendants(child, parent_id, csv) }
+      obj.try(:ordered_file_sets)&.map { |child| serialize_with_descendants(child, parent_id, csv) }
+    end
+
+    def download_url(obj)
+      return unless obj.is_a? FileSet
+      Hyrax::Engine.routes.url_helpers.download_url(obj.id)
     end
 
     def serialize(obj, parent_id = nil)
       return unless obj
-      obj.define_singleton_method(:parent) { parent_id }
       values = HEADER_ROW.map { |attr| pack_field(obj.try(attr)) }
-      CSV::Row.new(HEADER_ROW, values)
+      row = CSV::Row.new(HEADER_ROW, values)
+      row[:parent] = parent_id
+      row[:identifier] = obj.primary_identifier || obj.id
+      row[:file_url] = download_url(obj)
+      row[:object_type] = obj.class.to_s.gsub('FileSet', 'File')
+      row
     end
 
     # Handle multi-value fields regardless of underlying class

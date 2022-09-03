@@ -64,13 +64,13 @@ RSpec.describe Tenejo::CsvExporter do
       expect(rows[0]['identifier']).to eq 'COL001'
       expect(rows[0]['error']).to be_nil
       expect(rows[0]['title']).to include 'Test collection'
-      expect(rows[0]['object type']).to eq "Collection"
+      expect(rows[0]['object_type']).to eq "Collection"
 
       # Work WRK001
       expect(rows[1]['identifier']).to eq 'WRK001'
       expect(rows[1]['error']).to be_nil
       expect(rows[1]['title']).to include 'Test work'
-      expect(rows[1]['object type']).to eq "Work"
+      expect(rows[1]['object_type']).to eq "Work"
     end
 
     it 'includes children', :aggregate_failures do
@@ -84,10 +84,34 @@ RSpec.describe Tenejo::CsvExporter do
 
       expect(rows[0]['parent']).to be_blank
       expect(rows[0]['identifier']).to eq 'COL001'
+      expect(rows[0]['object_type']).to eq 'Collection'
       expect(rows[1]['parent']).to eq 'COL001'
       expect(rows[1]['identifier']).to eq 'WRK001'
+      expect(rows[1]['object_type']).to eq 'Work'
       expect(rows[2]['parent']).to eq 'WRK001'
       expect(rows[2]['identifier']).to eq 'WRK002'
+      expect(rows[2]['object_type']).to eq 'Work'
+    end
+
+    it 'includes files', :aggregate_failures do
+      file001 = FileSet.new(primary_identifier: 'FIL001', id: 'placeholder')
+      file002 = FileSet.new(id: 'auto-generated')
+      allow(ActiveFedora::Base).to receive(:where).and_return([work001])
+      allow(work001).to receive(:ordered_file_sets).and_return([file001, file002])
+
+      export.identifiers = ['WRK001']
+      csv_string = described_class.new(export).generate_csv
+      rows = CSV.parse(csv_string, headers: true)
+
+      expect(rows[0]['object_type']).to eq 'Work'
+      expect(rows[0]['identifier']).to eq 'WRK001'
+      expect(rows[0]['file_url']).to be_blank
+      expect(rows[1]['object_type']).to eq 'File'
+      expect(rows[1]['identifier']).to eq 'FIL001'
+      expect(rows[1]['file_url']).to eq 'http://localhost:3000/downloads/placeholder'
+      expect(rows[2]['object_type']).to eq 'File'
+      expect(rows[2]['identifier']).to eq 'auto-generated'
+      expect(rows[2]['file_url']).to eq 'http://localhost:3000/downloads/auto-generated'
     end
   end
 
@@ -131,6 +155,10 @@ RSpec.describe Tenejo::CsvExporter do
       expect(serialized[:parent]).to eq 'PARENT_ID'
     end
 
+    it "returns the row type" do
+      expect(serialized[:object_type]).to eq 'Work'
+    end
+
     it "handles all the fields" do
       # Just check for one value deep in the array
       # Otherwise we need to check the whole exact string and the test becomes fragile
@@ -147,6 +175,10 @@ RSpec.describe Tenejo::CsvExporter do
 
     it "handles embedded commas" do
       expect(serialized[:creator]).to eq 'Anon., 16th Century'
+    end
+
+    it "defaults to private(restricted) visibility" do
+      expect(serialized[:visibility]).to eq 'restricted'
     end
   end
 end

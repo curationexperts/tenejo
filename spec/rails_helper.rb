@@ -11,6 +11,7 @@ require 'devise'
 require_relative 'support/controller_macros'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'capybara/rails'
+require 'noid/rails/rspec'
 
 # use this in specs to avoid actually using a working virus scanner during tests (very slow)
 Hyrax.config.virus_scanner = Hyrax::VirusScanner
@@ -45,6 +46,16 @@ RSpec.configure do |config|
   # Enable sign_in and sign_out functionality in specs
   config.include Devise::Test::IntegrationHelpers, type: :system
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Avoid rollback of id minter-state to avoid errors like
+  # `Ldp::Conflict, "Can't call create on an existing resource"`
+  # see testing notes at https://github.com/samvera/noid-rails#overriding-default-behavior
+  include Noid::Rails::RSpec
+  config.before(:suite) { disable_production_minter! }
+  config.after(:suite)  { enable_production_minter! }
+
+  # Clean out ActiveFedora
+  config.before(:suite) { ActiveFedora::Cleaner.clean! }
 
   config.before do |_example|
     class_double(Tenejo::VirusScanner)
