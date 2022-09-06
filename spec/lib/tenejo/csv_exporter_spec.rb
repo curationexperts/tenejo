@@ -27,6 +27,16 @@ RSpec.describe Tenejo::CsvExporter do
       exporter.run
       expect(exporter).to have_received(:generate_csv).once
     end
+
+    it 'saves the item counts to the export job', :aggregate_failures do
+      exporter = described_class.new(export)
+      exporter.instance_variable_set(:@object_type_counts, { 'File' => 4, 'Work' => 3, 'Collection' => 2 })
+      allow(exporter).to receive(:generate_csv).and_return('')
+      exporter.run
+      expect(export.collections).to eq 2
+      expect(export.works).to eq 3
+      expect(export.files).to eq 4
+    end
   end
 
   context "#generate_csv" do
@@ -112,6 +122,21 @@ RSpec.describe Tenejo::CsvExporter do
       expect(rows[2]['object_type']).to eq 'File'
       expect(rows[2]['identifier']).to eq 'auto-generated'
       expect(rows[2]['file_url']).to eq 'http://localhost:3000/downloads/auto-generated'
+    end
+
+    it 'counts object types', :aggregate_failures do
+      allow(ActiveFedora::Base).to receive(:where).and_return([col001], [work001], [work002])
+      allow(col001).to receive(:child_works).and_return([work001])
+      allow(work001).to receive(:child_works).and_return([work002])
+
+      export.identifiers = ['COL001']
+      exporter_instance = described_class.new(export)
+      exporter_instance.generate_csv
+
+      object_type_counts = exporter_instance.instance_variable_get(:@object_type_counts)
+      expect(object_type_counts['File']).to eq 0
+      expect(object_type_counts['Work']).to eq 2
+      expect(object_type_counts['Collection']).to eq 1
     end
   end
 

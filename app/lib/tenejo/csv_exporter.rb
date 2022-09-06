@@ -13,6 +13,7 @@ module Tenejo
 
     def initialize(export_job)
       @export = export_job
+      @object_type_counts = Hash.new(0)
     end
 
     def run
@@ -22,6 +23,9 @@ module Tenejo
       @export.manifest.attach(io: output, filename: export_name, content_type: 'text/csv')
       @export.status = :completed
       @export.completed_at = Time.current
+      @export.collections = @object_type_counts['Collection']
+      @export.works =       @object_type_counts['Work']
+      @export.files =       @object_type_counts['File']
       @export.save
     end
 
@@ -85,6 +89,7 @@ module Tenejo
       row[:identifier] = obj.primary_identifier || obj.id
       row[:file_url] = download_url(obj)
       row[:object_type] = obj.class.to_s.gsub('FileSet', 'File')
+      @object_type_counts[row[:object_type]] = @object_type_counts[row[:object_type]] + 1
       row
     end
 
