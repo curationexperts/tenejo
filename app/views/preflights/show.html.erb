@@ -77,13 +77,13 @@
             <%# This view is really large and could reasonably be broken into partials. %>
             <%# I'm leaving it in a single file for now because the  %>
             <%# API for the preflight graph is still in flux %>
-            <h3>
+              <h3>
             Analysis
             </h3>
 
             <%# ERRORS %>
             <% unless @preflight_graph.fatal_errors.blank? %>
-              <div id="preflight-errors" class="card card--job card--preflight"> <h4 class="card-header card-header--errors">
+              <div id="preflight-errors" class="card card--job card--preflight"> <h4 class="card-header preflight-errors">
                 Errors
               </h4>
               <div class="card-body">
@@ -99,7 +99,7 @@
           <%# WARNINGS %>
           <% unless @preflight_graph.warnings.blank? %>
           <div id="preflight-warnings" class="card card--job card--preflight">
-            <h4 class="card-header card-header--warnings">
+            <h4 class="card-header preflight-warnings">
               Warnings
             </h4>
             <div class="card-body">
@@ -121,7 +121,7 @@
         <%# COLLECTIONS %>
         <% unless @preflight_graph.collections.blank? %>
         <div id="preflight-collections" class="card card--job card--preflight">
-          <h4 class="card-header card-header--info">
+          <h4 class="card-header preflight-info">
             <span class="">Collections</span>
           </h4>
           <div class="card-body">
@@ -152,7 +152,7 @@
       <%# WORKS %>
       <% unless @preflight_graph.works.blank? %>
       <div id="preflight-works" class="card card--job card--preflight">
-        <h4 class="card-header card-header--info">Works</h4>
+        <h4 class="card-header preflight-info">Works</h4>
         <div class="card-body">
           <table class="table table-responsive table-striped">
             <thead>
@@ -181,7 +181,7 @@
     <%# FILES %>
     <% unless @preflight_graph.files.blank? %>
     <div id="preflight-files" class="card card--job card--preflight">
-      <h4 class="card-header card-header--info">Files</h4>
+      <h4 class="card-header preflight-info">Files</h4>
       <div class="card-body">
         <table class="table table-responsive table-striped">
           <thead>
@@ -209,7 +209,4 @@
       </div>
     </div>
   <% end %>
-</div>
-</div>
-</div>
-</div>
+</div></div></div></div>
