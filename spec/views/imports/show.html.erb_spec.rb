@@ -25,10 +25,10 @@ RSpec.describe "imports/show", type: :view do
     expect(rendered).to have_selector('.jobs-user', text: admin)
     expect(rendered).to have_selector('.job-status', text: 'Submitted')
     expect(rendered).to have_selector('.jobs-created_at', text: import_job.created_at)
-    expect(rendered).to have_selector('.jobs-completed_at', text: '--')
-    expect(rendered).to have_selector('.jobs-collections', text: 'N/A')
-    expect(rendered).to have_selector('.jobs-works', text: 'N/A')
-    expect(rendered).to have_selector('.jobs-files', text: 'N/A')
+    expect(rendered).to have_selector('.jobs-completed_at', text: '–')
+    expect(rendered).to have_selector('.jobs-collections', text: '–')
+    expect(rendered).to have_selector('.jobs-works', text: '–')
+    expect(rendered).to have_selector('.jobs-files', text: '–')
     expect(rendered).to have_link(text: 'empty.csv')
   end
 
@@ -53,16 +53,16 @@ RSpec.describe "imports/show", type: :view do
 
   it "shows any collections", :aggregate_failures do
     pending "Finalize import/show UI layout"
-    expect(rendered).to have_selector('tr td', text: 'Collection...')
+    expect(rendered).to have_selector('dt', text: 'Collections')
   end
 
   it "shows any works", :aggregate_failures do
     pending "Finalize import/show UI layout"
-    expect(rendered).to have_selector('tr td', text: 'Work...')
+    expect(rendered).to have_selector('dt', text: 'Works')
   end
 
   it "shows any files", :aggregate_failures do
     pending "Finalize import/show UI layout"
-    expect(rendered).to have_selector('tr td', text: 'File...')
+    expect(rendered).to have_selector('dt', text: 'Files')
   end
 end
