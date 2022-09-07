@@ -35,7 +35,7 @@
                   <% if job&.try(:manifest)&.attached? %>
                     <%= job&.manifest.filename %>
                   <% else %>
-                    --
+                    &ndash;
                   <% end %>
                 </td>
                 <td><%= job.user %></td>
