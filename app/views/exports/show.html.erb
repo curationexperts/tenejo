@@ -47,15 +47,15 @@
             <div class="row">
               <dl class="col-xs-4">
                 <dt>Collections</dt>
-                <dd class="job-number"><%= @job&.collections.nil? || raw("&ndash;") %></dd>
+                <dd class="job-number"><%= @job&.collections || raw("&ndash;") %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt>Works</dt>
-                <dd class="job-number"><%= @job&.works.nil? || raw("&ndash;") %></dd>
+                <dd class="job-number"><%= @job&.works || raw("&ndash;") %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt>Files</dt>
-                <dd class="job-number"><%= @job&.files.nil? || raw("&ndash;") %></dd>
+                <dd class="job-number"><%= @job&.files || raw("&ndash;") %></dd>
               </dl>
             </div>
           </div>
