@@ -24,12 +24,12 @@
         <%= node['identifier'].first %>
       </td>
       <td class="lineno"><%= node['lineno'] %></td>
-      <td class="index"><%= order || '-' %></td>
+      <td class="index"><%= order || raw("&ndash;") %></td>
       <td class="type"><%= node['class'].to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "") %></td>
       <td class="visibility"><%= node['visibility'] %></td>
       <td class="collection_count">
         <% if node['type'] == 'Tenejo::PFCollection' %>
-          na
+          &ndash;
         <% else %>
           <%= node.dig('collections')&.count %>
         <% end %>
@@ -38,12 +38,12 @@
         <% if node['type'] == 'Tenejo::PFWork' %>
           <%= node.dig('works')&.count %>
         <% else %>
-          na
+          &ndash;
         <% end %>
       </td>
       <td class="file_count">
         <% if node['type'] == 'Tenejo::PFFile' %>
-          -
+          &ndash;
         <% else %>
           <%= node.dig('files')&.count %>
         <% end %>

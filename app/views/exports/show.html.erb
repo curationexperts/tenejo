@@ -22,7 +22,7 @@
               <dl class="col-md-4">
                 <dt>Completed at</dt>
 
-                <dd><%= @job&.completed_at || '--' %></dd>
+                <dd><%= @job&.completed_at || raw("&ndash;") %></dd>
 
                 <dd></dd>
               </dl>
@@ -37,7 +37,7 @@
 							disposition: 'attachment')) %>
                     <span class="fa fa-download"></span>
                   <% else %>
-                    --
+                    &ndash;
                   <% end %>
                 </dd>
               </dl>
@@ -47,15 +47,15 @@
             <div class="row">
               <dl class="col-xs-4">
                 <dt>Collections</dt>
-                <dd class="job-number"><%= @job&.collections.nil? || 'N/A' %></dd>
+                <dd class="job-number"><%= @job&.collections.nil? || raw("&ndash;") %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt>Works</dt>
-                <dd class="job-number"><%= @job&.works.nil? || 'N/A' %></dd>
+                <dd class="job-number"><%= @job&.works.nil? || raw("&ndash;") %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt>Files</dt>
-                <dd class="job-number"><%= @job&.files.nil? || 'N/A' %></dd>
+                <dd class="job-number"><%= @job&.files.nil? || raw("&ndash;") %></dd>
               </dl>
             </div>
           </div>

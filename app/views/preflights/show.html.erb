@@ -20,7 +20,7 @@
               </dl>
               <dl class="col-md-4">
                 <dt>Completed at</dt>
-                <dd class="job-completed_at"><%= @job&.completed_at || '--' %><dd></dl>
+                <dd class="job-completed_at"><%= @job&.completed_at || raw("&ndash;") %><dd></dl>
                 </div>
                 <div class="row">
                   <dl class="col-md-12 filename">
@@ -30,7 +30,7 @@
                         <%= link_to(@job.manifest.filename, rails_blob_path(@job.manifest, disposition: 'attachment')) %>
                         <span class="fa fa-download"></span>
                       <% else %>
-                        --
+                        &ndash;
                       <% end %>
                     </dd>
 
@@ -41,15 +41,15 @@
                 <div class="row">
                   <dl class="col-md-4">
                     <dt>Collections</dt>
-                    <dd class="job-number job-collections"><%= @job&.collections || 'N/A' %></dd>
+                    <dd class="job-number job-collections"><%= @job&.collections || raw("&ndash;") %></dd>
                   </dl>
                   <dl class="col-md-4">
                     <dt>Works</dt>
-                    <dd class="job-number job-works"><%= @job&.works || 'N/A' %></dd>
+                    <dd class="job-number job-works"><%= @job&.works || raw("&ndash;") %></dd>
                   </dl>
                   <dl class="col-md-4">
                     <dt>Files</dt>
-                    <dd class="job-number job-files"><%= @job&.files || 'N/A' %></dd>
+                    <dd class="job-number job-files"><%= @job&.files || raw("&ndash;") %></dd>
                   </dl>
                 </div>
               </div>
