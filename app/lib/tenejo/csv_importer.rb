@@ -59,11 +59,14 @@ module Tenejo
     end
 
     def instantiate(node)
-      create_or_update(node)
-      node.children.map { |x| typify(x) }.each do |child|
-        instantiate(child)
+      nodes = []
+      nodes.push(node)
+      while nodes.any?
+        current_node = nodes.pop
+        create_or_update(current_node)
+        current_node.children.map { |child| nodes.push(typify(child)) }
       end
-      ensure_thumbnails(node)
+      # ensure_thumbnails(node)
     end
 
     def create_or_update(node)
