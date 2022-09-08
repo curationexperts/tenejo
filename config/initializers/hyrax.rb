@@ -306,8 +306,6 @@ Hyrax.config do |config|
   # See app/services/hyrax/identifier/registrar.rb for the registrar interface
   # config.identifier_registrars = {}
 end
-require './app/lib/hydra/file_characterization/characterizers/fits_servlet'
-require './app/lib/ldp/response'
 Date::DATE_FORMATS[:standard] = "%m/%d/%Y"
 
 Hyrax::Engine.routes.default_url_options = Rails.application.routes.default_url_options
