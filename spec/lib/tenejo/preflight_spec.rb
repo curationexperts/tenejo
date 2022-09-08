@@ -167,6 +167,13 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.warnings[:resource_type]).to be_empty
     end
 
+    it "gives an error if the file does not exist" do
+      rec.file = 'missing.tiff'
+      expect(rec.valid?).not_to eq true
+      expect(rec.warnings[:file]).to be_empty
+      expect(rec.errors[:file].join).to include 'missing.tiff'
+    end
+
     it "restricts resource type" do
       rec.resource_type = "foo"
       expect(rec.valid?).to eq false # there are other errors in the example

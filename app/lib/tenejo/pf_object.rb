@@ -97,7 +97,7 @@ module Tenejo
     attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
     validates_each :file, allow_blank: true, allow_nil: true do |rec, att, val|
-      rec.errors.add(att, "Could not find file #{val} at #{rec.import_path}") unless PFFile.exist?(rec, val)
+      rec.errors.add(att, "< #{val} > cannot be found at #{rec.import_path}") unless PFFile.exist?(rec, val)
     end
     validates_each :resource_type, allow_blank: true, allow_nil: true do |rec, _att, val|
       rec.warnings[:resource_type] << "Resource type \"#{val}\" on line #{rec.lineno} is not recognized and will be left blank." unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
