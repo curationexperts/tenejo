@@ -104,7 +104,7 @@ class Tenejo::Graph
     @works, invalid_works = @works.partition(&:valid?)
     @files, invalid_files = @files.partition(&:valid?)
     @invalids = invalid_collections + invalid_works + invalid_files
-    @warnings += @invalids.map { |k| "Invalid #{k} item: #{k.errors.full_messages.join(',')} on line #{k.lineno}" }
+    @warnings += @invalids.map { |k| "Line #{k.lineno}: #{k.errors.full_messages.join(', ')}" }
   end
 
   DEFAULT_UPLOAD_PATH = File.join(Hyrax.config.upload_path.call, 'ftp')
