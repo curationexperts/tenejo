@@ -28,7 +28,7 @@ class ImportsController < JobsController
     respond_to do |format|
       if @job.save
         BatchImportJob.perform_later(@job)
-        format.html { redirect_to @job, notice: "Job was successfully created." }
+        format.html { redirect_to @job }
         format.json { render :show, status: :created, location: @job }
       end
     end
