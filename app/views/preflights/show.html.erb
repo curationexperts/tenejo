@@ -1,103 +1,31 @@
 <div class="row">
-  <div class="col-xs-12 col-lg-10">
-    <div class="card card--job">
-      <h2 class="card-header">Job #<%= @job&.id %>
-        - Preflight
-        <%= status_span_generator(@job&.status) %>
-      </h2>
-      <%# End Card Header %>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-8">
-            <div class="row">
-              <dl class="col-md-4">
-                <dt>User</dt>
-                <dd class="job-user"><%= @job&.user %></dd>
-              </dl>
-              <dl class="col-md-4">
-                <dt>Submitted At</dt>
-                <dd class="job-created_at"><%= @job&.created_at %></dd>
-              </dl>
-              <dl class="col-md-4">
-                <dt>Completed at</dt>
-                <dd class="job-completed_at"><%= @job&.completed_at || raw("&ndash;") %><dd></dl>
-                </div>
-                <div class="row">
-                  <dl class="col-md-12 filename">
-                    <dt>File</dt>
-                    <dd class="job-manifest">
-                      <% if @job&.manifest&.attached? %>
-                        <%= link_to(@job.manifest.filename, rails_blob_path(@job.manifest, disposition: 'attachment')) %>
-                        <span class="fa fa-download"></span>
-                      <% else %>
-                        &ndash;
-                      <% end %>
-                    </dd>
+  <div class="col-xs-12 col-md-10">
+    <%= render "jobs/card"  %>
 
-                  </dl>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="row">
-                  <dl class="col-md-4">
-                    <dt>Collections</dt>
-                    <dd class="job-number job-collections"><%= @job&.collections || raw("&ndash;") %></dd>
-                  </dl>
-                  <dl class="col-md-4">
-                    <dt>Works</dt>
-                    <dd class="job-number job-works"><%= @job&.works || raw("&ndash;") %></dd>
-                  </dl>
-                  <dl class="col-md-4">
-                    <dt>Files</dt>
-                    <dd class="job-number job-files"><%= @job&.files || raw("&ndash;") %></dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <div
-              class="pull-left">
+    <div class="card card-default">
+      <div class="card-body">
+        <h3>Analysis</h3>
+
+        <%# EMPTY STATE %>
+        <% if @preflight_graph.fatal_errors.blank? && @preflight_graph.warnings.blank? %>
+          <div id="preflight-empty" class="card card--job card--preflight">
+            <div class="card-body text-center">
+              <h4>Congratulations!</h4>
+              <h5>
+                Your CSV is looking good and ready to be imported!
+              </h5>
               <%# IMPORT SUBMISSION FORM %>
-              <% if @preflight_graph.fatal_errors.empty? %>
-                <%= form_with(model: Import, local: true) do |form| %>
-                  <%= form.hidden_field :parent_job_id, value: @job.id %>
-                  <div class="actions">
-                    <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-primary' %>
-                  </div>
-                <% end %>
+              <%= form_with(model: Import, local: true) do |form| %>
+                <%= form.hidden_field :parent_job_id, value: @job.id %>
+                <div class="actions">
+                  <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-success btn-lg' %>
+                </div>
               <% end %>
             </div>
           </div>
-        </div>
-
-        <div class="card card-default">
-          <div class="card-body">
-            <%# TODO %>
-            <%# This view is really large and could reasonably be broken into partials. %>
-            <%# I'm leaving it in a single file for now because the  %>
-            <%# API for the preflight graph is still in flux %>
-              <h3>
-            Analysis
-            </h3>
-
-            <%# ERRORS %>
-            <% unless @preflight_graph.fatal_errors.blank? %>
-              <div id="preflight-errors" class="card card--job card--preflight"> <h4 class="card-header preflight-errors">
-                Errors
-              </h4>
-              <div class="card-body">
-                <ul>
-                  <% @preflight_graph.fatal_errors.each do |error| %>
-                    <li><%= error %></li>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-          <% end %>
-
-          <%# WARNINGS %>
-          <% unless @preflight_graph.warnings.blank? %>
+        <% end %>
+        <%# WARNINGS %>
+        <% unless @preflight_graph.warnings.blank? %>
           <div id="preflight-warnings" class="card card--job card--preflight">
             <h4 class="card-header preflight-warnings">
               Warnings
@@ -108,8 +36,32 @@
                   <li><%= warning %></li>
                 <% end %>
               </ul>
+             </div>
+            <div class="card-footer text-center">
+                <%# IMPORT SUBMISSION FORM %>
+              <%= form_with(model: Import, local: true) do |form| %>
+                <%= form.hidden_field :parent_job_id, value: @job.id %>
+                <div class="actions">
+                  <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-success btn-lg' %>
+                </div>
+              <% end %>
             </div>
+          </div>
+        <% end %>
 
+        <%# ERRORS %>
+        <% unless @preflight_graph.fatal_errors.blank? %>
+          <div id="preflight-errors" class="card card--job card--preflight">
+            <h4 class="card-header preflight-errors">
+              Errors
+            </h4>
+            <div class="card-body">
+              <ul>
+                <% @preflight_graph.fatal_errors.each do |error| %>
+                  <li><%= error %></li>
+                <% end %>
+              </ul>
+            </div>
           </div>
         <% end %>
       </div>
@@ -117,96 +69,8 @@
     <div class="card card-default">
       <div class="card-body">
         <h3>Objects</h3>
-
-        <%# COLLECTIONS %>
-        <% unless @preflight_graph.collections.blank? %>
-        <div id="preflight-collections" class="card card--job card--preflight">
-          <h4 class="card-header preflight-info">
-            <span class="">Collections</span>
-          </h4>
-          <div class="card-body">
-            <table class="table table-responsive table-striped">
-              <thead>
-                <tr>
-                  <th>Row</th>
-                  <th>Visibility</th>
-                  <th>Identifier</th>
-                  <th>Title</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @preflight_graph.collections.each do |item| %>
-                  <tr>
-                    <td><%= item.lineno %></td>
-                    <td><%= item.visibility %></td>
-                    <td><%= item.identifier %></td>
-                    <td><%= item.title %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      <% end %>
-
-      <%# WORKS %>
-      <% unless @preflight_graph.works.blank? %>
-      <div id="preflight-works" class="card card--job card--preflight">
-        <h4 class="card-header preflight-info">Works</h4>
-        <div class="card-body">
-          <table class="table table-responsive table-striped">
-            <thead>
-              <tr>
-                <th>Row</th>
-                <th>Visibility</th>
-                <th>Identifier</th>
-                <th>Title</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @preflight_graph.works.each do |item| %>
-                <tr>
-                  <td><%= item.lineno %></td>
-                  <td><%= item.visibility %></td>
-                  <td><%= item.identifier %></td>
-                  <td><%= item.title %></td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    <% end %>
-
-    <%# FILES %>
-    <% unless @preflight_graph.files.blank? %>
-    <div id="preflight-files" class="card card--job card--preflight">
-      <h4 class="card-header preflight-info">Files</h4>
-      <div class="card-body">
-        <table class="table table-responsive table-striped">
-          <thead>
-            <tr>
-              <th>Row</th>
-              <th>Visibility</th>
-              <th>Parent</th>
-              <th>Path</th>
-              <th>Filename</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @preflight_graph.files.each do |item| %>
-              <tr>
-                <td><%= item.lineno %></td>
-                <td><%= item.visibility %></td>
-                <td><%= item.parent %></td>
-                <td><%= item.import_path %>/
-                </td>
-                <td><%= item.file %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+        <%= render "jobs/show_outline" %>
       </div>
     </div>
-  <% end %>
-</div></div></div></div>
+  </div>
+</div>
