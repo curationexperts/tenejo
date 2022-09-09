@@ -53,6 +53,23 @@ RSpec.describe Tenejo::CsvImporter do
     expect(greatgrandchild.parent_works).to include grandchild
   end
 
+  it 'sets item-level import status', :aggregate_failures do
+    # TODO: figure out a more readable test
+    # There should probably be some clearer unit-level tests too.
+
+    job = @csv_import.instance_variable_get(:@job)
+    root_children = job.graph['root']['children']
+    root_children_status = root_children.map { |c| c['status'] }
+    expect(root_children_status).to eq ["complete", "complete", "complete"]
+
+    first_child = job.graph['root']['children'][2]['children'][0]['children'][0]['children'][0]['children'][0]
+    expect(first_child['title']).to eq ["Ace of Hearts"]
+    expect(first_child['status']).to eq "complete"
+
+    hearts_status = job.graph['root']['children'][2]['children'][0]['children'][0]['children'].map { |c| c['status'] }
+    expect(hearts_status).to eq ["complete", "complete", "complete", "complete", "complete"]
+  end
+
   it 'sets work-level visibility', :aggregate_failures do
     private_work = Work.where(primary_identifier_ssi: 'ORPH-0001').first
     institutional_work = Work.where(primary_identifier_ssi: 'ORPH-0002').first
