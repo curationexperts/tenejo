@@ -63,7 +63,7 @@ RSpec.describe "/preflights", type: :request do
       it "sets the collections, works, and jobs count", :aggregate_failures do
         post preflights_path, params: { preflight: valid_attributes }
         created_job = assigns(:job)
-        expect(assigns(:graph)).not_to be_nil
+        expect(created_job.graph).not_to be_nil
         expect(created_job.status).to eq 'completed'
         expect(created_job.completed_at).to be_within(1.second).of Time.current
         expect(created_job.collections).to eq 2
