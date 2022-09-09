@@ -167,3 +167,12 @@ table {
 .table-numbers{
   text-align: center;
 }
+
+.card--job{
+  &#preflight-empty{
+    background-color: rgba(209, 250, 229, .125);
+    .btn{
+      margin: 1rem 0;
+    }
+  }
+}
