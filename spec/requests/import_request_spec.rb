@@ -51,5 +51,16 @@ RSpec.describe "/imports", type: :request do
       post imports_path, params: { import: { parent_job_id: preflight.id } }
       expect(response).to redirect_to Import.last
     end
+
+    it "sets status and item counts", :aggregate_failures do
+      post imports_path, params: { import: { parent_job_id: preflight.id } }
+      created_job = assigns(:job)
+      expect(created_job.graph).not_to be_nil
+      expect(created_job.status).to eq 'submitted'
+      expect(created_job.created_at).to be_within(1.second).of Time.current
+      expect(created_job.collections).to eq 0
+      expect(created_job.works).to eq 0
+      expect(created_job.files).to eq 0
+    end
   end
 end
