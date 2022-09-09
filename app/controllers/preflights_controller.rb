@@ -20,7 +20,7 @@ class PreflightsController < JobsController
 
   def create
     @job = Preflight.new(job_params.merge({ user: current_user }))
-    @graph = run_preflight(@job) if @job.validate
+    @job.graph = run_preflight(@job) if @job.validate
 
     respond_to do |format|
       if @job.save
