@@ -22,13 +22,13 @@ RSpec.describe "imports/show", type: :view do
     @job = import_job
     @root = {}
     render
-    expect(rendered).to have_selector('.jobs-user', text: admin)
+    expect(rendered).to have_selector('.job-user', text: admin)
     expect(rendered).to have_selector('.job-status', text: 'Submitted')
-    expect(rendered).to have_selector('.jobs-created_at', text: import_job.created_at)
-    expect(rendered).to have_selector('.jobs-completed_at', text: '–')
-    expect(rendered).to have_selector('.jobs-collections', text: '–')
-    expect(rendered).to have_selector('.jobs-works', text: '–')
-    expect(rendered).to have_selector('.jobs-files', text: '–')
+    expect(rendered).to have_selector('.job-created_at', text: import_job.created_at)
+    expect(rendered).to have_selector('.job-completed_at', text: '–')
+    expect(rendered).to have_selector('.job-collections', text: '–')
+    expect(rendered).to have_selector('.job-works', text: '–')
+    expect(rendered).to have_selector('.job-files', text: '–')
     expect(rendered).to have_link(text: 'empty.csv')
   end
 
