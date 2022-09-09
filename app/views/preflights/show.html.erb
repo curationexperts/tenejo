@@ -9,20 +9,41 @@
         <%# EMPTY STATE %>
         <% if @preflight_graph.fatal_errors.blank? && @preflight_graph.warnings.blank? %>
           <div id="preflight-empty" class="card card--job card--preflight">
-
             <div class="card-body text-center">
               <h4>Congratulations!</h4>
               <h5>
                 Your CSV is looking good and ready to be imported!
               </h5>
               <%# IMPORT SUBMISSION FORM %>
-              <% if @preflight_graph.fatal_errors.empty? %>
-                <%= form_with(model: Import, local: true) do |form| %>
-                  <%= form.hidden_field :parent_job_id, value: @job.id %>
-                  <div class="actions">
-                    <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-success btn-lg' %>
-                  </div>
+              <%= form_with(model: Import, local: true) do |form| %>
+                <%= form.hidden_field :parent_job_id, value: @job.id %>
+                <div class="actions">
+                  <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-success btn-lg' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        <%# WARNINGS %>
+        <% unless @preflight_graph.warnings.blank? %>
+          <div id="preflight-warnings" class="card card--job card--preflight">
+            <h4 class="card-header preflight-warnings">
+              Warnings
+            </h4>
+            <div class="card-body">
+              <ul>
+                <% @preflight_graph.warnings.each do |warning| %>
+                  <li><%= warning %></li>
                 <% end %>
+              </ul>
+             </div>
+            <div class="card-footer text-center">
+                <%# IMPORT SUBMISSION FORM %>
+              <%= form_with(model: Import, local: true) do |form| %>
+                <%= form.hidden_field :parent_job_id, value: @job.id %>
+                <div class="actions">
+                  <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-success btn-lg' %>
+                </div>
               <% end %>
             </div>
           </div>
@@ -38,22 +59,6 @@
               <ul>
                 <% @preflight_graph.fatal_errors.each do |error| %>
                   <li><%= error %></li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        <% end %>
-
-        <%# WARNINGS %>
-        <% unless @preflight_graph.warnings.blank? %>
-          <div id="preflight-warnings" class="card card--job card--preflight">
-            <h4 class="card-header preflight-warnings">
-              Warnings
-            </h4>
-            <div class="card-body">
-              <ul>
-                <% @preflight_graph.warnings.each do |warning| %>
-                  <li><%= warning %></li>
                 <% end %>
               </ul>
             </div>
