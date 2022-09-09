@@ -22,8 +22,7 @@ class ImportsController < JobsController
 
   def create
     @job = Import.new(job_params)
-    @job.user = current_user
-    @job.graph = Tenejo::Preflight.process_csv(@job.manifest.download)
+    update_submission_status(@job)
 
     respond_to do |format|
       if @job.save
@@ -39,5 +38,14 @@ class ImportsController < JobsController
   # Only allow a list of trusted parameters through.
   def job_params
     params.require(:import).permit(:parent_job_id)
+  end
+
+  def update_submission_status(job)
+    job.user = current_user
+    job.status = :submitted
+    job.graph = Tenejo::Preflight.process_csv(job.manifest.download)
+    job.collections = job.graph['collections'].count
+    job.works = job.graph['works'].count
+    job.files = job.graph['files'].count
   end
 end
