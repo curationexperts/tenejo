@@ -1,8 +1,19 @@
 # frozen_string_literal: true
 module Tenejo
   LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
-  RESOURCE_TYPES = YAML.safe_load(File.open(Rails.root.join("config/authorities/resource_types.yml")))
   RIGHTS_STATEMENTS = YAML.safe_load(File.open(Rails.root.join("config/authorities/rights_statements.yml")))
+
+  class ResourceTypeValidator < ActiveModel::Validator
+    RESOURCE_TYPES = YAML.safe_load(File.open(Rails.root.join("config/authorities/resource_types.yml")))['terms'].map { |h| h['term'] }
+
+    def validate(record)
+      return unless record.resource_type
+      record.resource_type, invalid_names = record.resource_type.partition { |term| RESOURCE_TYPES.include?(term) }
+      invalid_names.each do |term|
+        record.warnings[:resource_type] << "Resource Type \"#{term}\" is not recognized and will be omitted."
+      end
+    end
+  end
 
   class PreFlightObj
     include ActiveModel::Validations
@@ -80,6 +91,7 @@ module Tenejo
     REQUIRED_FIELDS = (Collection.required_terms + [:identifier, :visibility]).uniq.freeze
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
+    validates_with Tenejo::ResourceTypeValidator
 
     def attributes
       ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
@@ -96,12 +108,11 @@ module Tenejo
     attr_accessor(*ALL_FIELDS)
     attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
+    validates_with Tenejo::ResourceTypeValidator
     validates_each :file, allow_blank: true, allow_nil: true do |rec, att, val|
       rec.errors.add(att, "< #{val} > cannot be found at #{rec.import_path}") unless PFFile.exist?(rec, val)
     end
-    validates_each :resource_type, allow_blank: true, allow_nil: true do |rec, _att, val|
-      rec.warnings[:resource_type] << "Resource type \"#{val}\" on line #{rec.lineno} is not recognized and will be left blank." unless RESOURCE_TYPES["terms"].map { |x| x["term"] }.include?(val)
-    end
+
     def attributes
       a = ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
       a[:import_path] = nil
@@ -152,13 +163,13 @@ module Tenejo
   class PFWork < PreFlightObj
     ALL_FIELDS = (Work.terms + [:visibility, :parent, :files]).uniq.freeze
     REQUIRED_FIELDS = (Work.required_terms + [:identifier, :visibility]).uniq.freeze
-
     attr_accessor(*ALL_FIELDS)
+    validates_presence_of(*REQUIRED_FIELDS)
+    validates_with Tenejo::ResourceTypeValidator
 
     def attributes
       ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
     end
-    validates_presence_of(*REQUIRED_FIELDS)
 
     def initialize(row = {}, lineno = 0, import_path = nil, graph = nil)
       @files = []

@@ -87,6 +87,14 @@ RSpec.describe Tenejo::Preflight do
     end
   end
 
+  context "with invalid vocabulary entries" do
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
+
+    it "gives a warning" do
+      expect(graph.warnings.join).to include 'Resource Type "Photos" is not recognized'
+    end
+  end
+
   context "a well formed file" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
 
@@ -139,7 +147,11 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.files.last.valid?).to be true
     end
 
-    describe 'graph structure' do
+    it "includes warnings in the graph" do
+      expect(graph.warnings.join).to include "Could not find parent \"NONEXISTENT\""
+    end
+
+    describe "graph structure" do
       it "has a root node" do
         expect(graph.root).to be_a Tenejo::PreFlightObj
       end
@@ -175,9 +187,9 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "restricts resource type" do
-      rec.resource_type = "foo"
+      rec.resource_type = ["Book", "foo"]
       expect(rec.valid?).to eq false # there are other errors in the example
-      expect(rec.warnings[:resource_type]).to eq ["Resource type \"foo\" on line 1 is not recognized and will be left blank."]
+      expect(rec.warnings[:resource_type]).to eq ["Resource Type \"foo\" is not recognized and will be omitted."]
     end
 
     context "path checking" do
@@ -288,6 +300,12 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.rights_statement).to eq ["Copyright Undetermined"]
     end
 
+    it "restricts resource type" do
+      rec.resource_type = ["foo"]
+      expect(rec.valid?).to eq false # there are other errors in the example
+      expect(rec.warnings[:resource_type].join).to include "\"foo\" is not recognized and will be omitted."
+    end
+
     it "can unpack" do
       p = Tenejo::PFFile.unpack({ files: "a|~|b|~|c", parent: 'p' }, 2, "tmp/uploads")
       expect(p).to be_an Array
@@ -313,11 +331,12 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 has extra values: using 'public' -- ignoring: 'private, jet'"]
     end
 
-    it "gives a warning if a controlled field has one or more invalid entries" do
-      pending "TODO: figure out how multiples and validations should interact"
-      rec = described_class.new({ resource_type: "Poster|~|Airplane|~|Book|~|Bear" }, 1, Tenejo::Graph.new)
+    it "gives a warning if a controlled field has one or more invalid entries", :aggregate_failures do
+      rec = described_class.new({ resource_type: "Poster|~|Airplane|~|Book|~|Bear" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, 'placeholder for the graph')
+      expect(rec.valid?).to eq false
       expect(rec.resource_type).to eq ["Poster", "Book"]
-      expect(rec.warnings[:resource_type]).to eq ["Resource Type on line 1 contains invalid values, 'Airplane' & 'Bear' will be ignored"]
+      expect(rec.warnings[:resource_type].join).to include "\"Airplane\" is not recognized and will be omitted."
+      expect(rec.warnings[:resource_type].join).to include "\"Bear\" is not recognized and will be omitted."
     end
   end
 
@@ -328,6 +347,21 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
         title: ["can't be blank"]
       expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 is blank - and will be treated as private"]
+    end
+
+    it "restricts resource type" do
+      rec.resource_type = ["foo"]
+      expect(rec.valid?).to eq false # there are other errors in the example
+      expect(rec.warnings[:resource_type].join).to include "\"foo\" is not recognized and will be omitted."
+    end
+  end
+
+  describe Tenejo::PreFlightObj do
+    let(:rec) { described_class.new({}, 1) }
+    it "has a status", :aggregate_failures do
+      expect(rec.status).to be nil
+      rec.status = :submitted
+      expect(rec.status.as_json).to eq 'submitted'
     end
   end
 end
