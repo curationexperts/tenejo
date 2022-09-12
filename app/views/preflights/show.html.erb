@@ -2,6 +2,7 @@
   <div class="col-xs-12 col-md-10">
     <%= render "jobs/card"  %>
 
+    <%# ANALYSIS %>
     <div class="card card-default">
       <div class="card-body">
         <h3>Analysis</h3>
@@ -15,30 +16,6 @@
                 Your CSV is looking good and ready to be imported!
               </h5>
               <%# IMPORT SUBMISSION FORM %>
-              <%= form_with(model: Import, local: true) do |form| %>
-                <%= form.hidden_field :parent_job_id, value: @job.id %>
-                <div class="actions">
-                  <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-success btn-lg' %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-        <%# WARNINGS %>
-        <% unless @preflight_graph.warnings.blank? %>
-          <div id="preflight-warnings" class="card card--job card--preflight">
-            <h4 class="card-header preflight-warnings">
-              Warnings
-            </h4>
-            <div class="card-body">
-              <ul>
-                <% @preflight_graph.warnings.each do |warning| %>
-                  <li><%= warning %></li>
-                <% end %>
-              </ul>
-             </div>
-            <div class="card-footer text-center">
-                <%# IMPORT SUBMISSION FORM %>
               <%= form_with(model: Import, local: true) do |form| %>
                 <%= form.hidden_field :parent_job_id, value: @job.id %>
                 <div class="actions">
@@ -64,8 +41,39 @@
             </div>
           </div>
         <% end %>
+
+        <%# WARNINGS %>
+        <% unless @preflight_graph.warnings.blank? %>
+          <div id="preflight-warnings" class="card card--job card--preflight">
+            <h4 class="card-header preflight-warnings">
+              Warnings
+            </h4>
+            <div class="card-body">
+              <ul>
+                <% @preflight_graph.warnings.each do |warning| %>
+                  <li><%= warning %></li>
+                <% end %>
+              </ul>
+             </div>
+
+            <% if  @preflight_graph.fatal_errors.blank?%>
+              <div class="card-footer text-center">
+                <%# IMPORT SUBMISSION FORM %>
+                <%= form_with(model: Import, local: true) do |form| %>
+                  <%= form.hidden_field :parent_job_id, value: @job.id %>
+                  <div class="actions">
+                    <%= form.submit 'Start Import', type: 'submit', class: 'btn btn-success btn-lg' %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
       </div>
     </div>
+
+    <%# OBJECTS %>
     <div class="card card-default">
       <div class="card-body">
         <h3>Objects</h3>
