@@ -50,7 +50,7 @@ module Tenejo
       @visibility = transform_visibility
     end
 
-    def set_attribute(field_name, value)
+    def set_attribute(field_name, value, lineno)
       setter = "#{field_name}="
       return if value.nil?
       list = value.split("|~|")
