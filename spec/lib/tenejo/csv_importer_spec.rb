@@ -41,19 +41,19 @@ RSpec.describe Tenejo::CsvImporter do
       expect(csv_import.preflight_warnings)
         .to contain_exactly(
               'The column "Comment" is unknown, and will be ignored',
-              'Could not find parent "NONEXISTENT" on line 3; collection "NONACOLLECTION" will be created without a parent if you continue.',
-              'Could not find parent work "WHUT?" for file "MN-02 2.png" on line 6 - the file will be ignored',
-              'Could not find parent "NONA" on line 10; work "MPC009" will be created without a parent if you continue.',
-              'Line 2: Resource Type "Photos" is not recognized and will be omitted.',
-              'Line 3: Resource Type "Posters" is not recognized and will be omitted.',
-              'Line 4: License on line 4 is not recognized and will be left blank, Rights Statement on line 4 not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
-              'Line 5: Visibility on line 5 is blank - and will be treated as private',
-              'Line 5: Visibility on line 5 is blank - and will be treated as private',
-              'Line 6: Visibility on line 6 is blank - and will be treated as private',
-              'Line 7: License on line 7 is not recognized and will be left blank, Rights Statement on line 7 not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
-              'Line 8: Visibility on line 8 is blank - and will be treated as private',
-              'Line 9: License on line 9 is not recognized and will be left blank, Rights Statement on line 9 not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
-              'Line 10: License on line 10 is not recognized and will be left blank, Rights Statement on line 10 not recognized or cannot be blank, and will be set to \'Copyright Undetermined\''
+              'Could not find parent "NONEXISTENT"; collection "NONACOLLECTION" will be created without a parent if you continue.',
+              'Could not find parent work "WHUT?" for file "MN-02 2.png" - the file will be ignored',
+              'Could not find parent "NONA"; work "MPC009" will be created without a parent if you continue.',
+              'Row 2: Resource Type "Photos" is not recognized and will be omitted.',
+              'Row 3: Resource Type "Posters" is not recognized and will be omitted.',
+              'Row 4: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
+              'Row 5: Visibility is blank - and will be treated as private',
+              'Row 5: Visibility is blank - and will be treated as private',
+              'Row 6: Visibility is blank - and will be treated as private',
+              'Row 7: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
+              'Row 8: Visibility is blank - and will be treated as private',
+              'Row 9: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
+              'Row 10: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\''
             )
     end
   end

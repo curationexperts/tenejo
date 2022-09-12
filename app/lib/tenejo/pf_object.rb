@@ -56,7 +56,7 @@ module Tenejo
       list = value.split("|~|")
       if singular?(field_name)
         unpacked_value = list&.shift
-        warnings[field_name] << "#{field_name.to_s.titlecase} on line #{lineno} has extra values: using '#{unpacked_value}' -- ignoring: '#{list.join(', ')}'" if list.count != 0
+        warnings[field_name] << "#{field_name.to_s.titlecase} has extra values: using '#{unpacked_value}' -- ignoring: '#{list.join(', ')}'" if list.count != 0
       else
         unpacked_value = list
       end
@@ -80,7 +80,7 @@ module Tenejo
       when 'private', 'restricted'
         Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
       else
-        warnings[:visibility] << "Visibility on line #{lineno} is #{visibility ? 'invalid: ' + visibility : 'blank'} - and will be treated as private"
+        warnings[:visibility] << "Visibility is #{visibility ? 'invalid: ' + visibility : 'blank'} - and will be treated as private"
         Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
       end
     end
@@ -185,16 +185,16 @@ module Tenejo
     def check_license
       return if license.blank?
       first_license = license&.shift
-      warnings[:license] << "Multiple licenses on line 1: using '#{first_license}' -- ignoring '#{license.join(', ')}'" if license.count != 0
+      warnings[:license] << "Multiple licenses: using '#{first_license}' -- ignoring '#{license.join(', ')}'" if license.count != 0
 
       return @license = [first_license] if LICENSES["terms"].map { |x| x['term'] }.include?(first_license)
-      warnings[:license] << "License on line #{@lineno} is not recognized and will be left blank"
+      warnings[:license] << "License is not recognized and will be left blank"
       @license = self.class.singular_fields.include?(:license) ? "" : []
     end
 
     def check_rights
       return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement&.first)
-      warnings[:rights_statement] << "Rights Statement on line #{@lineno} not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
+      warnings[:rights_statement] << "Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
       @rights_statement = ["Copyright Undetermined"]
     end
 

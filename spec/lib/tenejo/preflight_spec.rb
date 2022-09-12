@@ -55,7 +55,7 @@ RSpec.describe Tenejo::Preflight do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv", "spec/fixtures/images/uploads") }
 
     it "records a warning for that row" do
-      expect(graph.warnings).to eq ["Uknown object type on row 2: potato"]
+      expect(graph.warnings).to eq ["Uknown object type: potato"]
     end
   end
 
@@ -108,7 +108,7 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "warns about disconnected works" do
-      expect(graph.warnings).to include "Could not find parent \"NONA\" on line 10; work \"MPC009\" will be created without a parent if you continue."
+      expect(graph.warnings).to include "Could not find parent \"NONA\"; work \"MPC009\" will be created without a parent if you continue."
     end
 
     it "connects works and collections with parents" do
@@ -118,11 +118,11 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "warns when work has no parent" do
-      expect(graph.warnings).to include "Could not find parent \"NONEXISTENT\" on line 3; collection \"NONACOLLECTION\" will be created without a parent if you continue."
+      expect(graph.warnings).to include "Could not find parent \"NONEXISTENT\"; collection \"NONACOLLECTION\" will be created without a parent if you continue."
     end
 
     it "warns files without parent in sheet" do
-      expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6 - the file will be ignored"
+      expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" - the file will be ignored"
     end
 
     it "parses out object types" do
@@ -250,7 +250,7 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.valid?).not_to eq true
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
         title: ["can't be blank"], creator: ["can't be blank"]
-      expect(rec.warnings).to include(visibility: ["Visibility on line 1 is blank - and will be treated as private"])
+      expect(rec.warnings).to include(visibility: ["Visibility is blank - and will be treated as private"])
     end
 
     it "transforms visibility", :aggregate_failures do
@@ -266,7 +266,7 @@ RSpec.describe Tenejo::Preflight do
       rec = described_class.new({ visibility: 'spoon' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
       expect(rec.valid?).not_to eq true # for other missing values, the import process will now treat any unrecognized values as private
-      expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 is invalid: spoon - and will be treated as private"]
+      expect(rec.warnings[:visibility]).to eq ["Visibility is invalid: spoon - and will be treated as private"]
     end
 
     it "is ok to be blank" do
@@ -278,19 +278,19 @@ RSpec.describe Tenejo::Preflight do
 
     it "restricts license" do
       rec = described_class.new({ license: 'foo' }, 1, Tenejo::DEFAULT_UPLOAD_PATH,  Tenejo::Graph.new)
-      expect(rec.warnings[:license]).to eq ["License on line 1 is not recognized and will be left blank"]
+      expect(rec.warnings[:license]).to eq ["License is not recognized and will be left blank"]
       expect(rec.license).to eq []
     end
 
     it "discards extra license" do
       rec = described_class.new({ license: 'All rights reserved|~|Not validated' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.license).to eq ['All rights reserved']
-      expect(rec.warnings[:license]).to eq ["Multiple licenses on line 1: using 'All rights reserved' -- ignoring 'Not validated'"]
+      expect(rec.warnings[:license]).to eq ["Multiple licenses: using 'All rights reserved' -- ignoring 'Not validated'"]
     end
 
     it "restricts rights statement" do
       expect(rec.valid?).not_to eq true
-      expect(rec.warnings[:rights_statement]).to eq ["Rights Statement on line 1 not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"]
+      expect(rec.warnings[:rights_statement]).to eq ["Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"]
       expect(rec.rights_statement).to eq ["Copyright Undetermined"]
     end
 
@@ -322,7 +322,7 @@ RSpec.describe Tenejo::Preflight do
     it "gives a warning if a single-valued field has packed data" do
       rec = described_class.new({ visibility: "public|~|private|~|jet" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
-      expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 has extra values: using 'public' -- ignoring: 'private, jet'"]
+      expect(rec.warnings[:visibility]).to eq ["Visibility has extra values: using 'public' -- ignoring: 'private, jet'"]
     end
 
     it "gives a warning if a controlled field has one or more invalid entries", :aggregate_failures do
@@ -340,7 +340,7 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.valid?).not_to eq true
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
         title: ["can't be blank"]
-      expect(rec.warnings[:visibility]).to eq ["Visibility on line 1 is blank - and will be treated as private"]
+      expect(rec.warnings[:visibility]).to eq ["Visibility is blank - and will be treated as private"]
     end
 
     it "restricts resource type" do

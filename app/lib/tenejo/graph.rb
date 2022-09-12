@@ -40,7 +40,7 @@ class Tenejo::Graph
     when 'w', 'work'
       @works << Tenejo::PFWork.new(row, lineno, import_path, self)
     else
-      @warnings << "Uknown object type on row #{lineno}: #{row[:object_type]}"
+      @warnings << "Unknown object type on row #{lineno}: #{row[:object_type]}"
     end
     self
   end
@@ -63,7 +63,7 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].files << f
       else
-        @warnings << %/Could not find parent work "#{f.parent}" for file "#{f.file}" on line #{f.lineno} - the file will be ignored/
+        @warnings << %/Could not find parent work "#{f.parent}" for file "#{f.file}" - the file will be ignored/
       end
     end
     self
@@ -75,7 +75,7 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].children << f
       elsif f.parent.present?
-        @warnings << %/Could not find parent "#{f.parent}" on line #{f.lineno}; #{simple_class(f)} "#{f.identifier.first}" will be created without a parent if you continue./
+        @warnings << %/Could not find parent "#{f.parent}"; #{simple_class(f)} "#{f.identifier.first}" will be created without a parent if you continue./
         @root.children << f
       else
         @root.children << f
@@ -104,10 +104,10 @@ class Tenejo::Graph
     @works, invalid_works = @works.partition(&:valid?)
     @files, invalid_files = @files.partition(&:valid?)
     @invalids = invalid_collections + invalid_works + invalid_files
-    @warnings += @invalids.map { |k| "Line #{k.lineno}: #{k.errors.full_messages.join(', ')}" }
+    @warnings += @invalids.map { |k| "Row #{k.lineno}: #{k.errors.full_messages.join(', ')}" }
 
     all_the_items = @collections + @works + @files + @invalids
-    @warnings += all_the_items.filter_map { |item| "Line #{item.lineno}: #{item.warnings.values.join(', ')}" if item.warnings.any? }
+    @warnings += all_the_items.filter_map { |item| "Row #{item.lineno}: #{item.warnings.values.join(', ')}" if item.warnings.any? }
   end
 
   DEFAULT_UPLOAD_PATH = File.join(Hyrax.config.upload_path.call, 'ftp')
