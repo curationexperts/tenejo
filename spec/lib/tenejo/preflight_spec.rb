@@ -277,7 +277,7 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "restricts license" do
-      rec = described_class.new({ license: 'foo' }, 1, Tenejo::DEFAULT_UPLOAD_PATH,  Tenejo::Graph.new)
+      rec = described_class.new({ license: 'foo' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.warnings[:license]).to eq ["License is not recognized and will be left blank"]
       expect(rec.license).to eq []
     end
