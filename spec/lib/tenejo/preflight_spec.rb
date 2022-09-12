@@ -1,20 +1,8 @@
 # frozen_string_literal: true
 require 'rails_helper'
 require 'tenejo/pf_object'
-require 'fileutils'
 
-# rubocop:disable RSpec/InstanceVariable
 RSpec.describe Tenejo::Preflight do
-  before :all do
-    FileUtils.mkdir_p("tmp/uploads")
-    FileUtils.touch("tmp/uploads/MN-02 2.png")
-    FileUtils.touch("tmp/uploads/MN-02 3.png")
-    FileUtils.touch("tmp/uploads/MN-02 4.png")
-  end
-  after :all do
-    FileUtils.rm_r("tmp/uploads")
-  end
-
   context '.process_csv' do
     let(:no_data) { described_class.process_csv(nil, nil) }
     it 'returns an error when input stream absent' do
@@ -23,25 +11,26 @@ RSpec.describe Tenejo::Preflight do
   end
 
   context "a file with duplicate columns" do
-    let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv", "tmp/uploads") }
+    let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv", "spec/fixtures/images/uploads") }
 
     it "records fatal error for duplicate column " do
       expect(dupes.fatal_errors).to include "Duplicate column names detected [:identifier, :identifier, :title, :title], cannot process"
     end
   end
+
   context "a file that isn't a csv " do
-    let(:graph) { described_class.read_csv("spec/fixtures/images/tiny.jpg", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/images/tiny.jpg", "spec/fixtures/images/uploads") }
     it "returns a fatal error" do
       expect(graph.fatal_errors).to eq ["File format or encoding not recognized"]
     end
   end
+
   context "a file with no data" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/empty.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/empty.csv", "spec/fixtures/images/uploads") }
     it "returns an empty graph" do
-      [:works, :collections, :files].each do |x|
-        expect(graph.send(x)).to be_empty
-      end
+      expect(graph.root.children).to be_empty
     end
+
     it "records toplevel errors" do
       expect(graph.fatal_errors).to eq ["No data was detected"]
       expect(graph.warnings).to be_empty
@@ -49,37 +38,38 @@ RSpec.describe Tenejo::Preflight do
   end
 
   context "a file that has unmapped header names" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/unmapped.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/unmapped.csv", "spec/fixtures/images/uploads") }
     it "records a warning for that row" do
       expect(graph.warnings).to include "The column \"frankabillity\" is unknown, and will be ignored"
     end
   end
 
   context "a row with too many columns" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/missing_cols.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/missing_cols.csv", "spec/fixtures/images/uploads") }
     it "records a warning for that row" do
       expect(graph.warnings).to eq ["The number of columns in row 2 differed from the number of headers (missing quotation mark?)"]
     end
   end
 
   context "a file with a bad object type" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv", "spec/fixtures/images/uploads") }
 
     it "records a warning for that row" do
       expect(graph.warnings).to eq ["Uknown object type on row 2: potato"]
     end
   end
 
-  context " a file with header in it" do
+  context "a file with header in it" do
     it "understands bad caps" do
       expect(described_class.map_header("KeY wOrD")).to eq :keyword
-      expect(described_class.map_header("frank ability")).to eq "frank ability"
+      expect(described_class.map_header("frank ability")).to eq "frank ability" # unmatched headers get returned as-is
       expect(described_class.map_header("RIGHTS_STATEMENT")).to eq :rights_statement
       expect(described_class.map_header("Rights Statement ")).to eq :rights_statement
     end
   end
+
   context "with missing required headers" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/noid.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/noid.csv", "spec/fixtures/images/uploads") }
     it "requires required headers" do
       expect(graph.warnings.size).to eq 0
       expect(graph.fatal_errors).to include "Missing required column 'Identifier'"
@@ -88,7 +78,7 @@ RSpec.describe Tenejo::Preflight do
   end
 
   context "with invalid vocabulary entries" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "spec/fixtures/images/uploads") }
 
     it "gives a warning" do
       expect(graph.warnings.join).to include 'Resource Type "Photos" is not recognized'
@@ -96,7 +86,7 @@ RSpec.describe Tenejo::Preflight do
   end
 
   context "a well formed file" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "tmp/uploads") }
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "spec/fixtures/images/uploads") }
 
     it "checks for missing files in IMPORT_PATH" do
       expect(graph.files.first.valid?).to be true
@@ -112,20 +102,25 @@ RSpec.describe Tenejo::Preflight do
       expect(graph.works.first.files.map(&:file)).to eq ['MN-02 2.png', 'MN-02 3.png']
       expect(graph.works[1].files.map(&:file)).to eq ["MN-02 4.png"]
     end
+
     it "connects works with works" do
       expect(graph.works[1].children.map(&:identifier)).to eq [["MPC008"]]
     end
-    it "warns about disconnected  works" do
+
+    it "warns about disconnected works" do
       expect(graph.warnings).to include "Could not find parent \"NONA\" on line 10; work \"MPC009\" will be created without a parent if you continue."
     end
+
     it "connects works and collections with parents" do
       expect(graph.collections.size).to eq 2
       expect(graph.collections.first.children.map(&:identifier)).to eq [["MPC002"], ["MPC003"]]
       expect(graph.collections.last.children.map(&:identifier)).to be_empty
     end
+
     it "warns when work has no parent" do
       expect(graph.warnings).to include "Could not find parent \"NONEXISTENT\" on line 3; collection \"NONACOLLECTION\" will be created without a parent if you continue."
     end
+
     it "warns files without parent in sheet" do
       expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" on line 6 - the file will be ignored"
     end
@@ -137,7 +132,6 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "has validation" do
-      FileUtils.touch("tmp/uploads/MN-02 4.png")
       [:works, :collections].each do |x|
         graph.send(x).each do |y|
           expect(y.valid?).to eq true
@@ -170,13 +164,47 @@ RSpec.describe Tenejo::Preflight do
     end
   end
 
+  describe "assigns identifiers" do
+    let(:graph) { described_class.read_csv("spec/fixtures/csv/file_id_test.csv", "spec/fixtures/images/uploads") }
+    let(:hearts) { graph.root.children[0] }
+    let(:diamonds) { graph.root.children[1] }
+    let(:clubs) { graph.root.children[2] }
+    let(:spades) { graph.root.children[3] }
+    before do
+      # Ignore file existence validations for these tests
+      allow(Tenejo::PFFile).to receive(:exist?).and_return(true)
+    end
+    context "when explicit in the CSV" do
+      example "for single files", :aggregate_failures do
+        ace_of_spades = spades.files[0]
+        expect(ace_of_spades.identifier).to eq ['CARDS-0001-S-A']
+      end
+      example "for files packed in a work", :aggregate_failures do
+        king_of_clubs = clubs.files[3] # Arrays start at 0
+        expect(king_of_clubs.identifier).to eq ['CARDS-0001-C.4'] # identifier indexes start at 1
+      end
+    end
+    context "automatically when absent" do
+      example "for single files" do
+        jack_of_diamonds = diamonds.files[2]
+        expect(jack_of_diamonds.identifier).to eq ["CARDS-0001-D//L10"]
+      end
+      example "for packed files" do
+        queen_of_diamonds_back = diamonds.files[4]
+        expect(queen_of_diamonds_back.identifier).to eq ["CARDS-0001-D//L11.2"]
+      end
+      example "for files packed in files" do
+        ace_of_hearts = hearts.children[0].files[0]
+        expect(ace_of_hearts.identifier).to eq ['CARDS-0001-H-A.1']
+      end
+    end
+  end
+
   describe Tenejo::PFFile do
     let(:row) { {} }
-    let(:rec) { described_class.new(row, 1, 'tmp/uploads') }
-    it "is ok when blank" do
+    let(:rec) { described_class.new(row, 1, 'spec/fixtures/images/uploads') }
+    it "is invalid when blank" do
       expect(rec.valid?).not_to eq true
-      expect(rec.errors[:resource_type]).to be_empty
-      expect(rec.warnings[:resource_type]).to be_empty
     end
 
     it "gives an error if the file does not exist" do
@@ -216,42 +244,6 @@ RSpec.describe Tenejo::Preflight do
     end
   end
 
-  describe "assigns identifiers" do
-    let(:graph) { described_class.read_csv("spec/fixtures/csv/file_id_test.csv", "tmp/uploads") }
-    let(:hearts) { graph.root.children[0] }
-    let(:diamonds) { graph.root.children[1] }
-    let(:clubs) { graph.root.children[2] }
-    let(:spades) { graph.root.children[3] }
-    before do
-      # Ignore file existence validations for these tests
-      allow(Tenejo::PFFile).to receive(:exist?).and_return(true)
-    end
-    context "when explicit in the CSV" do
-      example "for single files", :aggregate_failures do
-        ace_of_spades = spades.files[0]
-        expect(ace_of_spades.identifier).to eq ['CARDS-0001-S-A']
-      end
-      example "for files packed in a work", :aggregate_failures do
-        king_of_clubs = clubs.files[3] # Arrays start at 0
-        expect(king_of_clubs.identifier).to eq ['CARDS-0001-C.4'] # identifier indexes start at 1
-      end
-    end
-    context "automatically when absent" do
-      example "for single files" do
-        jack_of_diamonds = diamonds.files[2]
-        expect(jack_of_diamonds.identifier).to eq ["CARDS-0001-D//L10"]
-      end
-      example "for packed files" do
-        queen_of_diamonds_back = diamonds.files[4]
-        expect(queen_of_diamonds_back.identifier).to eq ["CARDS-0001-D//L11.2"]
-      end
-      example "for files packed in files" do
-        ace_of_hearts = hearts.children[0].files[0]
-        expect(ace_of_hearts.identifier).to eq ['CARDS-0001-H-A.1']
-      end
-    end
-  end
-
   describe Tenejo::PFWork do
     let(:rec) { described_class.new({}, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
     it "is not valid when blank" do
@@ -260,6 +252,7 @@ RSpec.describe Tenejo::Preflight do
         title: ["can't be blank"], creator: ["can't be blank"]
       expect(rec.warnings).to include(visibility: ["Visibility on line 1 is blank - and will be treated as private"])
     end
+
     it "transforms visibility", :aggregate_failures do
       rec = described_class.new({ visibility: 'Public' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
@@ -268,6 +261,7 @@ RSpec.describe Tenejo::Preflight do
       rec = described_class.new({ visibility: 'PrIvAte' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
     end
+
     it "validates visibility" do
       rec = described_class.new({ visibility: 'spoon' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
       expect(rec.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
@@ -307,7 +301,7 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "can unpack" do
-      p = Tenejo::PFFile.unpack({ files: "a|~|b|~|c", parent: 'p' }, 2, "tmp/uploads")
+      p = Tenejo::PFFile.unpack({ files: "a|~|b|~|c", parent: 'p' }, 2, "spec/fixtures/images/uploads")
       expect(p).to be_an Array
       expect(p.size).to eq 3
       expect(p.first.file).to eq "a"
