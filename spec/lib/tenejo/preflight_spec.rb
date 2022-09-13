@@ -55,7 +55,7 @@ RSpec.describe Tenejo::Preflight do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv", "spec/fixtures/images/uploads") }
 
     it "records a warning for that row" do
-      expect(graph.warnings).to eq ["Unknown object type on row 2: potato"]
+      expect(graph.warnings).to eq ["Row 2: Unknown object type potato"]
     end
   end
 
@@ -108,7 +108,7 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "warns about disconnected works" do
-      expect(graph.warnings).to include "Could not find parent \"NONA\"; work \"MPC009\" will be created without a parent if you continue."
+      expect(graph.warnings).to include "Row 10: Could not find parent \"NONA\"; work \"MPC009\" will be created without a parent if you continue."
     end
 
     it "connects works and collections with parents" do
@@ -118,11 +118,11 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "warns when work has no parent" do
-      expect(graph.warnings).to include "Could not find parent \"NONEXISTENT\"; collection \"NONACOLLECTION\" will be created without a parent if you continue."
+      expect(graph.warnings).to include "Row 3: Could not find parent \"NONEXISTENT\"; collection \"NONACOLLECTION\" will be created without a parent if you continue."
     end
 
     it "warns files without parent in sheet" do
-      expect(graph.warnings).to include "Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" - the file will be ignored"
+      expect(graph.warnings).to include "Row 6: Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" - the file will be ignored"
     end
 
     it "parses out object types" do
