@@ -40,7 +40,7 @@ class Tenejo::Graph
     when 'w', 'work'
       @works << Tenejo::PFWork.new(row, lineno, import_path, self)
     else
-      @warnings << "Unknown object type on row #{lineno}: #{row[:object_type]}"
+      @warnings << "Row #{lineno}: Unknown object type #{row[:object_type]}"
     end
     self
   end
@@ -63,7 +63,7 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].files << f
       else
-        @warnings << %/Could not find parent work "#{f.parent}" for file "#{f.file}" - the file will be ignored/
+        @warnings << %/Row #{f.lineno}: Could not find parent work "#{f.parent}" for file "#{f.file}" - the file will be ignored/
       end
     end
     self
@@ -75,7 +75,7 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].children << f
       elsif f.parent.present?
-        @warnings << %/Could not find parent "#{f.parent}"; #{simple_class(f)} "#{f.identifier.first}" will be created without a parent if you continue./
+        @warnings << %/Row #{f.lineno}: Could not find parent "#{f.parent}"; #{simple_class(f)} "#{f.identifier.first}" will be created without a parent if you continue./
         @root.children << f
       else
         @root.children << f
