@@ -4,7 +4,7 @@ en:
     admin:
       sidebar:
         jobs: Jobs
-        preflight: Preflight
+        preflight: Import Preflight
         imports: Import
         exports: Export
         theme: Theme
