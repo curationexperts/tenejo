@@ -22,7 +22,7 @@ RSpec.describe Tenejo::CsvImporter do
     RSpec::Mocks.with_temporary_scope do
       # Stub file creation - test this separately in an import with fewer elements
       # This cuts the test time from over 3.5 minutes down to around 30 seconds.
-      allow(@csv_import).to receive(:create_or_update_files)
+      allow(IngestLocalFileJob).to receive(:perform_now)
       @csv_import.import
     end
   end
@@ -68,6 +68,10 @@ RSpec.describe Tenejo::CsvImporter do
 
     hearts_status = job.graph['root']['children'][2]['children'][0]['children'][0]['children'].map { |c| c['status'] }
     expect(hearts_status).to eq ["complete", "complete", "complete", "complete", "complete"]
+  end
+  it 'sets file import status', :aggregate_failures do
+    job = @csv_import.instance_variable_get(:@job)
+    expect(job.graph['root'].dig('children', 1, 'files', 0, 'status')).to eq "complete"
   end
 
   it 'sets work-level visibility', :aggregate_failures do
