@@ -55,7 +55,7 @@ RSpec.describe Tenejo::Preflight do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/bad_ot.csv", "spec/fixtures/images/uploads") }
 
     it "records a warning for that row" do
-      expect(graph.warnings).to eq ["Unknown object type: potato"]
+      expect(graph.warnings).to eq ["Unknown object type on row 2: potato"]
     end
   end
 
