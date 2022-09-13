@@ -71,8 +71,8 @@ RSpec.describe "preflights/show", type: :view do
   end
 
   it "shows any warnings", :aggregate_failures do
-    graph.add_warning("Could not find parent work \"GONE?\" for file \"neverwhere.jpg\" on line 6")
-    graph.add_warning("Could not find parent work \"NONA\" for work \"MPC009\" on line 11")
+    graph.add_warning("Could not find parent work \"GONE?\" for file \"neverwhere.jpg\"")
+    graph.add_warning("Could not find parent work \"NONA\" for work \"MPC009\"")
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
