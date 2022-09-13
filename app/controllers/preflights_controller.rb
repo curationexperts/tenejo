@@ -9,14 +9,14 @@ class PreflightsController < JobsController
   def new
     super
     @job = Preflight.new
-    add_breadcrumb I18n.t('tenejo.admin.sidebar.preflight'), @job
+    add_breadcrumb @job.class.name, @job
   end
 
   def show
     super
     @preflight_graph = Tenejo::Preflight.process_csv(@job.manifest.download)
     @root = JSON.parse(@preflight_graph.root.to_json)
-    add_breadcrumb "##{@job.id} - #{I18n.t('tenejo.admin.sidebar.preflight')}", @job
+    add_breadcrumb "##{@job.id} - #{@job.class.name}", @job
   end
 
   def create
