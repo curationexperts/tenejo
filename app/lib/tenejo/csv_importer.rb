@@ -108,6 +108,29 @@ module Tenejo
       found
     end
 
+    # TODO: make pfffiles live in the children array, so we don't have to search
+    # for them separately
+    def search_file(item, file_id)
+      # search under the files key instead of children
+      found = item.files.find { |x| x['identifier'] == file_id } if item.respond_to?(:files)
+      if !found && !item.children.empty?
+        item.children.each do |x|
+          found ||= search_file(typify(x), file_id)
+        end
+      end
+      found
+    end
+
+    # TODO: make pfffiles live in the children array, so we don't have to search
+    # for them separately
+    def update_file(file_id, status)
+      file = search_file(@root, file_id)
+      return unless file
+      file['status'] = status
+      @job.graph = @graph
+      @job.save!
+    end
+
     def update_child(child_id, status)
       child = search(@root, child_id)
       return unless child
@@ -242,6 +265,7 @@ module Tenejo
       # save the ordered list of children all at once.
     end
 
+    # rubocop:disable Metrics/AbcSize
     def create_or_update_files(work, pfwork)
       # Cases
       # - new work, new files
@@ -255,7 +279,9 @@ module Tenejo
         file_set.visibility = pffile.visibility
         file_set.save!
         local_path = File.join(pffile.import_path, pffile.file)
+        update_file(pffile.identifier, 'started')
         IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+        update_file(pffile.identifier, 'complete')
         file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
@@ -269,6 +295,7 @@ module Tenejo
       work.thumbnail ||= file_sets.first
       work.representative ||= file_sets.first
     end
+    # rubocop:enable Metrics/AbcSize
 
     def save_work(work)
       return unless work
