@@ -77,8 +77,24 @@ module Tenejo
       @warnings = warnings.merge(hash)
     end
 
+    def self.typify(hash)
+      if hash.is_a?(Hash) && hash.key?('type')
+        # puts "#{hash['type']} id: #{hash['identifier']} parent: #{hash['parent']}"
+        t = hash['type'].constantize.new
+        t.attributes = hash
+        t
+      else
+        hash
+      end
+    end
+
     def attributes=(hash)
       hash.each do |k, v|
+        v = if v.is_a?(Array)
+              v.map { |x| self.class.typify(x) }
+            else
+              self.class.typify(v)
+            end
         send("#{k}=", v)
       end
     end
@@ -152,8 +168,8 @@ module Tenejo
   end
 
   class PFFile < PreFlightObj
-    ALL_FIELDS = [:parent, :file, :files, :resource_type, :visibility, :identifier].freeze
-    REQUIRED_FIELDS = [:parent, :file].freeze
+    ALL_FIELDS = [:status, :parent, :file, :files, :resource_type, :visibility, :identifier].freeze
+    REQUIRED_FIELDS = [:parent, :file, :identifier].freeze
     attr_accessor(*ALL_FIELDS)
     attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
@@ -226,7 +242,7 @@ module Tenejo
       @files = []
       @import_path = import_path
       return unless graph
-      graph.files += unpack_files_from_work(row, lineno, import_path) if row[:files]
+      graph.detached_files += unpack_files_from_work(row, lineno, import_path) if row[:files]
       row.delete(:files)
       super(row, lineno)
     end

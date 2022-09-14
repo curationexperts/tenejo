@@ -44,6 +44,7 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'hydra-role-management', '~> 1.0', '>= 1.0.3'
 gem 'hyrax'
+gem 'redis-namespace', '~> 1.9'
 
 gem 'bootstrap-sass', '~> 3.0'
 gem 'devise'

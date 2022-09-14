@@ -2,63 +2,63 @@
   <tbody>
     <tr>
       <td class="title" style="padding-left: <%= depth * 2 %>rem;">
-        <% if node['children'].any? || node['files'].try(:any?) %>
-          <button class="btn btn-info btn-xs import_expand" type="button" data-toggle="collapse" data-target=".child-of-<%= node['lineno'] %>" aria-expanded="false" aria-controls=".children-#{node['lineno']}">
+        <% if node.children.any? || node.children.select{|x| x.kind_of?Tenejo::PFFile}.try(:any?) %>
+          <button class="btn btn-info btn-xs import_expand" type="button" data-toggle="collapse" data-target=".child-of-<%= node.lineno %>" aria-expanded="false" aria-controls=".children-#{node.lineno}">
             +
           </button>
         <% else %>
           &nbsp;
         <% end %>
-        <%= node['title'].first unless node['type'] == 'Tenejo::PFFile' %>
-        <% if node['type'] == 'Tenejo::PFFile' %>
+        <%= node.title.first unless node.kind_of?Tenejo::PFFile %>
+        <% if node.kind_of? Tenejo::PFFile %>
           <span class="file-name">
             <i class="fa fa-file-o" aria-hidden="true"></i>
-            <%= node['files'] if node['type'] == 'Tenejo::PFFile' %>
+            <%= node.file %>
           </span>
         <% end %>
       </td>
       <td class="item_status">
-        <%= status_span_generator(node['status']) %>
+        <%= status_span_generator(node.status) %>
       </td>
       <td class="identifier">
-        <%= node['identifier'].first %>
+        <%= node.identifier.first %>
       </td>
-      <td class="lineno"><%= node['lineno'] %></td>
+      <td class="lineno"><%= node.lineno %></td>
       <td class="index"><%= order || raw("&ndash;") %></td>
-      <td class="type"><%= node['type'].to_s.delete_prefix("Tenejo::PF").truncate(1, omission: "") %></td>
-      <td class="visibility"><%= node['visibility'] %></td>
+      <td class="type"><%= node.class.to_s.delete_prefix("Tenejo::PF").truncate(1, omission: "") %></td>
+      <td class="visibility"><%= node.visibility %></td>
       <td class="collection_count">
-        <% if node['type'] == 'Tenejo::PFCollection' %>
+        <% if node.kind_of? Tenejo::PFCollection %>
           &ndash;
         <% else %>
-          <%= node.dig('collections')&.count %>
+          <%= @job.graph.collections&.count %>
         <% end %>
       </td>
       <td class="work_count">
-        <% if node['type'] == 'Tenejo::PFWork' %>
-          <%= node.dig('works')&.count %>
+        <% if node.kind_of? Tenejo::PFWork %>
+          <%= @job.graph.works&.count %>
         <% else %>
           &ndash;
         <% end %>
       </td>
       <td class="file_count">
-        <% if node['type'] == 'Tenejo::PFFile' %>
+        <% if node.kind_of? Tenejo::PFFile %>
           &ndash;
         <% else %>
-          <%= node.dig('files')&.count %>
+          <%= @job.graph.files&.count %>
         <% end %>
       </td>
     </tr>
   </tbody>
 </table>
 
-<div class="job-child collapse in child-of-<%= node['lineno'] %>">
-  <% node['children'].each do |child| %>
-    <%= render "child", node: child, parent: node['lineno'], depth: depth + 1, order: nil %>
+<div class="job-child collapse in child-of-<%= node.lineno %>">
+  <% node.children.each do |child| %>
+    <%= render "child", node: child, parent: node.lineno, depth: depth + 1, order: nil %>
   <% end %>
-  <% if node['files'].try(:any?) %>
-    <% node['files'].each_with_index do |file, index| %>
-      <%= render "child", node: file, parent: node['lineno'], depth: depth + 1, order: index + 1 %>
+  <% if node.children.select{|x|x.kind_of?Tenejo::PFFile}.try(:any?) %>
+    <% node.children.select{|x|x.kind_of?Tenejo::PFFile}.each_with_index do |file, index| %>
+      <%= render "child", node: file, parent: node.lineno, depth: depth + 1, order: index + 1 %>
     <% end %>
   <% end %>
 </div>
