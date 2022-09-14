@@ -12,24 +12,21 @@
     }
   }
   .title {
-    width: 25%;
+    width: 45%;
   }
-  .item_status {
-    width: 10%;
-  }
+  .item_status,
   .identifier {
-    width: 15%;
+    width: 10%;
   }
 
-  .lineno {
-    width: 5%;
-    text-align: center;
-  }
+  .lineno,
+  .index,
   .type {
     width: 5%;
+    // text-align: center;
   }
   .visibility {
-    width: 10%;
+    width: 5%;
   }
   .collection_count,
   .work_count,
@@ -37,10 +34,7 @@
     width: 5%;
     text-align: center;
   }
-  .index {
-    width: 5%;
-    text-align: center;
-  }
+
 }
 .file-name {
   font-style: italic;
