@@ -25,7 +25,7 @@
       </td>
       <td class="lineno"><%= node['lineno'] %></td>
       <td class="index"><%= order || raw("&ndash;") %></td>
-      <td class="type"><%= node['class'].to_s.delete_prefix("Tenejo::PF").truncate(4, omission: "") %></td>
+      <td class="type"><%= node['type'].to_s.delete_prefix("Tenejo::PF").truncate(1, omission: "") %></td>
       <td class="visibility"><%= node['visibility'] %></td>
       <td class="collection_count">
         <% if node['type'] == 'Tenejo::PFCollection' %>
