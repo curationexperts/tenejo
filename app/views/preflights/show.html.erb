@@ -50,9 +50,116 @@
             </h4>
             <div class="card-body">
               <ul>
-                <% @preflight_graph.warnings.each do |warning| %>
+              <% @preflight_graph.warnings.each do |warning| %>
                   <li><%= warning %></li>
                 <% end %>
+              </ul>
+              <hr>
+              <ul>
+                
+                
+                  <li>The column <strong>'JUNK COLUMN HEADER'</strong> is unknown, and will be ignored</li>
+                  
+                  <li>Row 3:
+                    <ul>
+                      <li>File <span class="sp1">&lt;test.tiff, test.png&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                      <li>Could not find parent <strong>'Annualoooooo'</strong>; work <strong>'KAW000'</strong> will be created without a parent if you continue.</li>
+                      <li><strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                    </ul>
+                  </li>
+                  
+                  
+                  
+                  <li>Row 6:
+                    <ul>
+                      <li><strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                      <li>File <span class="sp1">&lt;test.tiff&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                      <li>File <span class="sp1">&lt;test.png&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                      <li>File <span class="sp1">&lt;FileNotFound.csv&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                    </ul>
+                  </li>
+                  
+                  <li>Row 10: 
+                    <ul>
+                      <li><strong> Identifier</strong> can't be blank</li>
+                      <li><strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                    </ul>
+                  </li>
+                    
+                  <li>Row 12: 
+                    <ul>
+                      <li><strong>Title</strong> can't be blank</li>
+                      <li><strong> Identifier</strong> can't be blank</li>
+                      <li><strong>Visibility</strong> is blank- and will be treated as private</li>
+                    </ul>
+                  </li>
+                  <li>Row 13: 
+                    <ul>
+                    <li><strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                    <li>Could not find parent <strong>'TestCard000'</strong>; work <strong>'TestTPC001'</strong> will be created without a parent if you continue.</li>
+                    </ul>
+                  </li>
+                  <li>Row 16: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 19: 
+                    <ul>
+                    <li><strong> Creator</strong> can't be blank</li>
+                      <li><strong> Visibility</strong> is invalid: No Visibility - and will be treated as <strong>'Private'</strong></li>
+                      <li><strong> Rights Statement</strong>  not recognized or cannot be blank, and will be set to <strong> 'Copyright Undetermined'</strong> </li>
+                      <li><strong>Resource Type</strong>  <strong>'TYPE OF THING'</strong> is not recognized and will be omitted.</li>
+                    </ul>
+                  </li>
+                  <li>Row 20: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 23: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 26: 
+                    <ul>
+                      <li><strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                      <li>Could not find parent <strong>'Blah'</strong>; work <strong>'TestTVGuide000'</strong> will be created without a parent if you continue.</li>
+                    </ul>
+                  </li>
+                  <li>Row 27: 
+                    <ul>
+                      <li>Could not find parent <strong>'Blah'</strong>; work <strong>'TestLaBEphem001'</strong> will be created without a parent if you continue.</li>
+                      <li><strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                    </ul>  
+                  </li>
+                  
+                  <li>Row 35: Unknown object type </li>
+                  <li>Row 38: Unknown object type </li>
+                  
+              </ul>
+              <hr>
+              <ul>
+                
+                  <li>The column <strong>'JUNK COLUMN HEADER'</strong> is unknown, and will be ignored</li>
+                  
+                  <li>Row 3: File <span class="sp1">&lt;test.tiff, test.png&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                  <li>Row 3: Could not find parent <strong>'Annualoooooo'</strong>; work <strong>'KAW000'</strong> will be created without a parent if you continue.</li>
+                  <li>Row 3: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 6: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 6: File <span class="sp1">&lt;test.tiff&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                  <li>Row 6: File <span class="sp1">&lt;test.png&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                  <li>Row 6: File <span class="sp1">&lt;FileNotFound.csv&gt;</span> cannot be found at <strong>tmp/uploads/ftp</strong></li>
+                  <li>Row 10: <strong> Identifier</strong> can't be blank</li>
+                  <li>Row 10: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 12: <strong>Title</strong> can't be blank</li>
+                  <li>Row 12: <strong> Identifier</strong> can't be blank</li>
+                  <li>Row 12: <strong>Visibility</strong> is blank- and will be treated as private</li>               
+                  <li>Row 13: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 13: Could not find parent <strong>'TestCard000'</strong>; work <strong>'TestTPC001'</strong> will be created without a parent if you continue.</li>      
+                  <li>Row 16: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 19: <strong> Creator</strong> can't be blank</li>
+                  <li>Row 19: <strong> Visibility</strong> is invalid: No Visibility - and will be treated as <strong>'Private'</strong></li>
+                  <li>Row 19: <strong> Rights Statement</strong>  not recognized or cannot be blank, and will be set to <strong> 'Copyright Undetermined'</strong> </li>
+                  <li>Row 19: <strong>Resource Type</strong>  <strong>'TYPE OF THING'</strong> is not recognized and will be omitted.</li>
+                  <li>Row 20: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 23: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 26: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Cotermined'</strong></li>
+                  <li>Row 26: Could not find parent <strong>'Blah'</strong>; work <strong>'TestTVGuide000'</strong> will be created without a parent if you continue.</li>
+                  <li>Row 27: Could not find parent <strong>'Blah'</strong>; work <strong>'TestLaBEphem001'</strong> will be created without a parent if you continue.</li>
+                  <li>Row 27: <strong>Rights Statement</strong> not recognized or cannot be blank, and will be set to <strong>'Copyright Undetermined'</strong></li>
+                  <li>Row 35: Unknown object type </li>
+                  <li>Row 38: Unknown object type </li>
+                  
               </ul>
              </div>
 
