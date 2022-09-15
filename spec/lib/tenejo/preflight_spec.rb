@@ -14,7 +14,7 @@ RSpec.describe Tenejo::Preflight do
     let(:dupes) { described_class.read_csv("spec/fixtures/csv/dupe_col.csv", "spec/fixtures/images/uploads") }
 
     it "records fatal error for duplicate column " do
-      expect(dupes.fatal_errors).to include "Duplicate column names detected [:identifier, :identifier, :title, :title], cannot process"
+      expect(dupes.fatal_errors).to include "Duplicate column names detected [:identifier, :identifier, :title, :title] cannot process"
     end
   end
 
@@ -40,7 +40,7 @@ RSpec.describe Tenejo::Preflight do
   context "a file that has unmapped header names" do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/unmapped.csv", "spec/fixtures/images/uploads") }
     it "records a warning for that row" do
-      expect(graph.warnings).to include "The column \"frankabillity\" is unknown, and will be ignored"
+      expect(graph.warnings).to include "The column \'frankabillity\' is unknown and will be ignored"
     end
   end
 
@@ -81,7 +81,7 @@ RSpec.describe Tenejo::Preflight do
     let(:graph) { described_class.read_csv("spec/fixtures/csv/fancy.csv", "spec/fixtures/images/uploads") }
 
     it "gives a warning" do
-      expect(graph.warnings.join).to include 'Resource Type "Photos" is not recognized'
+      expect(graph.warnings.join).to include 'Resource Type \'Photos\' is not recognized'
     end
   end
 
@@ -108,7 +108,7 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "warns about disconnected works" do
-      expect(graph.warnings).to include "Row 10: Could not find parent \"NONA\"; work \"MPC009\" will be created without a parent if you continue."
+      expect(graph.warnings).to include "Row 10: Could not find parent \'NONA\'; work \'MPC009\' will be created without a parent if you continue."
     end
 
     it "connects works and collections with parents" do
@@ -118,11 +118,11 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "warns when work has no parent" do
-      expect(graph.warnings).to include "Row 3: Could not find parent \"NONEXISTENT\"; collection \"NONACOLLECTION\" will be created without a parent if you continue."
+      expect(graph.warnings).to include "Row 3: Could not find parent \'NONEXISTENT\'; collection \'NONACOLLECTION\' will be created without a parent if you continue."
     end
 
     it "warns files without parent in sheet" do
-      expect(graph.warnings).to include "Row 6: Could not find parent work \"WHUT?\" for file \"MN-02 2.png\" - the file will be ignored"
+      expect(graph.warnings).to include "Row 6: Could not find parent work \'WHUT?\' for file \'MN-02 2.png\' - the file will be ignored"
     end
 
     it "parses out object types" do
@@ -142,7 +142,7 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "includes warnings in the graph" do
-      expect(graph.warnings.join).to include "Could not find parent \"NONEXISTENT\""
+      expect(graph.warnings.join).to include "Could not find parent \'NONEXISTENT\'"
     end
 
     describe "graph structure" do
@@ -217,7 +217,7 @@ RSpec.describe Tenejo::Preflight do
     it "restricts resource type" do
       rec.resource_type = ["Book", "foo"]
       expect(rec.valid?).to eq false # there are other errors in the example
-      expect(rec.warnings[:resource_type]).to eq ["Resource Type \"foo\" is not recognized and will be omitted."]
+      expect(rec.warnings[:resource_type]).to eq ["Resource Type \'foo\' is not recognized and will be omitted."]
     end
 
     context "path checking" do
@@ -332,7 +332,7 @@ RSpec.describe Tenejo::Preflight do
         it 'validates with warnings' do
           expect(rec).to be_valid
           expect(rec.errors).to be_empty
-          expect(rec.warnings[:license]).to eq ["License \"#{license}\" is not recognized and will be omitted"]
+          expect(rec.warnings[:license]).to eq ["License \'#{license}\' is not recognized and will be omitted"]
           expect(rec.license).to be_empty
         end
       end
@@ -346,7 +346,7 @@ RSpec.describe Tenejo::Preflight do
         it 'discards invalid vocabulary entries' do
           expect(rec).to be_valid
           expect(rec.errors).to be_empty
-          expect(rec.warnings[:license]).to eq ["License \"not-a-valid-id-or-label\" is not recognized and will be omitted"]
+          expect(rec.warnings[:license]).to eq ["License \'not-a-valid-id-or-label\' is not recognized and will be omitted"]
           expect(rec.license).to contain_exactly('https://creativecommons.org/licenses/by/4.0/',
                              'https://creativecommons.org/publicdomain/mark/1.0/')
         end
@@ -408,7 +408,7 @@ RSpec.describe Tenejo::Preflight do
         it "get set to undetermined" do
           expect(rec).to be_valid
           expect(rec.errors).to be_empty
-          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement \"not-a-valid-id-or-label\" is not recognized and will be set to 'Copyright Undetermined'"]
+          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement \'not-a-valid-id-or-label\' is not recognized and will be set to 'Copyright Undetermined'"]
           expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/UND/1.0/']
         end
       end
@@ -427,7 +427,7 @@ RSpec.describe Tenejo::Preflight do
     it "restricts resource type" do
       rec.resource_type = ["foo"]
       expect(rec.valid?).to eq false # there are other errors in the example
-      expect(rec.warnings[:resource_type].join).to include "\"foo\" is not recognized and will be omitted."
+      expect(rec.warnings[:resource_type].join).to include "\'foo\' is not recognized and will be omitted."
     end
 
     it "can unpack" do
@@ -459,8 +459,8 @@ RSpec.describe Tenejo::Preflight do
       rec = described_class.new({ resource_type: "Poster|~|Airplane|~|Book|~|Bear" }, 1, Tenejo::DEFAULT_UPLOAD_PATH, 'placeholder for the graph')
       expect(rec.valid?).to eq false
       expect(rec.resource_type).to eq ["Poster", "Book"]
-      expect(rec.warnings[:resource_type].join).to include "\"Airplane\" is not recognized and will be omitted."
-      expect(rec.warnings[:resource_type].join).to include "\"Bear\" is not recognized and will be omitted."
+      expect(rec.warnings[:resource_type].join).to include "\'Airplane\' is not recognized and will be omitted."
+      expect(rec.warnings[:resource_type].join).to include "\'Bear\' is not recognized and will be omitted."
     end
   end
 
@@ -476,7 +476,7 @@ RSpec.describe Tenejo::Preflight do
     it "restricts resource type" do
       rec.resource_type = ["foo"]
       expect(rec.valid?).to eq false # there are other errors in the example
-      expect(rec.warnings[:resource_type].join).to include "\"foo\" is not recognized and will be omitted."
+      expect(rec.warnings[:resource_type].join).to include "\'foo\' is not recognized and will be omitted."
     end
   end
 
