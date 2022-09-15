@@ -245,12 +245,23 @@ RSpec.describe Tenejo::Preflight do
   end
 
   describe Tenejo::PFWork do
-    let(:rec) { described_class.new({}, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
+    let(:row) { {} }
+    let(:valid_row) { { identifier: 'ID', creator: 'Anon.', title: 'title', rights_statement: 'https://rightsstatements.org/vocab/UND/1.0/', visibility: 'public' } }
+    let(:rec) { described_class.new(row, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
     it "is not valid when blank" do
-      expect(rec.valid?).not_to eq true
+      expect(rec).not_to be_valid
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
         title: ["can't be blank"], creator: ["can't be blank"]
       expect(rec.warnings).to include(visibility: ["Visibility is blank - and will be treated as private"])
+    end
+
+    context "with required fields" do
+      let(:rec) { described_class.new(valid_row, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
+      it "validates successfully" do
+        expect(rec).to be_valid
+        expect(rec.errors).to be_empty
+        expect(rec.warnings).to be_empty
+      end
     end
 
     it "transforms visibility", :aggregate_failures do
@@ -269,29 +280,148 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.warnings[:visibility]).to eq ["Visibility is invalid: spoon - and will be treated as private"]
     end
 
-    it "is ok to be blank" do
-      rec.license = ''
-      expect(rec.valid?).not_to eq true
-      expect(rec.warnings[:license]).to be_empty
-      expect(rec.license).to eq ""
+    context ".license" do
+      let(:row) { valid_row.merge({ license: license }) }
+
+      context 'without a value' do
+        let(:license) { '' } # in the CSV row
+        it "is valid" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings).to be_empty
+          expect(rec.license).to eq []
+        end
+
+        it 'handles scalars' do
+          rec.license = '' # assigned after CSV parsing
+          expect(rec).to be_valid
+          expect(rec.warnings[:license]).to be_empty
+          expect(rec.license).to eq []
+        end
+
+        it 'handles nil' do
+          rec.license = nil
+          expect(rec).to be_valid
+          expect(rec.warnings[:license]).to be_empty
+          expect(rec.license).to eq []
+        end
+      end
+
+      context 'with vocabulary ids' do
+        let(:license) { 'https://creativecommons.org/publicdomain/mark/1.0/' }
+        it "validates successufully" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings).to be_empty
+          expect(rec.license).to eq ['https://creativecommons.org/publicdomain/mark/1.0/']
+        end
+      end
+
+      context 'with vocabulary labels' do
+        let(:license) { 'Creative Commons BY Attribution 4.0 International' }
+        it "validates successufully" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings).to be_empty
+          expect(rec.license).to eq ['https://creativecommons.org/licenses/by/4.0/']
+        end
+      end
+
+      context 'with invalid vocabulary entries' do
+        let(:license) { 'not-a-valid-id-or-label' }
+        it 'validates with warnings' do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:license]).to eq ["License \"#{license}\" is not recognized and will be omitted"]
+          expect(rec.license).to be_empty
+        end
+      end
+
+      context 'with multiple values' do
+        let(:license) {
+          ['Creative Commons BY Attribution 4.0 International',
+           'not-a-valid-id-or-label',
+           'https://creativecommons.org/publicdomain/mark/1.0/'].join('|~|')
+        }
+        it 'discards invalid vocabulary entries' do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:license]).to eq ["License \"not-a-valid-id-or-label\" is not recognized and will be omitted"]
+          expect(rec.license).to contain_exactly('https://creativecommons.org/licenses/by/4.0/',
+                             'https://creativecommons.org/publicdomain/mark/1.0/')
+        end
+      end
+
+      context 'with repeated values' do
+        let(:license) {
+          ['Creative Commons BY Attribution 4.0 International',
+           'Creative Commons Public Domain Mark 1.0',
+           'https://creativecommons.org/licenses/by/4.0/',
+           'https://creativecommons.org/licenses/by/4.0/',
+           'https://creativecommons.org/publicdomain/mark/1.0/'].join('|~|')
+        }
+        it 'de-duplicates entries' do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:license]).to be_empty
+          expect(rec.license).to contain_exactly('https://creativecommons.org/licenses/by/4.0/',
+                                                 'https://creativecommons.org/publicdomain/mark/1.0/')
+        end
+      end
     end
 
-    it "restricts license" do
-      rec = described_class.new({ license: 'foo' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
-      expect(rec.warnings[:license]).to eq ["License is not recognized and will be left blank"]
-      expect(rec.license).to eq []
-    end
+    context ".rights_statement" do
+      let(:row) { valid_row.merge({ rights_statement: rights_statement }) }
 
-    it "discards extra license" do
-      rec = described_class.new({ license: 'All rights reserved|~|Not validated' }, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new)
-      expect(rec.license).to eq ['All rights reserved']
-      expect(rec.warnings[:license]).to eq ["Multiple licenses: using 'All rights reserved' -- ignoring 'Not validated'"]
-    end
+      context 'validates sucessfully' do
+        let(:rights_statement) { 'https://rightsstatements.org/vocab/InC/1.0/' }
+        it "when entries are in the vocabulary" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings).to be_empty
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/InC/1.0/']
+        end
+      end
 
-    it "restricts rights statement" do
-      expect(rec.valid?).not_to eq true
-      expect(rec.warnings[:rights_statement]).to eq ["Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"]
-      expect(rec.rights_statement).to eq ["Copyright Undetermined"]
+      context 'transforms human friendly labels' do
+        let(:rights_statement) { 'No Known Copyright' }
+        it 'to the corresponding URI' do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings).to be_empty
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/NKC/1.0/']
+        end
+      end
+
+      context 'replaces blank entries' do
+        let(:rights_statement) { '' }
+        it "with undetermined" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement cannot be blank and will be set to 'Copyright Undetermined'"]
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/UND/1.0/']
+        end
+      end
+
+      context 'with invalid entries' do
+        let(:rights_statement) { 'not-a-valid-id-or-label' }
+        it "get set to undetermined" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement \"not-a-valid-id-or-label\" is not recognized and will be set to 'Copyright Undetermined'"]
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/UND/1.0/']
+        end
+      end
+
+      context 'with multiple entries' do
+        let(:rights_statement) { 'https://rightsstatements.org/vocab/NKC/1.0/|~|not-a-valid-right' }
+        it "only checks the first" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement includes extra values which will be ignored"]
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/NKC/1.0/']
+        end
+      end
     end
 
     it "restricts resource type" do

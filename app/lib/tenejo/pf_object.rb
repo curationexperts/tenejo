@@ -1,10 +1,26 @@
 # frozen_string_literal: true
 module Tenejo
   LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
-  RIGHTS_STATEMENTS = YAML.safe_load(File.open(Rails.root.join("config/authorities/rights_statements.yml")))
+
+  class LicenseValidator < ActiveModel::Validator
+    def validate(record)
+      licenses = Array.wrap(record.license).select(&:present?)
+      matched, unmatched = licenses.partition { |id| license_authority.find(id).present? }
+      to_convert, invalid = unmatched.partition { |term| license_authority.search(term).present? }
+      invalid.each do |license|
+        record.warnings[:license] << "License \"#{license}\" is not recognized and will be omitted"
+      end
+      converted = to_convert.map { |term| license_authority.search(term).first['id'] }
+      record.license = (matched + converted).uniq
+    end
+
+    def license_authority
+      @license_authority ||= Hyrax.config.license_service_class.new.authority
+    end
+  end
 
   class ResourceTypeValidator < ActiveModel::Validator
-    RESOURCE_TYPES = YAML.safe_load(File.open(Rails.root.join("config/authorities/resource_types.yml")))['terms'].map { |h| h['term'] }
+    RESOURCE_TYPES = Qa::Authorities::Local.subauthority_for('resource_types').all.select { |term| term[:active] }.map { |term| term[:id] }
 
     def validate(record)
       return unless record.resource_type
@@ -12,6 +28,38 @@ module Tenejo
       invalid_names.each do |term|
         record.warnings[:resource_type] << "Resource Type \"#{term}\" is not recognized and will be omitted."
       end
+    end
+  end
+
+  class RightsValidator < ActiveModel::Validator
+    def validate(record)
+      rights_statements = Array.wrap(record.rights_statement)
+      rights = rights_statements.first
+      matched = rights_statement_authority.find(rights)['id'] # matches when passed a valid id
+      matched ||= rights_statement_authority.search(rights).first&.fetch('id') # matches when passed a valid term
+      if matched
+        record.rights_statement = [matched]
+      else
+        record.warnings[:rights_statement] << main_warning(rights)
+        record.rights_statement = ['https://rightsstatements.org/vocab/UND/1.0/']
+      end
+      other_warnings(record, rights_statements)
+    end
+
+    def main_warning(rights)
+      if rights.present?
+        "Rights Statement \"#{rights}\" is not recognized and will be set to 'Copyright Undetermined'"
+      else
+        "Rights Statement cannot be blank and will be set to 'Copyright Undetermined'"
+      end
+    end
+
+    def other_warnings(record, rights_statements)
+      record.warnings[:rights_statement] << "Rights Statement includes extra values which will be ignored" if rights_statements.count > 1
+    end
+
+    def rights_statement_authority
+      @rights_statement_authority ||= Hyrax.config.rights_statement_service_class.new.authority
     end
   end
 
@@ -164,8 +212,10 @@ module Tenejo
     ALL_FIELDS = (Work.terms + [:visibility, :parent, :files]).uniq.freeze
     REQUIRED_FIELDS = (Work.required_terms + [:identifier, :visibility]).uniq.freeze
     attr_accessor(*ALL_FIELDS)
-    validates_presence_of(*REQUIRED_FIELDS)
+    validates_with Tenejo::LicenseValidator
     validates_with Tenejo::ResourceTypeValidator
+    validates_with Tenejo::RightsValidator # run before presence validator to ensure rights_statement is set
+    validates_presence_of(*REQUIRED_FIELDS)
 
     def attributes
       ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
@@ -178,24 +228,6 @@ module Tenejo
       graph.files += unpack_files_from_work(row, lineno, import_path) if row[:files]
       row.delete(:files)
       super(row, lineno)
-      check_license
-      check_rights
-    end
-
-    def check_license
-      return if license.blank?
-      first_license = license&.shift
-      warnings[:license] << "Multiple licenses: using '#{first_license}' -- ignoring '#{license.join(', ')}'" if license.count != 0
-
-      return @license = [first_license] if LICENSES["terms"].map { |x| x['term'] }.include?(first_license)
-      warnings[:license] << "License is not recognized and will be left blank"
-      @license = self.class.singular_fields.include?(:license) ? "" : []
-    end
-
-    def check_rights
-      return if RIGHTS_STATEMENTS["terms"].map { |x| x['term'] }.include?(rights_statement&.first)
-      warnings[:rights_statement] << "Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"
-      @rights_statement = ["Copyright Undetermined"]
     end
 
     def unpack_files_from_work(row, lineno, import_path)
