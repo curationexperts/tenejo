@@ -2,6 +2,23 @@
 module Tenejo
   LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
 
+  class LicenseValidator < ActiveModel::Validator
+    def validate(record)
+      licenses = Array.wrap(record.license).select(&:present?)
+      matched, unmatched = licenses.partition { |id| license_authority.find(id).present? }
+      to_convert, invalid = unmatched.partition { |term| license_authority.search(term).present? }
+      invalid.each do |license|
+        record.warnings[:license] << "License \"#{license}\" is not recognized and will be omitted"
+      end
+      converted = to_convert.map { |term| license_authority.search(term).first['id'] }
+      record.license = (matched + converted).uniq
+    end
+
+    def license_authority
+      @license_authority ||= Hyrax.config.license_service_class.new.authority
+    end
+  end
+
   class ResourceTypeValidator < ActiveModel::Validator
     RESOURCE_TYPES = Qa::Authorities::Local.subauthority_for('resource_types').all.select { |term| term[:active] }.map { |term| term[:id] }
 
@@ -15,8 +32,6 @@ module Tenejo
   end
 
   class RightsValidator < ActiveModel::Validator
-    RIGHTS_STATEMENTS = Qa::Authorities::Local.subauthority_for('rights_statements').all.select { |term| term[:active] }.map { |term| term[:id] }
-
     def validate(record)
       rights_statements = Array.wrap(record.rights_statement)
       rights = rights_statements.first
@@ -197,6 +212,7 @@ module Tenejo
     ALL_FIELDS = (Work.terms + [:visibility, :parent, :files]).uniq.freeze
     REQUIRED_FIELDS = (Work.required_terms + [:identifier, :visibility]).uniq.freeze
     attr_accessor(*ALL_FIELDS)
+    validates_with Tenejo::LicenseValidator
     validates_with Tenejo::ResourceTypeValidator
     validates_with Tenejo::RightsValidator # run before presence validator to ensure rights_statement is set
     validates_presence_of(*REQUIRED_FIELDS)
@@ -212,17 +228,6 @@ module Tenejo
       graph.files += unpack_files_from_work(row, lineno, import_path) if row[:files]
       row.delete(:files)
       super(row, lineno)
-      check_license
-    end
-
-    def check_license
-      return if license.blank?
-      first_license = license&.shift
-      warnings[:license] << "Multiple licenses: using '#{first_license}' -- ignoring '#{license.join(', ')}'" if license.count != 0
-
-      return @license = [first_license] if LICENSES["terms"].map { |x| x['term'] }.include?(first_license)
-      warnings[:license] << "License is not recognized and will be left blank"
-      @license = self.class.singular_fields.include?(:license) ? "" : []
     end
 
     def unpack_files_from_work(row, lineno, import_path)
