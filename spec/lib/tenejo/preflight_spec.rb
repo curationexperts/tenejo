@@ -245,9 +245,11 @@ RSpec.describe Tenejo::Preflight do
   end
 
   describe Tenejo::PFWork do
-    let(:rec) { described_class.new({}, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
+    let(:row) { {} }
+    let(:valid_row) { { identifier: 'ID', creator: 'Anon.', title: 'title', rights_statement: 'https://rightsstatements.org/vocab/UND/1.0/', visibility: 'public' } }
+    let(:rec) { described_class.new(row, 1, Tenejo::DEFAULT_UPLOAD_PATH, Tenejo::Graph.new) }
     it "is not valid when blank" do
-      expect(rec.valid?).not_to eq true
+      expect(rec).not_to be_valid
       expect(rec.errors.messages).to eq identifier: ["can't be blank"],
         title: ["can't be blank"], creator: ["can't be blank"]
       expect(rec.warnings).to include(visibility: ["Visibility is blank - and will be treated as private"])
@@ -288,10 +290,58 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.warnings[:license]).to eq ["Multiple licenses: using 'All rights reserved' -- ignoring 'Not validated'"]
     end
 
-    it "restricts rights statement" do
-      expect(rec.valid?).not_to eq true
-      expect(rec.warnings[:rights_statement]).to eq ["Rights Statement not recognized or cannot be blank, and will be set to 'Copyright Undetermined'"]
-      expect(rec.rights_statement).to eq ["Copyright Undetermined"]
+    context ".rights_statement" do
+      let(:row) { valid_row.merge({ rights_statement: rights_statement }) }
+
+      context 'validates sucessfully' do
+        let(:rights_statement) { 'https://rightsstatements.org/vocab/InC/1.0/' }
+        it "when entries are in the vocabulary" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings).to be_empty
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/InC/1.0/']
+        end
+      end
+
+      context 'transforms human friendly labels' do
+        let(:rights_statement) { 'No Known Copyright' }
+        it 'to the corresponding URI' do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings).to be_empty
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/NKC/1.0/']
+        end
+      end
+
+      context 'replaces blank entries' do
+        let(:rights_statement) { '' }
+        it "with undetermined" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement cannot be blank and will be set to 'Copyright Undetermined'"]
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/UND/1.0/']
+        end
+      end
+
+      context 'with invalid entries' do
+        let(:rights_statement) { 'not-a-valid-id-or-label' }
+        it "get set to undetermined" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement \"not-a-valid-id-or-label\" is not recognized and will be set to 'Copyright Undetermined'"]
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/UND/1.0/']
+        end
+      end
+
+      context 'with multiple entries' do
+        let(:rights_statement) { 'https://rightsstatements.org/vocab/NKC/1.0/|~|not-a-valid-right' }
+        it "only checks the first" do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:rights_statement]).to eq ["Rights Statement includes extra values which will be ignored"]
+          expect(rec.rights_statement).to eq ['https://rightsstatements.org/vocab/NKC/1.0/']
+        end
+      end
     end
 
     it "restricts resource type" do

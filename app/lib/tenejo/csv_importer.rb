@@ -228,9 +228,22 @@ module Tenejo
       set_work_parent(work, pfwork)
       update_timestamp(work)
       work.admin_set ||= admin_set_for_work
-      work.rights_statement = [rights_statements.authority.search(pfwork.rights_statement.first).first["id"]]
+      work.rights_statement = normalized_rights(pfwork.rights_statement)
       work.primary_identifier = pfwork.identifier.first
       work.depositor ||= job_owner
+    end
+
+    def normalized_rights(rights_statement)
+      rights = rights_statement.first
+      # authority.find matches when rights_statement contains an ID (URI)
+      matched = rights_statement_authority.find(rights)['id']
+
+      # authority.search matches when rights_statement contains a label
+      matched ||= rights_statement_authority.search(rights).first&.fetch('id')
+
+      # otherwise default to copyright not evaluated
+      matched ||= copyright_not_evaluated
+      [matched]
     end
 
     # Determine whether to update date_uploaded or date_modified
@@ -321,8 +334,12 @@ module Tenejo
       @default_collection_type = nil
     end
 
-    def rights_statements
-      @rights_statements ||= Hyrax.config.rights_statement_service_class.new
+    def rights_statement_authority
+      @rights_statement_authority ||= Hyrax.config.rights_statement_service_class.new.authority
+    end
+
+    def copyright_not_evaluated
+      @copyright_not_evaluated ||= rights_statement_authority.search('not evaluated').first['id']
     end
 
     def self.collection_attributes_to_copy
