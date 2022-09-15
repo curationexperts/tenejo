@@ -40,16 +40,16 @@ RSpec.describe Tenejo::CsvImporter do
       expect(csv_import.invalid_rows).to eq []
       expect(csv_import.preflight_warnings)
         .to contain_exactly(
-              'The column "Comment" is unknown, and will be ignored',
-              'Row 3: Could not find parent "NONEXISTENT"; collection "NONACOLLECTION" will be created without a parent if you continue.',
-              'Row 6: Could not find parent work "WHUT?" for file "MN-02 2.png" - the file will be ignored',
-              'Row 10: Could not find parent "NONA"; work "MPC009" will be created without a parent if you continue.',
-              'Row 2: Resource Type "Photos" is not recognized and will be omitted.',
-              'Row 3: Resource Type "Posters" is not recognized and will be omitted.',
-              'Row 5: Visibility is blank - and will be treated as private',
-              'Row 5: Visibility is blank - and will be treated as private',
-              'Row 6: Visibility is blank - and will be treated as private',
-              'Row 8: Visibility is blank - and will be treated as private'
+              "The column \'Comment\' is unknown and will be ignored",
+              "Row 3: Could not find parent \'NONEXISTENT\'; collection \'NONACOLLECTION\' will be created without a parent if you continue.",
+              "Row 6: Could not find parent work \'WHUT?\' for file \'MN-02 2.png\' - the file will be ignored",
+              "Row 10: Could not find parent \'NONA\'; work \'MPC009\' will be created without a parent if you continue.",
+              "Row 2: Resource Type \'Photos\' is not recognized and will be omitted.",
+              "Row 3: Resource Type \'Posters\' is not recognized and will be omitted.",
+              "Row 5: Visibility is blank - and will be treated as private",
+              "Row 5: Visibility is blank - and will be treated as private",
+              "Row 6: Visibility is blank - and will be treated as private",
+              "Row 8: Visibility is blank - and will be treated as private"
             )
     end
   end

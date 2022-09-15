@@ -13,14 +13,14 @@ module Tenejo
   class Preflight # rubocop:disable Metrics/ClassLength
     def self.check_unknown_headers(row, graph)
       row.to_h.keys.each do |x|
-        graph.add_warning "The column \"#{x.dup.encode('UTF-8')}\" is unknown, and will be ignored" unless KNOWN_HEADERS.include? x
+        graph.add_warning "The column \'#{x.dup.encode('UTF-8')}\' is unknown and will be ignored" unless KNOWN_HEADERS.include? x
       end
     end
 
     def self.check_duplicate_headers(row)
       all = row.map(&:first)
       dupes = all.select { |x| all.count(x) > 1 }
-      raise DuplicateColumnError, "Duplicate column names detected #{dupes}, cannot process" unless dupes.empty?
+      raise DuplicateColumnError, "Duplicate column names detected #{dupes} cannot process" unless dupes.empty?
       row.length
     end
 

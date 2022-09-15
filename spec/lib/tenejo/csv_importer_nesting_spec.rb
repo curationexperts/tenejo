@@ -37,7 +37,7 @@ RSpec.describe Tenejo::CsvImporter do
   it 'runs without errors', :aggregate_failures do
     expect(@csv_import.preflight_errors).to be_empty
     expect(@csv_import.invalid_rows).to be_empty
-    expect(@csv_import.preflight_warnings).to eq ["The column \"Comment\" is unknown, and will be ignored"]
+    expect(@csv_import.preflight_warnings).to eq ["The column \'Comment\' is unknown and will be ignored"]
   end
 
   it 'builds relationships', :aggregate_failures do

@@ -71,12 +71,11 @@ RSpec.describe "preflights/show", type: :view do
   end
 
   it "shows any warnings", :aggregate_failures do
-    graph.add_warning("Could not find parent work \"GONE?\" for file \"neverwhere.jpg\"")
-    graph.add_warning("Could not find parent work \"NONA\" for work \"MPC009\"")
+    graph.add_warning("Could not find parent work \'GONE?\' for file \'neverwhere.jpg\'")
+    graph.add_warning("Could not find parent work \'NONA\' for work \'MPC009\'")
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('#preflight-warnings', text: 'Warnings')
     expect(rendered).to have_selector('li', text: 'Could not find parent work', count: 2)
   end
 
@@ -88,7 +87,6 @@ RSpec.describe "preflights/show", type: :view do
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('#preflight-collections', text: 'Collections')
     expect(rendered).to have_selector('tr td', text: 'Collection 2')
   end
 
@@ -100,7 +98,6 @@ RSpec.describe "preflights/show", type: :view do
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('#preflight-works', text: 'Works')
     expect(rendered).to have_selector('tr td', text: 'Work 2')
   end
 
@@ -112,7 +109,6 @@ RSpec.describe "preflights/show", type: :view do
     assign(:preflight_graph, graph)
     assign(:job, job)
     render
-    expect(rendered).to have_selector('#preflight-files', text: 'Files')
     expect(rendered).to have_selector('tr td', text: 'hydra.tiff', count: 2)
   end
 end

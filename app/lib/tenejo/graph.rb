@@ -63,7 +63,7 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].files << f
       else
-        @warnings << %/Row #{f.lineno}: Could not find parent work "#{f.parent}" for file "#{f.file}" - the file will be ignored/
+        @warnings << %/Row #{f.lineno}: Could not find parent work '#{f.parent}' for file '#{f.file}' - the file will be ignored/
       end
     end
     self
@@ -75,7 +75,7 @@ class Tenejo::Graph
       if idx.key?(f.parent)
         idx[f.parent].children << f
       elsif f.parent.present?
-        @warnings << %/Row #{f.lineno}: Could not find parent "#{f.parent}"; #{simple_class(f)} "#{f.identifier.first}" will be created without a parent if you continue./
+        @warnings << %/Row #{f.lineno}: Could not find parent '#{f.parent}'; #{simple_class(f)} '#{f.identifier.first}' will be created without a parent if you continue./
         @root.children << f
       else
         @root.children << f

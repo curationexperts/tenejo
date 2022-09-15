@@ -33,8 +33,8 @@ RSpec.describe "/preflights", type: :request do
       post preflights_path, params: { preflight: valid_attributes }
       get preflight_path Job.last
       expect(response).to render_template('preflights/show')
-      expect(response.body).to match(/preflight-warning/)
-      expect(response.body).to match(/Could not find parent &quot;NONEXISTENT&quot;/)
+      expect(response.body).to match(/preflight-warnings/)
+      expect(response.body).to match(/Could not find parent &#39;NONEXISTENT&#39;/)
     end
   end
 
