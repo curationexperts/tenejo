@@ -8,7 +8,7 @@ module Tenejo
       matched, unmatched = licenses.partition { |id| license_authority.find(id).present? }
       to_convert, invalid = unmatched.partition { |term| license_authority.search(term).present? }
       invalid.each do |license|
-        record.warnings[:license] << "License \'#{license}\' is not recognized and will be omitted"
+        record.warnings[:license] << "License '#{license}' is not recognized and will be omitted"
       end
       converted = to_convert.map { |term| license_authority.search(term).first['id'] }
       record.license = (matched + converted).uniq
@@ -26,7 +26,7 @@ module Tenejo
       return unless record.resource_type
       record.resource_type, invalid_names = record.resource_type.partition { |term| RESOURCE_TYPES.include?(term) }
       invalid_names.each do |term|
-        record.warnings[:resource_type] << "Resource Type \'#{term}\' is not recognized and will be omitted."
+        record.warnings[:resource_type] << "Resource Type '#{term}' is not recognized and will be omitted."
       end
     end
   end
@@ -35,10 +35,9 @@ module Tenejo
     def validate(record)
       rights_statements = Array.wrap(record.rights_statement)
       rights = rights_statements.first
-      matched = rights_statement_authority.find(rights)['id'] # matches when passed a valid id
-      matched ||= rights_statement_authority.search(rights).first&.fetch('id') # matches when passed a valid term
+      matched = rights_statement_authority.find { |r| r.key(rights) }
       if matched
-        record.rights_statement = [matched]
+        record.rights_statement = [matched[:id]]
       else
         record.warnings[:rights_statement] << main_warning(rights)
         record.rights_statement = ['https://rightsstatements.org/vocab/UND/1.0/']
@@ -48,7 +47,7 @@ module Tenejo
 
     def main_warning(rights)
       if rights.present?
-        "Rights Statement \'#{rights}\' is not recognized and will be set to 'Copyright Undetermined'"
+        "Rights Statement '#{rights}' is not recognized and will be set to 'Copyright Undetermined'"
       else
         "Rights Statement cannot be blank and will be set to 'Copyright Undetermined'"
       end
@@ -59,7 +58,7 @@ module Tenejo
     end
 
     def rights_statement_authority
-      @rights_statement_authority ||= Hyrax.config.rights_statement_service_class.new.authority
+      @rights_statement_authority ||= Hyrax.config.rights_statement_service_class.new.active_elements
     end
   end
 
@@ -158,7 +157,7 @@ module Tenejo
     validates_presence_of(*REQUIRED_FIELDS)
     validates_with Tenejo::ResourceTypeValidator
     validates_each :file, allow_blank: true, allow_nil: true do |rec, att, val|
-      rec.errors.add(att, "< #{val} > cannot be found at \'#{rec.import_path}\'") unless PFFile.exist?(rec, val)
+      rec.errors.add(att, "< #{val} > cannot be found at '#{rec.import_path}'") unless PFFile.exist?(rec, val)
     end
 
     def attributes
