@@ -46,14 +46,14 @@ RSpec.describe Tenejo::CsvImporter do
               'Row 10: Could not find parent "NONA"; work "MPC009" will be created without a parent if you continue.',
               'Row 2: Resource Type "Photos" is not recognized and will be omitted.',
               'Row 3: Resource Type "Posters" is not recognized and will be omitted.',
-              'Row 4: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
+              'Row 4: License is not recognized and will be left blank',
               'Row 5: Visibility is blank - and will be treated as private',
               'Row 5: Visibility is blank - and will be treated as private',
               'Row 6: Visibility is blank - and will be treated as private',
-              'Row 7: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
+              'Row 7: License is not recognized and will be left blank',
               'Row 8: Visibility is blank - and will be treated as private',
-              'Row 9: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\'',
-              'Row 10: License is not recognized and will be left blank, Rights Statement not recognized or cannot be blank, and will be set to \'Copyright Undetermined\''
+              'Row 9: License is not recognized and will be left blank',
+              'Row 10: License is not recognized and will be left blank'
             )
     end
   end
@@ -135,7 +135,7 @@ RSpec.describe Tenejo::CsvImporter do
           { "identifier" => "TEST0002", "title" => "Snappy title", "alternative_title" => "The other title",
             "resource_type" => "Image", "creator" => "c1", "contributor" => "c2", "description" => "a test fixture",
             "abstract" => "impressionism", "keyword" => "none", "license" => "http://creativecommons.org/publicdomain/mark/1.0/",
-            "rights_notes" => "use freely", "rights_statement" => "http://rightsstatements.org/vocab/CNE/1.0/",
+            "rights_notes" => "use freely", "rights_statement" => "https://rightsstatements.org/vocab/CNE/1.0/",
             "publisher" => "DCE", "date_created" => "2021-12-06", "subject" => "tbd", "language" => "english",
             "related_url" => "/also/#", "bibliographic_citation" => "yada yada", "source" => "mhb" }
         }
@@ -184,7 +184,7 @@ RSpec.describe Tenejo::CsvImporter do
         expect(work.depositor).to eq job_owner.user_key
         expect(work.date_uploaded.in_time_zone).to be_within(1.minute).of Time.current
         expect(work.title).to eq pf_work.title
-        expect(work.rights_statement).to eq ["http://rightsstatements.org/vocab/NKC/1.0/"]
+        expect(work.rights_statement).to eq ["https://rightsstatements.org/vocab/NKC/1.0/"]
         expect(Sipity::Entity(work).workflow_state.name).to eq 'deposited'
       end
     end
@@ -245,7 +245,7 @@ RSpec.describe Tenejo::CsvImporter do
           # TODO: the next two lines will break if/when any settable attributes are not multi-valued in the model
           wrapped_settable_attributes = settable_attributes.except('rights_statement').transform_values { |v| [v] }
           expect(work.attributes).to include wrapped_settable_attributes
-          expect(work.rights_statement).to eq ["http://rightsstatements.org/vocab/NoC-US/1.0/"]
+          expect(work.rights_statement).to eq ["https://rightsstatements.org/vocab/NoC-US/1.0/"]
 
           # A handful of values should not have been modified even if they were in the preflight
           expect(work.id).not_to eq "fake0id"
@@ -268,6 +268,21 @@ RSpec.describe Tenejo::CsvImporter do
           expect(Rails.logger).to have_received(:error).with(/ImNotHere/)
         end
       end
+    end
+  end
+
+  context '.normalized_rights' do
+    let(:csv_import) { described_class.new(import_job) }
+    it 'works for vocabulary ids' do
+      expect(csv_import.normalized_rights(['https://rightsstatements.org/vocab/InC/1.0/'])).to eq ['https://rightsstatements.org/vocab/InC/1.0/']
+    end
+
+    it 'works for vocabulary labels' do
+      expect(csv_import.normalized_rights(['In Copyright'])).to eq ['https://rightsstatements.org/vocab/InC/1.0/']
+    end
+
+    it 'has a default for missing values' do
+      expect(csv_import.normalized_rights(['invalid entry'])).to eq ['https://rightsstatements.org/vocab/CNE/1.0/']
     end
   end
 end
