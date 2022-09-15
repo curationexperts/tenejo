@@ -46,14 +46,10 @@ RSpec.describe Tenejo::CsvImporter do
               'Row 10: Could not find parent "NONA"; work "MPC009" will be created without a parent if you continue.',
               'Row 2: Resource Type "Photos" is not recognized and will be omitted.',
               'Row 3: Resource Type "Posters" is not recognized and will be omitted.',
-              'Row 4: License is not recognized and will be left blank',
               'Row 5: Visibility is blank - and will be treated as private',
               'Row 5: Visibility is blank - and will be treated as private',
               'Row 6: Visibility is blank - and will be treated as private',
-              'Row 7: License is not recognized and will be left blank',
-              'Row 8: Visibility is blank - and will be treated as private',
-              'Row 9: License is not recognized and will be left blank',
-              'Row 10: License is not recognized and will be left blank'
+              'Row 8: Visibility is blank - and will be treated as private'
             )
     end
   end
