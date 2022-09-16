@@ -5,17 +5,19 @@ module Tenejo
   class LicenseValidator < ActiveModel::Validator
     def validate(record)
       licenses = Array.wrap(record.license).select(&:present?)
-      matched, unmatched = licenses.partition { |id| license_authority.find(id).present? }
-      to_convert, invalid = unmatched.partition { |term| license_authority.search(term).present? }
+      matched, invalid = licenses.partition { |license| license_id_lookup[license] }
       invalid.each do |license|
         record.warnings[:license] << "License '#{license}' is not recognized and will be omitted"
       end
-      converted = to_convert.map { |term| license_authority.search(term).first['id'] }
-      record.license = (matched + converted).uniq
+      record.license = matched.map { |license| license_id_lookup[license] }.uniq
+    end
+
+    def license_id_lookup
+      @license_lookup ||= license_authority.flat_map { |e| [[e[:id], e[:id]], [e[:label], e[:id]]] }.to_h
     end
 
     def license_authority
-      @license_authority ||= Hyrax.config.license_service_class.new.authority
+      @license_authority ||= Hyrax.config.license_service_class.new.active_elements
     end
   end
 
