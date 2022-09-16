@@ -42,8 +42,8 @@ class ImportsController < JobsController
     job.status = :submitted
     job.graph = Tenejo::Preflight.process_csv(job.manifest.download)
     flat = job.graph.flatten
-    job.collections = flat.count { |x| x.is_a? PFCollection }
-    job.works = flat.count { |x| x.is_a? PFWork }
-    job.files = flat.count { |x| x.is_a? PFFile }
+    job.collections = flat.map { |x| x.is_a? Tenejo::PFCollection }
+    job.works = flat.map { |x| x.is_a? Tenejo::PFWork }
+    job.files = flat.map { |x| x.is_a? Tenejo::PFFile }
   end
 end
