@@ -280,7 +280,7 @@ RSpec.describe Tenejo::Preflight do
       expect(rec.warnings[:visibility]).to eq ["Visibility is invalid: spoon - and will be treated as private"]
     end
 
-    context ".license" do
+    context ".license", :aggregate_failures do
       let(:row) { valid_row.merge({ license: license }) }
 
       context 'without a value' do
@@ -337,6 +337,16 @@ RSpec.describe Tenejo::Preflight do
         end
       end
 
+      context 'without exact matches' do
+        let(:license) { 'Creative Commons' }
+        it 'validates with warnings' do
+          expect(rec).to be_valid
+          expect(rec.errors).to be_empty
+          expect(rec.warnings[:license]).to eq ["License '#{license}' is not recognized and will be omitted"]
+          expect(rec.license).to be_empty
+        end
+      end
+
       context 'with multiple values' do
         let(:license) {
           ['Creative Commons BY Attribution 4.0 International',
@@ -370,7 +380,7 @@ RSpec.describe Tenejo::Preflight do
       end
     end
 
-    context ".rights_statement" do
+    context ".rights_statement", :aggregate_failures do
       let(:row) { valid_row.merge({ rights_statement: rights_statement }) }
 
       context 'validates sucessfully' do
