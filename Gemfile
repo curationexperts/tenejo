@@ -8,7 +8,7 @@ ruby '2.7.4'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'bcrypt_pbkdf'
 gem 'ed25519'
-gem 'rails', '~> 5.2.7'
+gem 'rails', '~> 5.2'
 gem 'sidekiq', '~> 6.4'
 # Use Puma as the app server
 gem 'dotenv-rails', '~> 2.2.1'
