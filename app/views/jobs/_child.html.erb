@@ -44,9 +44,4 @@
   <% node.children.each do |child| %>
     <%= render "child", node: child, parent: node.lineno, depth: depth + 1, order: nil %>
   <% end %>
-  <% if node.children.select{|x|x.kind_of?Tenejo::PFFile}.try(:any?) %>
-    <% node.children.select{|x|x.kind_of?Tenejo::PFFile}.each_with_index do |file, index| %>
-      <%= render "child", node: file, parent: node.lineno, depth: depth + 1, order: index + 1 %>
-    <% end %>
-  <% end %>
 </div>

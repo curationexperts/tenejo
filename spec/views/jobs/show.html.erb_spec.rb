@@ -16,9 +16,9 @@ RSpec.describe "jobs/show", type: :view do
 
   # Scaffold generated test - should be replaced when additional functionality is developed
   it "renders attributes in <p>" do
-    expect(job.graph).to have_received(:collections).and_return(Array.new(11))
-    expect(job.graph).to have_received(:works).and_return(Array.new(13))
-    expect(job.graph).to have_received(:files).and_return(Array.new(17))
+    allow(job.graph).to receive(:collections).and_return(Array.new(11))
+    allow(job.graph).to receive(:works).and_return(Array.new(13))
+    allow(job.graph).to receive(:files).and_return(Array.new(17))
     assign(:job, job)
     render
     expect(rendered).to match('Type')

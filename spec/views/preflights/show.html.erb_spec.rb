@@ -22,8 +22,8 @@ RSpec.describe "preflights/show", type: :view do
   end
 
   it "renders attributes", :aggregate_failures do
-    expect(job.graph).to have_received(:files).and_return(Array.new(17))
-    expect(job.graph).to have_received(:works).and_return(Array.new(13))
+    allow(job.graph).to receive(:files).and_return(Array.new(17))
+    allow(job.graph).to receive(:works).and_return(Array.new(13))
     assign(:job, job)
     assign(:preflight_graph, job.graph)
     render
