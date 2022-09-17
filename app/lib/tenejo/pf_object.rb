@@ -77,6 +77,17 @@ module Tenejo
       @warnings = warnings.merge(hash)
     end
 
+    def collections
+      children.select{|x| x.kind_of?(Tenejo::PFCollection)}
+    end
+    def works
+      children.select{|x| x.kind_of?(Tenejo::PFWork)}
+    end
+
+    def files
+      children.select{|x| x.kind_of?(Tenejo::PFFile)}
+    end
+
     def self.typify(hash)
       if hash.is_a?(Hash) && hash.key?('type')
         # puts "#{hash['type']} id: #{hash['identifier']} parent: #{hash['parent']}"

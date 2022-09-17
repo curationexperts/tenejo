@@ -28,25 +28,13 @@
       <td class="type"><%= node.class.to_s.delete_prefix("Tenejo::PF").truncate(1, omission: "") %></td>
       <td class="visibility"><%= node.visibility %></td>
       <td class="collection_count">
-        <% if node.kind_of? Tenejo::PFCollection %>
-          &ndash;
-        <% else %>
-          <%= @job.graph.collections&.count %>
-        <% end %>
+        <%= node.collections.count %>
       </td>
       <td class="work_count">
-        <% if node.kind_of? Tenejo::PFWork %>
-          <%= @job.graph.works&.count %>
-        <% else %>
-          &ndash;
-        <% end %>
+        <%= node.works.count %>
       </td>
       <td class="file_count">
-        <% if node.kind_of? Tenejo::PFFile %>
-          &ndash;
-        <% else %>
-          <%= @job.graph.files&.count %>
-        <% end %>
+          <%= node.files.count unless node.kind_of?Tenejo::PFFile%>
       </td>
     </tr>
   </tbody>
