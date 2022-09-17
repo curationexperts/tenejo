@@ -10,4 +10,16 @@ class Job < ApplicationRecord
   def graph
     @memo ||= Tenejo::Graph.from(attribute(:graph))
   end
+
+  def collections
+    graph.collections.count
+  end
+
+  def works
+    graph.works.count
+  end
+
+  def files
+    graph.files.count
+  end
 end
