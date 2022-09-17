@@ -14,11 +14,16 @@ RSpec.describe Tenejo::Graph do
     let(:g) {
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with(/tiff/).and_return(true)
+      allow(File).to receive(:exist?).with(/png/).and_return(true)
       Tenejo::Preflight.process_csv(File.open("./spec/fixtures/csv/nesting_test.csv"))
     }
     let(:flat) { g.flatten }
 
     let(:j) { Job.create!(user: FactoryBot.create(:user), graph: g) }
+
+    it "finds all the files" do
+      expect(j.graph.files.count).to eq 17
+    end
 
     it "empties out the detached files list after attaching them" do
       expect(g.detached_files).to be_empty
@@ -35,8 +40,10 @@ RSpec.describe Tenejo::Graph do
     end
 
     it "generates a flat list" do # rubocop:disable Metrics/BlockLength
-      expect(flat.size).to eq 27
+      expect(flat.size).to eq 29
       expect(flat.shift.identifier).to eq ["ORPH-0001"]
+      expect(flat.shift.identifier).to eq ["ORPH-0001"]
+      expect(flat.shift.identifier).to eq ["ORPH-0002"]
       expect(flat.shift.identifier).to eq ["ORPH-0002"]
       expect(flat.shift.identifier).to eq ["EPHEM"]
       expect(flat.shift.identifier).to eq ["CARDS"]

@@ -50,7 +50,7 @@
               </dl>
               <dl class="col-xs-4">
                 <dt class="text-nowrap">Files</dt>
-                <dd class="job-number job-files"><%= dasher(@job&.files)%></dd>
+                <dd class="job-number job-files"><%= dasher(@job.graph.flatten.select{|x| x.kind_of?Tenejo::PFFile}.count)%></dd>
               </dl>
             </div>
           </div>
