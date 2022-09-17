@@ -32,7 +32,7 @@ RSpec.describe "preflights/show", type: :view do
     expect(rendered).to have_selector('.job-status', text: 'Completed')
     expect(rendered).to have_selector('.job-created_at', text: job.created_at)
     expect(rendered).to have_selector('.job-completed_at', text: completion_time)
-    expect(rendered).to have_selector('.job-collections', text: '0')
+    expect(rendered).to have_selector('.job-collections', text: "–")
     expect(rendered).to have_selector('.job-works', text: '13')
     expect(rendered).to have_selector('.job-files', text: '17')
     expect(rendered).to have_link(text: 'empty.csv')

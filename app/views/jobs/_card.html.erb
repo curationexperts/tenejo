@@ -42,15 +42,15 @@
             <div class="row">
               <dl class="col-xs-4">
                 <dt class="text-nowrap">Collections</dt>
-                <dd class="job-number job-collections"><%= dasher(@job.collections)  %></dd>
+                <dd class="job-number job-collections"><%= dasher(@job&.collections)  %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt class="text-nowrap">Works</dt>
-                <dd class="job-number job-works"><%= dasher(@job.works) %></dd>
+                <dd class="job-number job-works"><%= dasher(@job&.works) %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt class="text-nowrap">Files</dt>
-                <dd class="job-number job-files"><%= dasher(@job.files)%></dd>
+                <dd class="job-number job-files"><%= dasher(@job&.files)%></dd>
               </dl>
             </div>
           </div>
