@@ -2,7 +2,7 @@
 
 module ApplicationHelper
   def dasher(n)
-    n.nil? || n.to_s == "0" ? raw("&ndash;") : n 
+    n.nil? || n.to_s == "0" ? raw("&ndash;") : n # rubocop:disable Rails/OutputSafety
   end
 
   def random_image

@@ -78,14 +78,15 @@ module Tenejo
     end
 
     def collections
-      children.select{|x| x.kind_of?(Tenejo::PFCollection)}
+      children.select { |x| x.is_a?(Tenejo::PFCollection) }
     end
+
     def works
-      children.select{|x| x.kind_of?(Tenejo::PFWork)}
+      children.select { |x| x.is_a?(Tenejo::PFWork) }
     end
 
     def files
-      children.select{|x| x.kind_of?(Tenejo::PFFile)}
+      children.select { |x| x.is_a?(Tenejo::PFFile) }
     end
 
     def self.typify(hash)
