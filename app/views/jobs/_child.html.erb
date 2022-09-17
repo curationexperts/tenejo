@@ -28,13 +28,13 @@
       <td class="type"><%= node.class.to_s.delete_prefix("Tenejo::PF").truncate(1, omission: "") %></td>
       <td class="visibility"><%= node.visibility %></td>
       <td class="collection_count">
-        <%= node.collections.count %>
+        <%= dasher(node.collections.count) %>
       </td>
       <td class="work_count">
-        <%= node.works.count %>
+        <%= dasher(node.works.count) %>
       </td>
       <td class="file_count">
-          <%= node.files.count unless node.kind_of?Tenejo::PFFile%>
+          <%= dasher(node.files.count) unless node.kind_of?Tenejo::PFFile%>
       </td>
     </tr>
   </tbody>

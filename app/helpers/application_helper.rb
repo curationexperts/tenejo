@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  def dasher(n)
+    n.nil? || n.to_s == "0" ? raw("&ndash;") : n 
+  end
+
   def random_image
     image_path_prefix = "app/assets/images/"
     image_files = Dir.glob("#{image_path_prefix}unsplash/*")
