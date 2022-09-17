@@ -70,7 +70,7 @@ RSpec.describe Tenejo::CsvImporter do
   end
   it 'sets file import status', :aggregate_failures do
     job = @csv_import.instance_variable_get(:@job)
-    expect(job.graph.root.children[1].children[0].status).to eq "complete"
+    expect(job.graph.files[3].status).to eq "complete"
   end
 
   it 'sets work-level visibility', :aggregate_failures do
