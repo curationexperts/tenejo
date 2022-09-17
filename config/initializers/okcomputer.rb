@@ -16,7 +16,7 @@ class ServiceCheck < OkComputer::Check
     super()
   end
   def check
-    system("systemctl is-active #{@service}") ? 
+    system("systemctl is-active #{@service} > /dev/null 2>&1") ?
            mark_message("Check passed") : (mark_failure && mark_message("Check failed"))
   end
 end

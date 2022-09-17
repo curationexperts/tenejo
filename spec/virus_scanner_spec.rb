@@ -5,7 +5,6 @@ require './app/lib/tenejo/virus_scanner'
 
 RSpec.describe Tenejo::VirusScanner do
   executable = ENV.fetch('CLAMSCAN_EXEC', "clamscan")
-  puts "executable: #{executable}"
   context "with clean file" do
     let(:scanner) { described_class.new('./spec/fixtures/images/cat.jpg', executable) }
     it "does not freak out" do

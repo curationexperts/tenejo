@@ -20,7 +20,7 @@
           </div>
           <div class="form-group">
             <%= f.label "Add Role" %>
-            <%= f.collection_select('role_ids', (Role.order('LOWER(name) ASC').all - @user.roles ), :id, :name, {include_blank: 'Please select a role…'}, { class: "form-control"}) %>
+            <%= f.collection_select('role_ids', (Role.order(Arel.sql('LOWER(name) ASC')).all - @user.roles ), :id, :name, {include_blank: 'Please select a role…'}, { class: "form-control"}) %>
           </div>
           <div class="actions">
             <%= f.submit "Update User" , class: "btn btn-primary" %>
