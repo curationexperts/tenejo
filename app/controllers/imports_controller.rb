@@ -13,7 +13,10 @@ class ImportsController < JobsController
 
   def show
     super
-    @job = Job.find(params[:id])
+    job = Job.find(params[:id])
+    g = Tenejo::Graph.new
+    g.attributes = job.graph
+    @root = g.root
     add_breadcrumb "##{@job.id} - #{I18n.t('tenejo.admin.sidebar.imports')}", @job
   end
 
@@ -26,7 +29,7 @@ class ImportsController < JobsController
         BatchImportJob.perform_later(@job)
         format.html { redirect_to @job }
         format.json { render :show, status: :created, location: @job }
-      end # maybe throw an exception if we can't save?
+      end
     end
   end
 
@@ -41,9 +44,8 @@ class ImportsController < JobsController
     job.user = current_user
     job.status = :submitted
     job.graph = Tenejo::Preflight.process_csv(job.manifest.download)
-    flat = job.graph.flatten
-    job.collections = flat.map { |x| x.is_a? Tenejo::PFCollection }
-    job.works = flat.map { |x| x.is_a? Tenejo::PFWork }
-    job.files = flat.map { |x| x.is_a? Tenejo::PFFile }
+    job.collections = job.graph['collections'].count
+    job.works = job.graph['works'].count
+    job.files = job.graph['files'].count
   end
 end

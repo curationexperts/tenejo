@@ -20,6 +20,7 @@ RSpec.describe Tenejo::CsvImporter do
     it "creates no objects" do
       csv_import = described_class.new(import_job)
       expect(csv_import.preflight_errors).to eq ["No data was detected"]
+      expect(csv_import).not_to receive(:instantiate)
       expect(csv_import).not_to receive(:create_or_update_collection)
       expect(csv_import).not_to receive(:create_or_update_work)
       csv_import.import

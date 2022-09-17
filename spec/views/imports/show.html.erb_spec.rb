@@ -34,6 +34,7 @@ RSpec.describe "imports/show", type: :view do
 
   it "handles missing attributes gracefully" do
     @job = nil
+    @root = {}
     expect { render }.not_to raise_error
   end
 

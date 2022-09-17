@@ -3,8 +3,19 @@
 # rubocop:todo Metrics/ClassLength
 module Tenejo
   class CsvImporter
+    def typify(hash)
+      t = hash['type'].constantize.new
+      t.attributes = hash
+      t
+    end
+
     def initialize(import_job)
       @job = import_job
+      @graph = Tenejo::Graph.new
+      @graph.attributes = @job.graph # comes out of db as hash
+      @root = Tenejo::PreFlightObj.new
+      @root.attributes = @graph.root
+      @children = @root.children.map { |x| typify(x) }
       @depositor = import_job.user.user_key
       @logger = Rails.logger
       if preflight_errors.present?
@@ -21,32 +32,38 @@ module Tenejo
     end
 
     def preflight_errors
-      @job.graph&.fatal_errors
+      @graph&.fatal_errors
     end
 
     def preflight_warnings
-      @job.graph.warnings
+      @graph.warnings
     end
 
     def invalid_rows
-      @job.graph.invalids
+      @graph.invalids
     end
 
     def import
-      return if fatal_errors(@job.graph)
+      return if fatal_errors(@graph)
       @job.status = :in_progress
       @job.save!
-      @job.graph.flatten.each do |node|
-        create_or_update(node)
-        ensure_thumbnails(node)
+      @children.each do |child|
+        instantiate(child)
       end
-      flat = @job.graph.flatten
-      @job.collections = flat.count { |x| x.is_a? PFCollection }
-      @job.works = flat.count { |x| x.is_a? PFWork }
-      @job.files = flat.count { |x| x.is_a? PFFile }
+      @job.collections = @graph.collections.count
+      @job.works = @graph.works.count
+      @job.files = @graph.files.count
       @job.completed_at = Time.current
       @job.status = :completed
       @job.save
+    end
+
+    def instantiate(node)
+      create_or_update(node)
+      node.children.map { |x| typify(x) }.each do |child|
+        instantiate(child)
+      end
+      ensure_thumbnails(node)
     end
 
     def create_or_update(node)
@@ -55,10 +72,8 @@ module Tenejo
         create_or_update_collection(node)
       when Tenejo::PFWork
         create_or_update_work(node)
-      when Tenejo::PFFile
-      # skip for now
       else
-        @job.graph.add_fatal_error("Row: #{node.lineno} - Did not create #{node.class} with identifier #{node.identifier} ")
+        @graph.add_fatal_error("Row: #{node.lineno} - Did not create #{node.class} with identifier #{node.identifier} ")
       end
     end
 
@@ -84,10 +99,10 @@ module Tenejo
     end
 
     def search(item, child_id)
-      found = item.children.find { |x| x.identifier == child_id }
+      found = item.children.find { |x| x['identifier'] == child_id }
       if !found && !item.children.empty?
         item.children.each do |x|
-          found ||= search(x, child_id)
+          found ||= search(typify(x), child_id)
         end
       end
       found
@@ -97,10 +112,10 @@ module Tenejo
     # for them separately
     def search_file(item, file_id)
       # search under the files key instead of children
-      found = item.children.find { |x| x.identifier == file_id } if item.respond_to?(:files)
+      found = item.files.find { |x| x['identifier'] == file_id } if item.respond_to?(:files)
       if !found && !item.children.empty?
         item.children.each do |x|
-          found ||= search_file(x, file_id)
+          found ||= search_file(typify(x), file_id)
         end
       end
       found
@@ -109,16 +124,18 @@ module Tenejo
     # TODO: make pfffiles live in the children array, so we don't have to search
     # for them separately
     def update_file(file_id, status)
-      file = search_file(@job.graph.root, file_id)
+      file = search_file(@root, file_id)
       return unless file
-      file.status = status
+      file['status'] = status
+      @job.graph = @graph
       @job.save!
     end
 
     def update_child(child_id, status)
-      child = search(@job.graph.root, child_id)
+      child = search(@root, child_id)
       return unless child
-      child.status = status
+      child['status'] = status
+      @job.graph = @graph
       @job.save!
     end
 
@@ -184,7 +201,6 @@ module Tenejo
 
     def create_or_update_work(pfwork)
       # expensive stuff here
-
       update_child(pfwork.identifier, 'started')
       work = find_or_new_work(pfwork.identifier, pfwork.title)
       update_work_attributes(work, pfwork)
@@ -269,7 +285,7 @@ module Tenejo
       # - existing work, update files - NOT IMPLEMENTED YET
       # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
-      file_sets = pfwork.children.filter { |x| x.is_a? Tenejo::PFFile }.map do |pffile|
+      file_sets = pfwork.files.map { |x| typify(x) }.map do |pffile|
         file_set = FileSet.new
         file_set.label = File.basename(pffile.file)
         file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
@@ -288,21 +304,23 @@ module Tenejo
       #       Hyrax.publisher.publish('file.set.attached', file_set: file_set, user: user)
       #       Hyrax.publisher.publish('object.metadata.updated', object: file_set, user: user)
       #     end"
-      return if file_sets.empty?
       work.ordered_members.concat(file_sets)
       work.thumbnail ||= file_sets.first
       work.representative ||= file_sets.first
-      work.save!
     end
     # rubocop:enable Metrics/AbcSize
 
     def save_work(work)
       return unless work
-      newly_created = !work.persisted?
-      work.save!
-      # Add Sipity workflow to newly created works
-      Hyrax::Workflow::WorkflowFactory.create(work, {}, @job.user) if newly_created
-      # update job status table - work creation successful
+      begin
+        newly_created = !work.persisted?
+        work.save!
+        # Add Sipity workflow to newly created works
+        Hyrax::Workflow::WorkflowFactory.create(work, {}, @job.user) if newly_created
+        # update job status table - work creation successful
+      rescue
+        # update job status table - work creation failed - save error to table
+      end
     end
 
     def self.default_collection_type

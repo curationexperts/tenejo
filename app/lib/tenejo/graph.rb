@@ -1,49 +1,25 @@
 # frozen_string_literal: true
 require 'tenejo/pf_object'
 require 'csv'
-class Tenejo::Graph # rubocop:disable Metrics/ClassLength
+class Tenejo::Graph
   include ActiveModel::Serializers::JSON
-  attr_accessor :detached_files, :warnings, :invalids, :fatal_errors, :root
-  attr_writer :collections, :works, :files
+  attr_accessor :works, :collections, :files, :warnings, :invalids, :fatal_errors, :root
   def initialize
     @fatal_errors = []
     @works = []
     @collections = []
-    @detached_files = []
+    @files = []
     @warnings = []
     @invalids = []
     @root = Tenejo::PreFlightObj.new(CSV::Row.new([:object_type], ["root"]), 0)
   end
 
-  def flatten(node = @root, accum = [])
-    if node.respond_to? :identifier
-      accum << node if node.respond_to? :identifier
-    end
-    node.children.each do |x|
-      flatten(x, accum)
-    end
-    accum
-  end
-
   def attributes
-    { works: [], collections: [], detached_files: [], warnings: [], invalids: [], fatal_errors: [], root: {} }
-  end
-
-  def works
-    flatten.select { |x| x.is_a? Tenejo::PFWork }
-  end
-
-  def files
-    flatten.select { |x| x.is_a? Tenejo::PFFile }
-  end
-
-  def collections
-    flatten.select { |x| x.is_a? Tenejo::PFCollection }
+    { works: [], collections: [], files: [], warnings: [], invalids: [], fatal_errors: [], root: {} }
   end
 
   def attributes=(hash)
     hash.each do |k, v|
-      v = Tenejo::PreFlightObj.typify(v)
       send("#{k}=", v)
     end
   end
@@ -60,7 +36,7 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
     when 'c', 'collection'
       @collections << Tenejo::PFCollection.new(row.to_h, lineno)
     when 'f', 'file'
-      @detached_files += Tenejo::PFFile.unpack(row, lineno, import_path)
+      @files += Tenejo::PFFile.unpack(row, lineno, import_path)
     when 'w', 'work'
       @works << Tenejo::PFWork.new(row, lineno, import_path, self)
     else
@@ -78,19 +54,18 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
   end
 
   def empty?
-    @works.empty? && @detached_files.empty? && @collections.empty?
+    @works.empty? && @files.empty? && @collections.empty?
   end
 
   def connect_files
     idx = index(@works)
-    @detached_files.each do |f|
+    @files.each do |f|
       if idx.key?(f.parent)
-        idx[f.parent].children << f
+        idx[f.parent].files << f
       else
         @warnings << %/Row #{f.lineno}: Could not find parent work '#{f.parent}' for file '#{f.file}' - the file will be ignored/
       end
     end
-    @detached_files = [] # we don't need these anymore, all pffiles should be attached  to works
     self
   end
 
@@ -106,15 +81,7 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
         @root.children << f
       end
     end
-    @works = []
-    @collections = []
     self
-  end
-
-  def self.from(hash)
-    i = new
-    i.attributes = hash
-    i
   end
 
   def simple_class(pf_obj)
@@ -135,11 +102,11 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
   def reject_invalid
     @collections, invalid_collections = @collections.partition(&:valid?)
     @works, invalid_works = @works.partition(&:valid?)
-    @detached_files, invalid_files = @detached_files.partition(&:valid?)
+    @files, invalid_files = @files.partition(&:valid?)
     @invalids = invalid_collections + invalid_works + invalid_files
     @warnings += @invalids.map { |k| "Row #{k.lineno}: #{k.errors.full_messages.join(', ')}" }
 
-    all_the_items = @collections + @works + @detached_files + @invalids
+    all_the_items = @collections + @works + @files + @invalids
     @warnings += all_the_items.filter_map { |item| "Row #{item.lineno}: #{item.warnings.values.join(', ')}" if item.warnings.any? }
   end
 
