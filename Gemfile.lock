@@ -189,7 +189,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.10)
-    connection_pool (2.2.5)
+    connection_pool (2.3.0)
     coveralls (0.8.23)
       json (>= 1.8, < 3)
       simplecov (~> 0.16.1)
@@ -647,6 +647,7 @@ GEM
     pg (1.2.3)
     posix-spawn (0.3.15)
     power_converter (0.1.2)
+    psych (3.3.3)
     public_suffix (4.0.7)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -763,7 +764,7 @@ GEM
       rexml (~> 3.2)
     redic (1.5.3)
       hiredis
-    redis (4.6.0)
+    redis (4.8.0)
     redis-namespace (1.9.0)
       redis (>= 4)
     redlock (1.2.2)
@@ -876,10 +877,10 @@ GEM
       rdf-xsd (~> 3.2)
       sparql (~> 3.2)
       sxp (~> 1.2)
-    sidekiq (6.4.2)
-      connection_pool (>= 2.2.2)
+    sidekiq (6.5.6)
+      connection_pool (>= 2.2.5)
       rack (~> 2.0)
-      redis (>= 4.2.0)
+      redis (>= 4.5.0, < 5)
     signet (0.16.1)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.0)
@@ -1028,6 +1029,7 @@ DEPENDENCIES
   listen (>= 3.0.5, < 3.2)
   okcomputer
   pg (~> 1.0)
+  psych (< 4.0)
   puma (~> 4.3)
   rails (~> 5.2)
   rails-controller-testing

@@ -9,9 +9,10 @@
 bundle/*
 vendor/bundle
 
-# Ignore environment files (except test for CI)
-.env*
-!.env.test
+# Ignore local environment file overrides
+.env*.local
+# Avoid committing production credentials
+.env.production
 
 # Ignore the default SQLite database.
 /db/*.sqlite3

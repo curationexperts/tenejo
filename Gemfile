@@ -14,6 +14,7 @@ gem 'sidekiq', '~> 6.4'
 gem 'dotenv-rails', '~> 2.2.1'
 gem 'okcomputer'
 gem 'pg', '~> 1.0'
+gem 'psych', '< 4.0'
 gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
