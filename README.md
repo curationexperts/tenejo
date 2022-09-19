@@ -21,17 +21,6 @@ Things you may want to cover:
 
 ## Getting started
 
-Configure .env.development file, something like this:
-```
-PROJECT_NAME=tenejo
-DATABASE_USERNAME=db_user
-DATABASE_PASSWORD=<db_user password>
-DATABASE_POOL_SIZE=25
-SOLR_URL=http://localhost:8983/solr/hydra-development
-FEDORA_DEV_URL=http://localhost:8984/rest
-RAILS_SERVE_STATIC_FILES=true
-SIDEKIQ_WORKERS=7
-```
 Create your databases:
 ```rails db:create```
 Migrate the schema:
@@ -52,6 +41,5 @@ Create admin user:
 ```rails tenejo:create_user[email@example.com]```
 This task will create an initial admin user with a random password, which will be the output of this task.
 The default username is admin@example.com, but it can be parameterized as above.
-
 
 If all went well, you should have a server up and runnint at http://localhost:3000
