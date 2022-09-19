@@ -41,5 +41,8 @@ class ImportsController < JobsController
     job.user = current_user
     job.status = :submitted
     job.graph = Tenejo::Preflight.process_csv(job.manifest.download)
+    job.collections = job.graph.collections.count
+    job.works = job.graph.works.count
+    job.files = job.graph.files.count
   end
 end
