@@ -42,15 +42,15 @@
             <div class="row">
               <dl class="col-xs-4">
                 <dt class="text-nowrap">Collections</dt>
-                <dd class="job-number job-collections"><%= @job&.collections || raw("&ndash;") %></dd>
+                <dd class="job-number job-collections"><%= dasher(@job.graph.collections.size)  %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt class="text-nowrap">Works</dt>
-                <dd class="job-number job-works"><%= @job&.works || raw("&ndash;") %></dd>
+                <dd class="job-number job-works"><%= dasher(@job.graph.works.size) %></dd>
               </dl>
               <dl class="col-xs-4">
                 <dt class="text-nowrap">Files</dt>
-                <dd class="job-number job-files"><%= @job&.files || raw("&ndash;") %></dd>
+                <dd class="job-number job-files"><%= dasher(@job.graph.files.size)%></dd>
               </dl>
             </div>
           </div>

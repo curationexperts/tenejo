@@ -13,9 +13,7 @@ RSpec.describe "preflights/show", type: :view do
       manifest: tempfile,
       status: :completed,
       completed_at: completion_time,
-      collections: '0',
-      works: 13,
-      files: 17
+      graph: graph
     )
   }
 
@@ -24,15 +22,17 @@ RSpec.describe "preflights/show", type: :view do
   end
 
   it "renders attributes", :aggregate_failures do
+    allow(job.graph).to receive(:files).and_return(Array.new(17))
+    allow(job.graph).to receive(:works).and_return(Array.new(13))
     assign(:job, job)
-    assign(:preflight_graph, graph)
+    assign(:preflight_graph, job.graph)
     render
     expect(rendered).to have_selector('.job-user', text: user)
     expect(rendered).to have_selector('.job-manifest', text: 'empty.csv')
     expect(rendered).to have_selector('.job-status', text: 'Completed')
     expect(rendered).to have_selector('.job-created_at', text: job.created_at)
     expect(rendered).to have_selector('.job-completed_at', text: completion_time)
-    expect(rendered).to have_selector('.job-collections', text: '0')
+    expect(rendered).to have_selector('.job-collections', text: "–")
     expect(rendered).to have_selector('.job-works', text: '13')
     expect(rendered).to have_selector('.job-files', text: '17')
     expect(rendered).to have_link(text: 'empty.csv')
@@ -64,6 +64,7 @@ RSpec.describe "preflights/show", type: :view do
   end
 
   it "shows any errors" do
+    assign(:job, job)
     graph.add_fatal_error "No data was detected"
     assign(:preflight_graph, graph)
     render

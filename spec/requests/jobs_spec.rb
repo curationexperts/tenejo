@@ -16,14 +16,13 @@ require 'rails_helper'
 RSpec.describe "/jobs", type: :request do
   # Job. As you add validations to Job, be sure to
   # adjust the attributes here as well.
+
   let(:valid_attributes) {
     { type: nil,
       user: admin,
       label: "Label",
       status: "Status",
-      collections: 2,
-      works: 3,
-      files: 4 }
+      graph: Tenejo::Graph.new }
   }
 
   let(:admin) { User.create(email: 'test@example.com', password: '123456', roles: [Role.create(name: 'admin')]) }

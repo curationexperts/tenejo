@@ -68,7 +68,7 @@ RSpec.describe "/preflights", type: :request do
         expect(created_job.completed_at).to be_within(1.second).of Time.current
         expect(created_job.collections).to eq 2
         expect(created_job.works).to eq 4
-        expect(created_job.files).to eq 4
+        expect(created_job.files).to eq 3
       end
     end
 

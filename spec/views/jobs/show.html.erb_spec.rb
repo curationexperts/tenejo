@@ -3,20 +3,23 @@ require 'rails_helper'
 
 RSpec.describe "jobs/show", type: :view do
   let(:user) { User.create(email: 'test@example.com', password: '123456') }
-  before do
+
+  let(:job) {
     @job = Job.create!(
        type: nil,
        label: "test job",
        user: user,
        status: :completed,
-       collections: 11,
-       works: 13,
-       files: 17
+       graph: Tenejo::Graph.new
      )
-  end
+  }
 
   # Scaffold generated test - should be replaced when additional functionality is developed
   it "renders attributes in <p>" do
+    allow(job.graph).to receive(:collections).and_return(Array.new(11))
+    allow(job.graph).to receive(:works).and_return(Array.new(13))
+    allow(job.graph).to receive(:files).and_return(Array.new(17))
+    assign(:job, job)
     render
     expect(rendered).to match('Type')
     expect(rendered).to match('Label')

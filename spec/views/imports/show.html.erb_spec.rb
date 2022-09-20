@@ -11,12 +11,10 @@ RSpec.describe "imports/show", type: :view do
       user: admin,
       manifest: tempfile,
       status: :completed,
-      completed_at: completion_time,
-      works: 13,
-      files: 17
+      completed_at: completion_time
     )
   }
-  let(:import_job) { Import.create!(user: admin, parent_job: preflight, graph: Tenejo::Preflight.process_csv(preflight.manifest.download), status: :submitted) }
+  let(:import_job) { Import.create!(user: admin, parent_job: preflight, graph: Tenejo::Graph.new, status: :submitted) }
 
   it "renders attributes", :aggregate_failures do
     @job = import_job
@@ -34,7 +32,7 @@ RSpec.describe "imports/show", type: :view do
 
   it "handles missing attributes gracefully" do
     @job = nil
-    @root = {}
+    assign(:job, import_job)
     expect { render }.not_to raise_error
   end
 

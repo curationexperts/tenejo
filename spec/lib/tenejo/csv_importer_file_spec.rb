@@ -76,7 +76,7 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'sets thumbnails from attached works' do
-    nested_jokers = Work.where(primary_identifier_ssi: 'CARDS-JJ').first
+    nested_jokers = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
     expect(nested_jokers.thumbnail).to eq joker_1_front
   end
 

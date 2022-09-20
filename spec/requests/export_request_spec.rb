@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe "/exports", type: :request do
   let(:admin) { FactoryBot.create(:user, :admin) }
-  let(:export) { Export.new(user: admin) }
+  let(:export) { Export.new(user: admin, graph: Tenejo::Graph.new) }
 
   before do
     sign_in admin
