@@ -1,0 +1,12 @@
+version: "2"
+
+exclude_patterns:
+  - config/
+  - db/
+  - spec/
+  - vendor/
+  - **/node_modules/
+  - **/spec/
+  - **/test/
+  - **/vendor/
+  - app/extensions/extended_bounded_description.rb
