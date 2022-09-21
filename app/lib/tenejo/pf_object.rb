@@ -250,24 +250,12 @@ module Tenejo
       ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
     end
 
-    def initialize(row = {}, lineno = 0, import_path = nil, graph = nil)
-      @files = []
-      @import_path = import_path
-      return unless graph
-      graph.detached_files += unpack_files_from_work(row, lineno, import_path) if row[:files]
-      row.delete(:files)
+    def initialize(row = {}, lineno = 0, _import_path = nil, _graph = nil)
       super(row, lineno)
     end
 
-    def unpack_files_from_work(row, lineno, import_path)
-      files = CSV::Row.new(row.headers, row.fields)
-      files[:parent] = files[:identifier]
-      files[:object_type] = "file"
-      PFFile.unpack(files, lineno, import_path)
-    end
-
     def self.singular_fields
-      @singular_fields ||= (ALL_FIELDS - Work.properties.select { |_k, v| v["multiple"] }.keys.map(&:to_sym)).sort
+      @singular_fields ||= ALL_FIELDS - ([:files] + Work.properties.select { |_k, v| v["multiple"] }.keys.map(&:to_sym))
     end
   end
 end

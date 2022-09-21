@@ -5,7 +5,7 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
   include ActiveModel::Serializers::JSON
   attr_accessor :detached_files, :warnings, :invalids, :fatal_errors, :root
   attr_writer :collections, :works, :files
-  def initialize
+  def initialize(import_path = Tenejo::DEFAULT_UPLOAD_PATH)
     @fatal_errors = []
     @works = []
     @collections = []
@@ -13,6 +13,7 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
     @warnings = []
     @invalids = []
     @root = Tenejo::PreFlightObj.new(CSV::Row.new([:object_type], ["root"]), 0)
+    @import_path = import_path
   end
 
   def flatten(node = @root, accum = [])
@@ -54,19 +55,28 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
     connect_works
   end
 
-  def consume(row, import_path, lineno)
+  def consume(row, lineno)
     return if row.to_h.values.all?(nil)
     case row[:object_type]&.downcase
     when 'c', 'collection'
       @collections << Tenejo::PFCollection.new(row.to_h, lineno)
     when 'f', 'file'
-      @detached_files += Tenejo::PFFile.unpack(row, lineno, import_path)
+      @detached_files += Tenejo::PFFile.unpack(row, lineno, @import_path)
     when 'w', 'work'
-      @works << Tenejo::PFWork.new(row, lineno, import_path, self)
+      @works << Tenejo::PFWork.new(row, lineno)
+      consume_files(row, lineno)
     else
       @warnings << "Row #{lineno}: Unknown object type #{row[:object_type]}"
     end
     self
+  end
+
+  def consume_files(row, lineno)
+    return unless row[:files]
+    file_row = row.dup
+    file_row[:object_type] = 'file'
+    file_row[:parent] = row[:identifier]
+    consume(file_row, lineno)
   end
 
   def add_fatal_error(s)
@@ -142,6 +152,4 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
     all_the_items = @collections + @works + @detached_files + @invalids
     @warnings += all_the_items.filter_map { |item| "Row #{item.lineno}: #{item.warnings.values.join(', ')}" if item.warnings.any? }
   end
-
-  DEFAULT_UPLOAD_PATH = File.join(Hyrax.config.upload_path.call, 'ftp')
 end

@@ -52,7 +52,7 @@ module Tenejo
     end
 
     def self.process_csv(input, import_path = DEFAULT_UPLOAD_PATH) # rubocop:disable Metrics/CyclomaticComplexity
-      graph = Graph.new
+      graph = Graph.new(import_path)
       graph.add_fatal_error("No manifest present") and return graph unless input
       begin
         csv = CSV.new(input, headers: true, return_headers: true, skip_blanks: true,
@@ -63,7 +63,7 @@ module Tenejo
         check_unknown_headers(headers, graph)
         csv.each do |row|
           next unless check_length(row, headerlen, csv.lineno, graph)
-          graph.consume(row, import_path, csv.lineno)
+          graph.consume(row, csv.lineno)
         end
         graph.add_fatal_error("No data was detected") if graph.empty?
         graph.finalize
