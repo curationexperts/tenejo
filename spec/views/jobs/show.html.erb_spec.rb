@@ -10,15 +10,14 @@ RSpec.describe "jobs/show", type: :view do
        label: "test job",
        user: user,
        status: :completed,
-       graph: Tenejo::Graph.new
+       collections: 11,
+       works: 13,
+       files: 17
      )
   }
 
   # Scaffold generated test - should be replaced when additional functionality is developed
-  it "renders attributes in <p>" do
-    allow(job.graph).to receive(:collections).and_return(Array.new(11))
-    allow(job.graph).to receive(:works).and_return(Array.new(13))
-    allow(job.graph).to receive(:files).and_return(Array.new(17))
+  it "renders attributes in <p>", :aggregate_failures do
     assign(:job, job)
     render
     expect(rendered).to match('Type')
