@@ -7,7 +7,7 @@ class Collection < ActiveFedora::Base
     index.as :stored_sortable
   end
   # You can replace these metadata if they're not suitable
-  include Hyrax::BasicMetadata
+  include ::Tenejo::BasicMetadata
   self.indexer = Hyrax::CollectionWithBasicMetadataIndexer
 
   def self.terms

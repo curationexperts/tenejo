@@ -16,7 +16,7 @@ class Work < ActiveFedora::Base
   # This must be included at the end, because it finalizes the metadata
   # schema (by adding accepts_nested_attributes)
 
-  include ::Hyrax::BasicMetadata
+  include ::Tenejo::BasicMetadata
 
   def self.terms
     @metadata ||= properties.keys.sort.map(&:to_sym)
