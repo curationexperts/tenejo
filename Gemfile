@@ -59,12 +59,11 @@ gem 'whenever', group: 'production'
 
 group :test do
   gem 'capybara'
-  gem 'coveralls', require: false
+  gem 'coveralls_reborn', '~> 0.25.0'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
-  gem 'simplecov_json_formatter'
   gem 'webdrivers'
 end
 
