@@ -106,7 +106,7 @@ module Tenejo
     def create_or_update_collection(pfcollection)
       # put all the expensive stuff here
       # and unit test the heck out of it
-      update_status(pfcollection, 'started', 'completed') do
+      update_status(pfcollection, 'in_progress', 'completed') do
         collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
         update_collection_attributes(collection, pfcollection)
         if pfcollection.parent
@@ -165,7 +165,7 @@ module Tenejo
 
     def create_or_update_work(pfwork)
       # expensive stuff here
-      update_status(pfwork, 'started', 'completed') do
+      update_status(pfwork, 'in_progress', 'completed') do
         work = find_or_new_work(pfwork.identifier, pfwork.title)
         update_work_attributes(work, pfwork)
         create_or_update_files(work, pfwork)
@@ -256,7 +256,7 @@ module Tenejo
         file_set.visibility = pffile.visibility
         file_set.save!
         local_path = File.join(pffile.import_path, pffile.file)
-        update_status(pffile, 'started', 'completed') do
+        update_status(pffile, 'in_progress', 'completed') do
           IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
         end
         file_set
