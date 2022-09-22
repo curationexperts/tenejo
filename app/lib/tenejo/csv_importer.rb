@@ -83,31 +83,35 @@ module Tenejo
       @depositor
     end
 
-    # TODO: make pfffiles live in the children array, so we don't have to search
-    # for them separately
     def search_members(type, file_id)
       @job.graph.flatten.find { |x| x.is_a?(type) && x.identifier == file_id }
     end
 
-    def update_member(item, status)
+    def update_status(item, start_state, end_state)
+      tmp = @job.graph
       member = search_members(item.class, item.identifier)
       return unless member
-      member.status = status
+      member.status = start_state
+      @job.graph = tmp # this only exists to trick ActiveRecord into actually saving the modified graph
+      @job.save!
+      yield
+      member.status = end_state
+      @job.graph = tmp # same here
       @job.save!
     end
 
     def create_or_update_collection(pfcollection)
       # put all the expensive stuff here
       # and unit test the heck out of it
-      update_member(pfcollection, 'started')
-      collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
-      update_collection_attributes(collection, pfcollection)
-      if pfcollection.parent
-        parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
-        collection.member_of_collections << parent if parent
+      update_status(pfcollection, 'started', 'completed') do
+        collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
+        update_collection_attributes(collection, pfcollection)
+        if pfcollection.parent
+          parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
+          collection.member_of_collections << parent if parent
+        end
+        save_collection(collection)
       end
-      save_collection(collection)
-      update_member(pfcollection, 'complete')
     end
 
     # Finds or creates a collection by its user supplied identifier
@@ -158,13 +162,12 @@ module Tenejo
 
     def create_or_update_work(pfwork)
       # expensive stuff here
-
-      update_member(pfwork, 'started')
-      work = find_or_new_work(pfwork.identifier, pfwork.title)
-      update_work_attributes(work, pfwork)
-      create_or_update_files(work, pfwork)
-      save_work(work)
-      update_member(pfwork, 'complete')
+      update_status(pfwork, 'started', 'complete') do
+        work = find_or_new_work(pfwork.identifier, pfwork.title)
+        update_work_attributes(work, pfwork)
+        create_or_update_files(work, pfwork)
+        save_work(work)
+      end
     end
 
     # Finds or creates a work by its user supplied identifier
@@ -250,9 +253,9 @@ module Tenejo
         file_set.visibility = pffile.visibility
         file_set.save!
         local_path = File.join(pffile.import_path, pffile.file)
-        update_member(pffile, 'started')
-        IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
-        update_member(pffile, 'complete')
+        update_status(pffile, 'started', 'complete') do
+          IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+        end
         file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'tenejo/pf_object'
+require 'tenejo/preflight'
 require 'csv'
 class Tenejo::Graph # rubocop:disable Metrics/ClassLength
   include ActiveModel::Serializers::JSON
