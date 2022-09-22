@@ -2,8 +2,6 @@
 
 class Job < ApplicationRecord
   belongs_to :user
-  has_many :work_states, dependent: :nullify
-
   has_many :child_jobs, class_name: 'Job', foreign_key: 'parent_job_id', dependent: :nullify
   belongs_to :parent_job, class_name: 'Job', optional: true
 

@@ -46,7 +46,7 @@ module Tenejo
       @job.files = flat.count { |x| x.is_a? PFFile }
       @job.completed_at = Time.current
       @job.status = :completed
-      @job.save
+      @job.save!
     end
 
     def create_or_update(node)
@@ -83,57 +83,38 @@ module Tenejo
       @depositor
     end
 
-    def search(item, child_id)
-      found = item.children.find { |x| x.identifier == child_id }
-      if !found && !item.children.empty?
-        item.children.each do |x|
-          found ||= search(x, child_id)
-        end
+    def search_members(type, file_id)
+      @job.graph.flatten.find { |x| x.is_a?(type) && x.identifier == file_id }
+    end
+
+    def update_status(item, start_state, end_state)
+      tmp = @job.graph
+      member = search_members(item.class, item.identifier)
+      if member
+        member.status = start_state
+        @job.graph = tmp # this only exists to trick ActiveRecord into actually saving the modified graph
+        @job.save!
+        yield
+        member.status = end_state
+        @job.graph = tmp # same here
+        @job.save!
+      else
+        yield # still need to call the block if the member doesn't exist in the graph somehow. this seems like a bug related to test setup
       end
-      found
-    end
-
-    # TODO: make pfffiles live in the children array, so we don't have to search
-    # for them separately
-    def search_file(item, file_id)
-      # search under the files key instead of children
-      found = item.children.find { |x| x.identifier == file_id } if item.respond_to?(:files)
-      if !found && !item.children.empty?
-        item.children.each do |x|
-          found ||= search_file(x, file_id)
-        end
-      end
-      found
-    end
-
-    # TODO: make pfffiles live in the children array, so we don't have to search
-    # for them separately
-    def update_file(file_id, status)
-      file = search_file(@job.graph.root, file_id)
-      return unless file
-      file.status = status
-      @job.save!
-    end
-
-    def update_child(child_id, status)
-      child = search(@job.graph.root, child_id)
-      return unless child
-      child.status = status
-      @job.save!
     end
 
     def create_or_update_collection(pfcollection)
       # put all the expensive stuff here
       # and unit test the heck out of it
-      update_child(pfcollection.identifier, 'started')
-      collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
-      update_collection_attributes(collection, pfcollection)
-      if pfcollection.parent
-        parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
-        collection.member_of_collections << parent if parent
+      update_status(pfcollection, 'in_progress', 'completed') do
+        collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
+        update_collection_attributes(collection, pfcollection)
+        if pfcollection.parent
+          parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
+          collection.member_of_collections << parent if parent
+        end
+        save_collection(collection)
       end
-      save_collection(collection)
-      update_child(pfcollection.identifier, 'complete')
     end
 
     # Finds or creates a collection by its user supplied identifier
@@ -184,13 +165,12 @@ module Tenejo
 
     def create_or_update_work(pfwork)
       # expensive stuff here
-
-      update_child(pfwork.identifier, 'started')
-      work = find_or_new_work(pfwork.identifier, pfwork.title)
-      update_work_attributes(work, pfwork)
-      create_or_update_files(work, pfwork)
-      save_work(work)
-      update_child(pfwork.identifier, 'complete')
+      update_status(pfwork, 'in_progress', 'completed') do
+        work = find_or_new_work(pfwork.identifier, pfwork.title)
+        update_work_attributes(work, pfwork)
+        create_or_update_files(work, pfwork)
+        save_work(work)
+      end
     end
 
     # Finds or creates a work by its user supplied identifier
@@ -276,9 +256,9 @@ module Tenejo
         file_set.visibility = pffile.visibility
         file_set.save!
         local_path = File.join(pffile.import_path, pffile.file)
-        update_file(pffile.identifier, 'started')
-        IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
-        update_file(pffile.identifier, 'complete')
+        update_status(pffile, 'in_progress', 'completed') do
+          IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+        end
         file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
