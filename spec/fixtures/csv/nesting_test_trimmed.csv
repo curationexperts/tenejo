@@ -1,0 +1,12 @@
+"Identifier","Object Type","Parent","Title","Description","Creator","Rights Statement","Visibility","Files","Comment"
+"ORPH-0001","Work",,"RapidDesign Office Plan Template","Work not in any collection, private visibility","Berol Corporation","In Copyright","private",,
+"EPHEM","Collection",,"Printed Ephemera","Top-level collection",,,OPEN,,
+"CARDS","c","EPHEM","Playing Cards and Related Ephemera","Child collection, system (open) visibility for public",,,"open",,
+"CARDS-0001","Work","CARDS","Turkish Playing Cards","Work in a collection","T. C. Oyun Kagitlari Monopolu","No Copyright - Other Known Legal Restrictions","Public",,
+,,,,,,,,,
+"CARDS-0001-H","Work","CARDS-0001","Hearts","Child work with directly attached file, plus child works (file is reused in a child)","T. C. Oyun Kagitlari Monopolu","Copyright Undetermined","Public",,
+"CARDS-0001-H-A","work","CARDS-0001-H","Ace of Hearts","Child work (2-deep)","T. C. Oyun Kagitlari Monopolu","Copyright Not Evaluated",authenticated,,
+,,,,,,,,,
+"CARDS-0001-J","Work","CARDS-0001","Jokers","Child work with packed file list","T. C. Oyun Kagitlari Monopolu","Copyright Not Evaluated","public","/jokers/Joker1-Recto.tiff|~|/jokers/Joker1-Verso.tiff",
+,,,,,,,,,
+"DARK","c","EPHEM","Non-public Materials","Child collection, private (restricted) visiblity",,,"restricted",,
