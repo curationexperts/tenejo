@@ -88,16 +88,15 @@ module Tenejo
     end
 
     def update_status(item, start_state, end_state)
-      tmp = @job.graph
       member = search_members(item.class, item.identifier)
       if member
         member.status = start_state
-        @job.graph = tmp # this only exists to trick ActiveRecord into actually saving the modified graph
-        @job.save!
+        # rubocop:disable Rails/SkipsModelValidations
+        @job.update_attribute(:graph, @job.graph) # forces AR to write the graph column, regardless of what it thinks
         yield
         member.status = end_state
-        @job.graph = tmp # same here
-        @job.save!
+        # rubocop:disable Rails/SkipsModelValidations
+        @job.update_attribute(:graph, @job.graph)
       else
         yield # still need to call the block if the member doesn't exist in the graph somehow. this seems like a bug related to test setup
       end
