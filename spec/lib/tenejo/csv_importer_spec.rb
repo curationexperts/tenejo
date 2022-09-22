@@ -83,10 +83,11 @@ RSpec.describe Tenejo::CsvImporter do
       end
       let(:pf_collection) { Tenejo::PFCollection.new({ identifier: 'TEST0001', title: 'Importer test collection' }, -1) }
 
-      it "creates a new collection", :aggregate_failures do
+      it "creates a new collection" do
         csv_import = described_class.new(import_job)
         expect { csv_import.create_or_update_collection(pf_collection) }.to change { Collection.where(primary_identifier_ssi: 'TEST0001').count }.from(0).to(1)
         collection = Collection.where(primary_identifier_ssi: 'TEST0001').last
+        expect(collection).not_to be_nil
         expect(collection.depositor).to eq job_owner.user_key
         expect(collection.date_uploaded.in_time_zone).to be_within(1.minute).of Time.current
         expect(collection.title).to eq pf_collection.title

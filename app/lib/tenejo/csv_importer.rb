@@ -45,8 +45,8 @@ module Tenejo
       @job.works = flat.count { |x| x.is_a? PFWork }
       @job.files = flat.count { |x| x.is_a? PFFile }
       @job.completed_at = Time.current
-      @job.status = :complete
-      @job.save
+      @job.status = :completed
+      @job.save!
     end
 
     def create_or_update(node)
@@ -90,20 +90,23 @@ module Tenejo
     def update_status(item, start_state, end_state)
       tmp = @job.graph
       member = search_members(item.class, item.identifier)
-      return unless member
-      member.status = start_state
-      @job.graph = tmp # this only exists to trick ActiveRecord into actually saving the modified graph
-      @job.save!
-      yield
-      member.status = end_state
-      @job.graph = tmp # same here
-      @job.save!
+      if member
+        member.status = start_state
+        @job.graph = tmp # this only exists to trick ActiveRecord into actually saving the modified graph
+        @job.save!
+        yield
+        member.status = end_state
+        @job.graph = tmp # same here
+        @job.save!
+      else
+        yield # still need to call the block if the member doesn't exist in the graph somehow. this seems like a bug related to test setup
+      end
     end
 
     def create_or_update_collection(pfcollection)
       # put all the expensive stuff here
       # and unit test the heck out of it
-      update_status(pfcollection, 'started', 'complete') do
+      update_status(pfcollection, 'started', 'completed') do
         collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
         update_collection_attributes(collection, pfcollection)
         if pfcollection.parent
@@ -162,7 +165,7 @@ module Tenejo
 
     def create_or_update_work(pfwork)
       # expensive stuff here
-      update_status(pfwork, 'started', 'complete') do
+      update_status(pfwork, 'started', 'completed') do
         work = find_or_new_work(pfwork.identifier, pfwork.title)
         update_work_attributes(work, pfwork)
         create_or_update_files(work, pfwork)
@@ -253,7 +256,7 @@ module Tenejo
         file_set.visibility = pffile.visibility
         file_set.save!
         local_path = File.join(pffile.import_path, pffile.file)
-        update_status(pffile, 'started', 'complete') do
+        update_status(pffile, 'started', 'completed') do
           IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
         end
         file_set

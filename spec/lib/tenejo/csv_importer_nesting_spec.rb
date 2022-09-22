@@ -59,26 +59,26 @@ RSpec.describe Tenejo::CsvImporter do
     job = @csv_import.instance_variable_get(:@job)
     root_children = job.graph.root.children
     expect(root_children.map(&:identifier)).to eq [['ORPH-0001'], ['EPHEM']]
-    expect(root_children.map(&:status)).to eq ['complete', 'complete']
+    expect(root_children.map(&:status)).to eq ['completed', 'completed']
 
     nested_work = job.graph.root.children[1].children[0].children[0].children[0].children[0]
     expect(nested_work.title).to eq ['Ace of Hearts']
     expect(nested_work.class).to eq Tenejo::PFWork
-    expect(nested_work.status).to eq 'complete'
+    expect(nested_work.status).to eq 'completed'
 
     attached_file = job.graph.root.children[1].children[0].children[0].children[1].children[1]
     expect(attached_file.class).to eq Tenejo::PFFile
     expect(attached_file.file).to eq '/jokers/Joker1-Verso.tiff'
-    expect(attached_file.status).to eq 'complete'
+    expect(attached_file.status).to eq 'completed'
 
     cards = job.graph.root.children[1].children[0].children[0].children
     expect(cards.map(&:title)).to eq [['Hearts'], ['Jokers']]
-    expect(cards.map(&:status)).to eq ['complete', 'complete']
+    expect(cards.map(&:status)).to eq ['completed', 'completed']
   end
 
   it 'sets file import status', :aggregate_failures do
     job = @csv_import.instance_variable_get(:@job)
-    expect(job.graph.files[0].status).to eq "complete"
+    expect(job.graph.files[0].status).to eq "completed"
   end
 
   it 'sets work-level visibility', :aggregate_failures do
