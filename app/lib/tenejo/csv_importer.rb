@@ -45,7 +45,7 @@ module Tenejo
       @job.works = flat.count { |x| x.is_a? PFWork }
       @job.files = flat.count { |x| x.is_a? PFFile }
       @job.completed_at = Time.current
-      @job.status = :completed
+      @job.status = :complete
       @job.save
     end
 
@@ -103,7 +103,7 @@ module Tenejo
     def create_or_update_collection(pfcollection)
       # put all the expensive stuff here
       # and unit test the heck out of it
-      update_status(pfcollection, 'started', 'completed') do
+      update_status(pfcollection, 'started', 'complete') do
         collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
         update_collection_attributes(collection, pfcollection)
         if pfcollection.parent
