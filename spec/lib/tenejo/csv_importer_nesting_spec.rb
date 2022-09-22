@@ -14,7 +14,7 @@ RSpec.describe Tenejo::CsvImporter do
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = true
 
     job_owner = User.find_by(email: 'admin@example.org') || User.create(email: 'admin@example.org', password: 'abcd5678')
-    csv = fixture_file_upload("./spec/fixtures/csv/nesting_test.csv")
+    csv = fixture_file_upload("./spec/fixtures/csv/nesting_test_trimmed.csv")
     preflight = Preflight.create!(user: job_owner, manifest: csv)
     import_job = Import.create!(user: job_owner, graph: Tenejo::Preflight.process_csv(preflight.manifest.download, './spec/fixtures/images/structure_test'), parent_job: preflight)
     @csv_import = described_class.new(import_job)
@@ -58,24 +58,32 @@ RSpec.describe Tenejo::CsvImporter do
 
     job = @csv_import.instance_variable_get(:@job)
     root_children = job.graph.root.children
-    root_children_status = root_children.map(&:status)
-    expect(root_children_status).to eq ["complete", "complete", "complete"]
+    expect(root_children.map(&:identifier)).to eq [['ORPH-0001'], ['EPHEM']]
+    expect(root_children.map(&:status)).to eq ['complete', 'complete']
 
-    first_child = job.graph.root.children[2].children[0].children[0].children[0].children[1]
-    expect(first_child.title).to eq ["Ace of Hearts"]
-    expect(first_child.status).to eq "complete"
+    nested_work = job.graph.root.children[1].children[0].children[0].children[0].children[0]
+    expect(nested_work.title).to eq ['Ace of Hearts']
+    expect(nested_work.class).to eq Tenejo::PFWork
+    expect(nested_work.status).to eq 'complete'
 
-    hearts_status = job.graph.root.children[2].children[0].children[0].children.map(&:status)
-    expect(hearts_status).to eq ["complete", "complete", "complete", "complete", "complete"]
+    attached_file = job.graph.root.children[1].children[0].children[0].children[1].children[1]
+    expect(attached_file.class).to eq Tenejo::PFFile
+    expect(attached_file.file).to eq '/jokers/Joker1-Verso.tiff'
+    expect(attached_file.status).to eq 'complete'
+
+    cards = job.graph.root.children[1].children[0].children[0].children
+    expect(cards.map(&:title)).to eq [['Hearts'], ['Jokers']]
+    expect(cards.map(&:status)).to eq ['complete', 'complete']
   end
+
   it 'sets file import status', :aggregate_failures do
     job = @csv_import.instance_variable_get(:@job)
-    expect(job.graph.files[3].status).to eq "complete"
+    expect(job.graph.files[0].status).to eq "complete"
   end
 
   it 'sets work-level visibility', :aggregate_failures do
     private_work = Work.where(primary_identifier_ssi: 'ORPH-0001').first
-    institutional_work = Work.where(primary_identifier_ssi: 'ORPH-0002').first
+    institutional_work = Work.where(primary_identifier_ssi: 'CARDS-0001-H-A').first
     public_work = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
 
     expect(private_work.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
