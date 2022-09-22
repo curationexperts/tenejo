@@ -4,7 +4,9 @@
       <div class="preview-masthead clearfix">
         <% if theme.logo.attached? %>
           <div class="preview-logo">
+            <% if theme.logo.attached? %>
             <%= image_tag rails_blob_path(theme.logo)  %>
+          <%end%>
           </div>
         <% end %>
         <div class="preview-site-title"><%= theme.site_title %></div>
@@ -35,8 +37,12 @@
 
     <div class="preview-body clearfix">
       <h1>Heading H1</h1>
-        <%= image_tag theme.hero_image.representation(resize: '100x100').processed%>
       <p><%= theme.site_description %></p>
+    <div class="col-xs-5">
+      <% if theme.hero_image.attached? %>
+        <%= image_tag theme.hero_image.representation(resize: '500x').processed, class: 'homepage-hero'%>
+      <%end%>
+    </div>
     </div>
     <div class="preview-footer clearfix">
       Powered by Tenejo
