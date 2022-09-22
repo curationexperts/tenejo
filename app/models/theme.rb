@@ -73,7 +73,7 @@ class Theme < ApplicationRecord
       filename: 'default_logo.png',
       content_type: 'image/svg+xml'
     )
-    save if persisted?
+    logo.save!
   end
 
   def ensure_hero_image

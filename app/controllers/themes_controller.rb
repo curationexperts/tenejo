@@ -18,6 +18,7 @@ class ThemesController < ApplicationController
       @theme.logo.purge
       @theme.hero_image.purge
       @theme.reset_preview_to_defaults
+      @theme.save!
     end
 
 
