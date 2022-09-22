@@ -27,7 +27,6 @@ class Theme < ApplicationRecord
       theme.merge_defaults
       theme.ensure_logo
       theme.ensure_hero_image
-      theme.save
     end
   end
 
