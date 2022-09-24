@@ -41,13 +41,13 @@ RSpec.describe Tenejo::CsvExporter do
 
   context "#generate_csv" do
     let(:col001) {
-      Collection.new(title: ['Test collection'], primary_identifier: 'COL001',
+      Collection.new(title: ['Test collection'], identifier: 'COL001',
                      collection_type_gid: Hyrax::CollectionType.find_or_create_default_collection_type.gid)
     }
 
-    let(:work001) { Work.new(title: ['Test work'], primary_identifier: 'WRK001') }
+    let(:work001) { Work.new(title: ['Test work'], identifier: 'WRK001') }
 
-    let(:work002) { Work.new(title: ['Another Test work'], primary_identifier: 'WRK002') }
+    let(:work002) { Work.new(title: ['Another Test work'], identifier: 'WRK002') }
 
     it 'includes error message if no identifiers were provided' do
       csv_string = described_class.new(export).generate_csv
@@ -104,7 +104,7 @@ RSpec.describe Tenejo::CsvExporter do
     end
 
     it 'includes files', :aggregate_failures do
-      file001 = FileSet.new(primary_identifier: 'FIL001', id: 'placeholder')
+      file001 = FileSet.new(identifier: 'FIL001', id: 'placeholder')
       file002 = FileSet.new(id: 'auto-generated')
       allow(ActiveFedora::Base).to receive(:where).and_return([work001])
       allow(work001).to receive(:ordered_file_sets).and_return([file001, file002])
@@ -144,8 +144,8 @@ RSpec.describe Tenejo::CsvExporter do
     let(:max_work) {
       Work.new(
         title: ['Work with all the fields'],
-        primary_identifier: 'MAX-WORK',
-        identifier: ['DOI:xxxxxxx', 'https://hdl.handle.net/ooooo/iiiiiiiii'],
+        identifier: 'MAX-WORK',
+        other_identifiers: ['DOI:xxxxxxx', 'https://hdl.handle.net/ooooo/iiiiiiiii'],
         alternative_title: ['Alle Felder', 'सर्वाणि क्षेत्राणि'],
         resource_type: ["Image"],
         creator: ["Anon., 16th Century"],

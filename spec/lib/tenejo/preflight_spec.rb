@@ -104,7 +104,7 @@ RSpec.describe Tenejo::Preflight do
     end
 
     it "connects works with works" do
-      expect(graph.root.children[1].children[1].children.map(&:identifier)).to include ["MPC008"]
+      expect(graph.root.children[1].children[1].children.map(&:identifier)).to include "MPC008"
     end
 
     it "warns about disconnected works" do
@@ -113,7 +113,7 @@ RSpec.describe Tenejo::Preflight do
 
     it "connects works and collections with parents" do
       expect(graph.collections.size).to eq 2
-      expect(graph.collections.first.children.map(&:identifier)).to eq [["MPC002"], ["MPC003"]]
+      expect(graph.collections.first.children.map(&:identifier)).to eq ["MPC002", "MPC003"]
       expect(graph.collections.last.children.map(&:identifier)).to be_empty
     end
 
@@ -155,11 +155,11 @@ RSpec.describe Tenejo::Preflight do
       end
 
       it "connects collections without a parent in the CSV to the root" do
-        expect(graph.root.children.map(&:identifier)).to include(["TESTINGCOLLECTION"])
+        expect(graph.root.children.map(&:identifier)).to include("TESTINGCOLLECTION")
       end
 
       it "connects works without a parent in the CSV to the root" do
-        expect(graph.root.children.map(&:identifier)).to include(["MPC009"])
+        expect(graph.root.children.map(&:identifier)).to include("MPC009")
       end
     end
   end
@@ -177,25 +177,25 @@ RSpec.describe Tenejo::Preflight do
     context "when explicit in the CSV" do
       example "for single files", :aggregate_failures do
         ace_of_spades = spades.children[0]
-        expect(ace_of_spades.identifier).to eq ['CARDS-0001-S-A']
+        expect(ace_of_spades.identifier).to eq 'CARDS-0001-S-A'
       end
       example "for files packed in a work", :aggregate_failures do
         king_of_clubs = clubs.children[3] # Arrays start at 0
-        expect(king_of_clubs.identifier).to eq ['CARDS-0001-C.4'] # identifier indexes start at 1
+        expect(king_of_clubs.identifier).to eq 'CARDS-0001-C.4' # identifier indexes start at 1
       end
     end
     context "automatically when absent" do
       example "for single files" do
         jack_of_diamonds = diamonds.children[2]
-        expect(jack_of_diamonds.identifier).to eq ["CARDS-0001-D//L10"]
+        expect(jack_of_diamonds.identifier).to eq "CARDS-0001-D//L10"
       end
       example "for packed files" do
         queen_of_diamonds_back = diamonds.children[4]
-        expect(queen_of_diamonds_back.identifier).to eq ["CARDS-0001-D//L11.2"]
+        expect(queen_of_diamonds_back.identifier).to eq "CARDS-0001-D//L11.2"
       end
       example "for files packed in files" do
         ace_of_hearts = hearts.children[1].children[0]
-        expect(ace_of_hearts.identifier).to eq ['CARDS-0001-H-A.1']
+        expect(ace_of_hearts.identifier).to eq 'CARDS-0001-H-A.1'
       end
     end
   end

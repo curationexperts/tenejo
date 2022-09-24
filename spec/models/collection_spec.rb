@@ -16,4 +16,11 @@ RSpec.describe Collection do
     expect(described_class.editable_terms).to include(:creator)
     expect(described_class.editable_terms).not_to include(:date_uploaded)
   end
+
+  it 'does not tokenize identifier' do
+    collection = described_class.new(identifier: "TESTING-123")
+    solr_doc = collection.indexing_service.generate_solr_document
+    expect(solr_doc.keys).to include "identifier_ssi"
+    expect(solr_doc["identifier_ssi"]).to eq "TESTING-123"
+  end
 end

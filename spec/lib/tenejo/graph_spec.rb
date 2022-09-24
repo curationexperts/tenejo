@@ -41,35 +41,35 @@ RSpec.describe Tenejo::Graph do
 
     it "generates a flat list" do # rubocop:disable Metrics/BlockLength
       expect(flat.size).to eq 29
-      expect(flat.shift.identifier).to eq ["ORPH-0001"]
-      expect(flat.shift.identifier).to eq ["ORPH-0001"]
-      expect(flat.shift.identifier).to eq ["ORPH-0002"]
-      expect(flat.shift.identifier).to eq ["ORPH-0002"]
-      expect(flat.shift.identifier).to eq ["EPHEM"]
-      expect(flat.shift.identifier).to eq ["CARDS"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-H"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-H"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-H-A"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-H-A.1"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-H-A.2"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-J"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-J.1"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-J.2"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-J.3"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-J.4"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-D"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-D-A.1"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-D-A.2"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-C"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-C.1"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-C.2"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-C.3"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-C.4"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-S"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-S-A"]
-      expect(flat.shift.identifier).to eq ["CARDS-0001-S-J"]
-      expect(flat.shift.identifier).to eq ["DARK"]
+      expect(flat.shift.identifier).to eq "ORPH-0001"
+      expect(flat.shift.identifier).to eq "ORPH-0001"
+      expect(flat.shift.identifier).to eq "ORPH-0002"
+      expect(flat.shift.identifier).to eq "ORPH-0002"
+      expect(flat.shift.identifier).to eq "EPHEM"
+      expect(flat.shift.identifier).to eq "CARDS"
+      expect(flat.shift.identifier).to eq "CARDS-0001"
+      expect(flat.shift.identifier).to eq "CARDS-0001-H"
+      expect(flat.shift.identifier).to eq "CARDS-0001-H"
+      expect(flat.shift.identifier).to eq "CARDS-0001-H-A"
+      expect(flat.shift.identifier).to eq "CARDS-0001-H-A.1"
+      expect(flat.shift.identifier).to eq "CARDS-0001-H-A.2"
+      expect(flat.shift.identifier).to eq "CARDS-0001-J"
+      expect(flat.shift.identifier).to eq "CARDS-0001-J.1"
+      expect(flat.shift.identifier).to eq "CARDS-0001-J.2"
+      expect(flat.shift.identifier).to eq "CARDS-0001-J.3"
+      expect(flat.shift.identifier).to eq "CARDS-0001-J.4"
+      expect(flat.shift.identifier).to eq "CARDS-0001-D"
+      expect(flat.shift.identifier).to eq "CARDS-0001-D-A.1"
+      expect(flat.shift.identifier).to eq "CARDS-0001-D-A.2"
+      expect(flat.shift.identifier).to eq "CARDS-0001-C"
+      expect(flat.shift.identifier).to eq "CARDS-0001-C.1"
+      expect(flat.shift.identifier).to eq "CARDS-0001-C.2"
+      expect(flat.shift.identifier).to eq "CARDS-0001-C.3"
+      expect(flat.shift.identifier).to eq "CARDS-0001-C.4"
+      expect(flat.shift.identifier).to eq "CARDS-0001-S"
+      expect(flat.shift.identifier).to eq "CARDS-0001-S-A"
+      expect(flat.shift.identifier).to eq "CARDS-0001-S-J"
+      expect(flat.shift.identifier).to eq "DARK"
     end
   end
 end

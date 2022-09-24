@@ -7,6 +7,10 @@ module Tenejo
     extend ActiveSupport::Concern
 
     included do # rubocop:disable Metrics/BlockLength
+      property :identifier, predicate: ::RDF::Vocab::DC11.identifier, multiple: false do |index|
+        index.as :stored_sortable
+      end
+      property :other_identifiers, predicate: ::RDF::Vocab::DC.identifier
       property :alternative_title, predicate: ::RDF::Vocab::DC.alternative
 
       property :label, predicate: ActiveFedora::RDF::Fcrepo::Model.downloadFilename, multiple: false
@@ -32,7 +36,6 @@ module Tenejo
       property :date_created, predicate: ::RDF::Vocab::DC.created
       property :subject, predicate: ::RDF::Vocab::DC11.subject
       property :language, predicate: ::RDF::Vocab::DC11.language
-      property :identifier, predicate: ::RDF::Vocab::DC.identifier
       property :based_near, predicate: ::RDF::Vocab::FOAF.based_near, class_name: Hyrax::ControlledVocabularies::Location
       property :related_url, predicate: ::RDF::RDFS.seeAlso
       property :bibliographic_citation, predicate: ::RDF::Vocab::DC.bibliographicCitation
