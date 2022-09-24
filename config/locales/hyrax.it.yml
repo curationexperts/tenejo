@@ -21,10 +21,11 @@ it:
           date_uploaded_dtsi: Data caricata
           description_tesim: Descrizione
           file_format_tesim: Formato del file
-          identifier_tesim: Identifier
+          identifier_ssi: Identifier
           keyword_tesim: Parola chiave
           language_tesim: Lingua
           license_tesim: Licenza
+          other_identifiers_tesim: Altri Identificatori
           publisher_tesim: Editore
           rights_statement_tesim: Diritti
           subject_tesim: Soggetto
@@ -37,10 +38,11 @@ it:
           date_uploaded_dtsi: Data caricata
           description_tesim: Descrizione
           file_format_tesim: Formato del file
-          identifier_tesim: Identifier
+          identifier_ssi: Identifier
           keyword_tesim: Parola chiave
           language_tesim: Lingua
           license_tesim: Licenza
+          other_identifiers_tesim: Altri Identificatori
           publisher_tesim: Editore
           rights_statement_tesim: Diritti
           subject_tesim: Soggetto
