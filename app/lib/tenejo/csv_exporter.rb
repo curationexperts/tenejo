@@ -53,7 +53,7 @@ module Tenejo
     # @param id[String] the primary identifier for the object to serialze
     # @param csv[CSV] a CSV IO object to append the metadata to
     def find_and_export(id, csv)
-      obj = ActiveFedora::Base.where(primary_identifier_ssi: id).last
+      obj = ActiveFedora::Base.where(identifier_ssi: id).last
       csv << CSV::Row.new([:identifier, :error], [id, "No match for identifier"]) unless obj
       serialize_with_descendants(obj, nil, csv)
     end
@@ -70,7 +70,7 @@ module Tenejo
     end
 
     def serialize_children(csv, obj)
-      parent_id = obj.primary_identifier
+      parent_id = obj.identifier
       obj.try(:child_collections)&.map { |child| serialize_with_descendants(child, parent_id, csv) }
       obj.try(:child_works)&.map { |child| serialize_with_descendants(child, parent_id, csv) }
       obj.try(:ordered_file_sets)&.map { |child| serialize_with_descendants(child, parent_id, csv) }
@@ -86,7 +86,7 @@ module Tenejo
       values = HEADER_ROW.map { |attr| pack_field(obj.try(attr)) }
       row = CSV::Row.new(HEADER_ROW, values)
       row[:parent] = parent_id
-      row[:identifier] = obj.primary_identifier || obj.id
+      row[:identifier] = obj.identifier || obj.id
       row[:file_url] = download_url(obj)
       row[:object_type] = obj.class.to_s.gsub('FileSet', 'File')
       @object_type_counts[row[:object_type]] = @object_type_counts[row[:object_type]] + 1

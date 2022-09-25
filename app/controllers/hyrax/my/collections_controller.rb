@@ -8,6 +8,7 @@ module Hyrax
       configure_blacklight do |config|
         config.search_builder_class = Hyrax::My::CollectionsSearchBuilder
       end
+
       # Define collection specific filter facets.
       def self.configure_facets
         configure_blacklight do |config|

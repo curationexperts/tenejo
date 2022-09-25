@@ -111,7 +111,7 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
       if idx.key?(f.parent)
         idx[f.parent].children << f
       elsif f.parent.present?
-        @warnings << %/Row #{f.lineno}: Could not find parent '#{f.parent}'; #{simple_class(f)} '#{f.identifier.first}' will be created without a parent if you continue./
+        @warnings << %/Row #{f.lineno}: Could not find parent '#{f.parent}'; #{simple_class(f)} '#{f.identifier}' will be created without a parent if you continue./
         @root.children << f
       else
         @root.children << f
@@ -140,7 +140,7 @@ class Tenejo::Graph # rubocop:disable Metrics/ClassLength
   end
 
   def index(c, key: :identifier)
-    c.index_by { |v| v.send(key).first; }
+    c.index_by { |v| v.send(key); }
   end
 
   def reject_invalid

@@ -11,6 +11,12 @@ class WorkIndexer < Hyrax::WorkIndexer
   # this behavior
   include Hyrax::IndexesLinkedMetadata
 
+  # override 'canned' indexing of :identifier - see
+  # https://github.com/samvera/hyrax/blob/v3.4.1/app/indexers/concerns/hyrax/indexes_linked_metadata.rb#L7
+  # https://github.com/samvera/hyrax/blob/v3.4.1/app/indexers/hyrax/deep_indexing_service.rb#L4
+  # https://github.com/samvera/hyrax/blob/v3.4.1/app/indexers/hyrax/basic_metadata_indexer.rb#L7
+  Hyrax::BasicMetadataIndexer.stored_fields.delete(:identifier)
+
   # Uncomment this block if you want to add custom indexing behavior:
   # def generate_solr_document
   #  super.tap do |solr_doc|

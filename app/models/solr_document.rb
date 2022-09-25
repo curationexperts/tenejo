@@ -7,6 +7,10 @@ class SolrDocument
   # Adds Hyrax behaviors to the SolrDocument.
   include Hyrax::SolrDocumentBehavior
 
+  # Make any metadata changes after module inclusions to override
+  # https://github.com/samvera/hyrax/blob/v3.4.1/app/models/concerns/hyrax/solr_document/metadata.rb
+  attribute :identifier, Solr::String, "identifier_ssi"
+
   # self.unique_key = 'id'
 
   # Email uses the semantic field mappings below to generate the body of an email.

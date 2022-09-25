@@ -14,7 +14,7 @@ RSpec.describe Tenejo::CsvImporter do
     ActiveJob::Base.queue_adapter = :test
     @old_perform_enqueued_jobs = ActiveJob::Base.queue_adapter.perform_enqueued_jobs
     ActiveJob::Base.queue_adapter.perform_enqueued_jobs = true
-    ace_of_hearts = Work.new(title: ['Ace of Hearts'], primary_identifier: 'CARDS-AH', description: ['A pre-existing work'], rights_statement: ["http://rightsstatements.org/vocab/NoC-OKLR/1.0/"])
+    ace_of_hearts = Work.new(title: ['Ace of Hearts'], identifier: 'CARDS-AH', description: ['A pre-existing work'], rights_statement: ["http://rightsstatements.org/vocab/NoC-OKLR/1.0/"])
     ace_of_hearts.ordered_members << FileSet.create!
     ace_of_hearts.save!
 
@@ -48,11 +48,11 @@ RSpec.describe Tenejo::CsvImporter do
   end
   # rubocop:enable RSpec/InstanceVariable
 
-  let(:jokers) { Work.where(primary_identifier_ssi: 'CARDS-0001-J').first }
+  let(:jokers) { Work.where(identifier_ssi: 'CARDS-0001-J').first }
   let(:joker_1_front) { jokers.ordered_members.to_a.first }
 
   it 'only creates one work with the expected id' do
-    hits = Work.where(primary_identifier_ssi: 'CARDS-0001-J').count
+    hits = Work.where(identifier_ssi: 'CARDS-0001-J').count
     expect(hits).to eq 1
   end
 
@@ -76,7 +76,7 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'sets thumbnails from attached works' do
-    nested_jokers = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
+    nested_jokers = Work.where(identifier_ssi: 'CARDS-0001-J').first
     expect(nested_jokers.thumbnail).to eq joker_1_front
   end
 
@@ -85,7 +85,7 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'adds files to existing works', :aggregate_failures do
-    ace_of_hearts = Work.where(primary_identifier_ssi: 'CARDS-AH').last
+    ace_of_hearts = Work.where(identifier_ssi: 'CARDS-AH').last
     expect(ace_of_hearts.title).to eq ['Ace of Hearts']
     expect(ace_of_hearts.description).to eq ['No Jokers here'] # changed from 'A pre-existing work'
     expect(ace_of_hearts.ordered_members.to_a.size).to eq 2 # started with 1 and added 1 during import

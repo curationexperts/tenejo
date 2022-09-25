@@ -64,7 +64,7 @@ module Tenejo
 
     def ensure_thumbnails(node)
       return unless node.class == Tenejo::PFWork
-      work = Work.where(primary_identifier_ssi: node.identifier.first)&.last
+      work = Work.where(identifier_ssi: node.identifier.first)&.last
       unless work
         @logger.error "CSV Importer couldn't find Work with primary_id #{node&.identifier} to attach thumbnail"
         return
@@ -109,7 +109,7 @@ module Tenejo
         collection = find_or_new_collection(pfcollection.identifier, pfcollection.title)
         update_collection_attributes(collection, pfcollection)
         if pfcollection.parent
-          parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
+          parent = Collection.where(identifier_ssi: pfcollection.parent).first
           collection.member_of_collections << parent if parent
         end
         save_collection(collection)
@@ -119,10 +119,9 @@ module Tenejo
     # Finds or creates a collection by its user supplied identifier
     # returns a valid collection or nil
     def find_or_new_collection(primary_id, title)
-      collection_found = Collection.where(primary_identifier_ssi: primary_id).last
+      collection_found = Collection.where(identifier_ssi: primary_id).last
       return collection_found if collection_found
       Collection.new(
-        primary_identifier: primary_id.first,
         identifier: primary_id,
         title: title,
         depositor: job_owner,
@@ -134,7 +133,7 @@ module Tenejo
       return unless collection
       Tenejo::CsvImporter.collection_attributes_to_copy.each { |source, dest| collection.send(dest, pfcollection.send(source)) }
 
-      collection.primary_identifier = pfcollection.identifier.first
+      collection.identifier = pfcollection.identifier
 
       # these timestamps are the Hyrax managed fields, not rails timestamps
       update_timestamp(collection)
@@ -147,7 +146,7 @@ module Tenejo
 
     def update_parent(collection, pfcollection)
       return unless pfcollection.parent
-      parent = Collection.where(primary_identifier_ssi: pfcollection.parent).first
+      parent = Collection.where(identifier_ssi: pfcollection.parent).first
       return unless parent
       collection.member_of_collections << parent
     end
@@ -175,10 +174,10 @@ module Tenejo
     # Finds or creates a work by its user supplied identifier
     # returns a valid work or nil
     def find_or_new_work(primary_id, title)
-      work_found = Work.where(primary_identifier_ssi: primary_id).last
+      work_found = Work.where(identifier_ssi: primary_id).last
       return work_found if work_found
       Work.new(
-        primary_identifier: primary_id.first,
+        identifier: primary_id,
         title: title,
         depositor: job_owner,
         admin_set: admin_set_for_work
@@ -192,7 +191,7 @@ module Tenejo
       update_timestamp(work)
       work.admin_set ||= admin_set_for_work
       work.rights_statement = normalized_rights(pfwork.rights_statement)
-      work.primary_identifier = pfwork.identifier.first
+      work.identifier = pfwork.identifier
       work.depositor ||= job_owner
     end
 
@@ -230,10 +229,10 @@ module Tenejo
       return unless pfwork.parent
       # Works can have either collections OR other works as their parents
       # for collections, set the relationship on the work
-      parent_collection = Collection.where(primary_identifier_ssi: pfwork.parent).first
+      parent_collection = Collection.where(identifier_ssi: pfwork.parent).first
       work.member_of_collections << parent_collection if parent_collection
       # for works, set the relationship on the parent work
-      parent_work = Work.where(primary_identifier_ssi: pfwork.parent).first
+      parent_work = Work.where(identifier_ssi: pfwork.parent).first
       parent_work.ordered_members << work if parent_work
       parent_work&.save!
       # if we need to make this code faster,

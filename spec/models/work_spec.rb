@@ -17,10 +17,10 @@ RSpec.describe Work do
     expect(described_class.editable_terms).not_to include(:date_uploaded)
   end
 
-  it 'does not tokenize primary_identifier' do
-    work = described_class.new(primary_identifier: "TESTING-123")
+  it 'does not tokenize identifier' do
+    work = described_class.new(identifier: "TESTING-123")
     solr_doc = work.indexing_service.generate_solr_document
-    expect(solr_doc.keys).to include "primary_identifier_ssi"
-    expect(solr_doc["primary_identifier_ssi"]).to eq "TESTING-123"
+    expect(solr_doc.keys).to include "identifier_ssi"
+    expect(solr_doc["identifier_ssi"]).to eq "TESTING-123"
   end
 end

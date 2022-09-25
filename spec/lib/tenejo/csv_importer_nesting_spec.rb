@@ -40,10 +40,10 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'builds relationships', :aggregate_failures do
-    parent = Collection.where(primary_identifier_ssi: 'EPHEM').first
-    child = Collection.where(primary_identifier_ssi: 'CARDS').first
-    grandchild = Work.where(primary_identifier_ssi: 'CARDS-0001').first
-    greatgrandchild = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
+    parent = Collection.where(identifier_ssi: 'EPHEM').first
+    child = Collection.where(identifier_ssi: 'CARDS').first
+    grandchild = Work.where(identifier_ssi: 'CARDS-0001').first
+    greatgrandchild = Work.where(identifier_ssi: 'CARDS-0001-J').first
 
     expect(parent.child_collections).to include child
     expect(child.parent_collections).to include parent
@@ -58,7 +58,7 @@ RSpec.describe Tenejo::CsvImporter do
 
     job = @csv_import.instance_variable_get(:@job)
     root_children = job.graph.root.children
-    expect(root_children.map(&:identifier)).to eq [['ORPH-0001'], ['EPHEM']]
+    expect(root_children.map(&:identifier)).to eq ['ORPH-0001', 'EPHEM']
     expect(root_children.map(&:status)).to eq ['completed', 'completed']
 
     nested_work = job.graph.root.children[1].children[0].children[0].children[0].children[0]
@@ -82,9 +82,9 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'sets work-level visibility', :aggregate_failures do
-    private_work = Work.where(primary_identifier_ssi: 'ORPH-0001').first
-    institutional_work = Work.where(primary_identifier_ssi: 'CARDS-0001-H-A').first
-    public_work = Work.where(primary_identifier_ssi: 'CARDS-0001-J').first
+    private_work = Work.where(identifier_ssi: 'ORPH-0001').first
+    institutional_work = Work.where(identifier_ssi: 'CARDS-0001-H-A').first
+    public_work = Work.where(identifier_ssi: 'CARDS-0001-J').first
 
     expect(private_work.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
     expect(institutional_work.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_AUTHENTICATED
@@ -92,8 +92,8 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'sets collection-level visibility', :aggregate_failures do
-    private_collection = Collection.where(primary_identifier_ssi: 'DARK').first
-    public_collection = Collection.where(primary_identifier_ssi: 'CARDS').first
+    private_collection = Collection.where(identifier_ssi: 'DARK').first
+    public_collection = Collection.where(identifier_ssi: 'CARDS').first
 
     expect(private_collection.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PRIVATE
     expect(public_collection.visibility).to eq Hydra::AccessControls::AccessRight::VISIBILITY_TEXT_VALUE_PUBLIC
