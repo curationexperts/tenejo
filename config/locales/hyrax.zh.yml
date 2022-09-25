@@ -21,10 +21,11 @@ zh:
           date_uploaded_dtsi: 日期上传
           description_tesim: 描述
           file_format_tesim: 文件格式
-          identifier_tesim: 识别码
+          identifier_ssi: 识别码
           keyword_tesim: 关键词
           language_tesim: 语言
           license_tesim: 执照
+          other_identifiers_tesim: 其他标识符
           publisher_tesim: 出版者
           rights_statement_tesim: 权
           subject_tesim: 学科
@@ -37,10 +38,11 @@ zh:
           date_uploaded_dtsi: 日期上传
           description_tesim: 描述
           file_format_tesim: 文件格式
-          identifier_tesim: 识别码
+          identifier_ssi: 识别码
           keyword_tesim: 关键词
           language_tesim: 语言
           license_tesim: 执照
+          other_identifiers_tesim: 其他标识符
           publisher_tesim: 出版者
           rights_statement_tesim: 权
           subject_tesim: 学科
