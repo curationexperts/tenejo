@@ -75,8 +75,7 @@ class ThemesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def theme_params
-    params.require(:theme).permit(Theme::DEFAULTS.keys << :logo)
-    params.require(:theme).permit(Theme::DEFAULTS.keys << :hero_image)
+    params.require(:theme).permit(Theme::DEFAULTS.keys + [:logo, :hero_image])
   end
 
   # Restrict theme access to admins
