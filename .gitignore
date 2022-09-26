@@ -24,6 +24,8 @@ vendor/bundle
 # Ignore all logfiles and tempfiles.
 **/log/*
 **/tmp/*
+log/
+tmp/
 !/log/.keep
 !/tmp/.keep
 *.log
