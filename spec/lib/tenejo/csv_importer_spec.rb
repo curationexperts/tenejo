@@ -145,8 +145,9 @@ RSpec.describe Tenejo::CsvImporter do
           collection = Collection.where(identifier_ssi: 'TEST0002').last
 
           # Most settings should be updated by the import
-          # TODO: the next expectation will break if/when any settable attributes are not multi-valued in the model
           wrapped_settable_attributes = settable_attributes.transform_values { |v| v.split('|~|') }.transform_keys(&:to_s)
+          # Manually set any singular fields
+          wrapped_settable_attributes['date_created'] = "2021-12-06"
           expect(collection.attributes).to include wrapped_settable_attributes
 
           # A handful of values should not have been modified even if they were in the preflight
@@ -232,8 +233,10 @@ RSpec.describe Tenejo::CsvImporter do
           work = Work.where(identifier_ssi: 'WORK-0002').last
 
           # Most settings should be updated by the import
-          # TODO: the next two lines will break if/when any settable attributes are not multi-valued in the model
           wrapped_settable_attributes = settable_attributes.transform_values { |v| v.split('|~|') }.transform_keys(&:to_s)
+          # Manually set any singular fields
+          wrapped_settable_attributes['date_created'] = "2021-12-06"
+
           expect(work.attributes).to include wrapped_settable_attributes
           expect(work.rights_statement).to eq ["https://rightsstatements.org/vocab/NoC-US/1.0/"]
 

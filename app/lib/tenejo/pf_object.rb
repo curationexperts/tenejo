@@ -141,7 +141,7 @@ module Tenejo
     end
 
     def singular?(attribute_name)
-      self.class.singular_fields.include?(attribute_name)
+      self.class.singular_fields.include?(attribute_name.to_sym)
     end
 
     def self.singular_fields

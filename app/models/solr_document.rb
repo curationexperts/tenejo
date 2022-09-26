@@ -9,7 +9,16 @@ class SolrDocument
 
   # Make any metadata changes after module inclusions to override
   # https://github.com/samvera/hyrax/blob/v3.4.1/app/models/concerns/hyrax/solr_document/metadata.rb
-  attribute :identifier, Solr::String, "identifier_ssi"
+  attribute :identifier,       Solr::String, "identifier_ssi"
+  attribute :date_normalized,  Solr::String, "date_normalized_ssi"
+  attribute :date_created,     Solr::String, "date_created_ssi"
+  attribute :date_copyrighted, Solr::String, "date_copyrighted_ssi"
+  attribute :date_issued,      Solr::String, "date_issued_ssi"
+  attribute :date_accepted,    Solr::String, "date_accepted_ssi"
+
+  attribute :resource_format,  Solr::Array,  "resource_format_tesim"
+  attribute :genre,            Solr::Array,  "genre_tesim"
+  attribute :extent,           Solr::Array,  "extent_tesim"
 
   # self.unique_key = 'id'
 

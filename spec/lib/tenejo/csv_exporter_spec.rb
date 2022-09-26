@@ -141,7 +141,7 @@ RSpec.describe Tenejo::CsvExporter do
   end
 
   context "#serialize" do
-    let(:max_work) {
+    let(:max_work) { # rubocop:disable Metrics/BlockLength
       Work.new(
         title: ['Work with all the fields'],
         identifier: 'MAX-WORK',
@@ -157,7 +157,11 @@ RSpec.describe Tenejo::CsvExporter do
         rights_notes: ["use freely"],
         rights_statement: ["No Copyright - United States"],
         publisher: ["DCE"],
-        date_created: ["2021-12-06"],
+        date_created: "2021-12-06",
+        date_normalized: "2021-12-07",
+        date_copyrighted: "2021",
+        date_issued: "2022-01-05",
+        date_accepted: "2022-06-01",
         subject: ["tbd"],
         language: ["english"],
         related_url: ["/also/#"],

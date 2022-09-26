@@ -16,6 +16,7 @@ class WorkIndexer < Hyrax::WorkIndexer
   # https://github.com/samvera/hyrax/blob/v3.4.1/app/indexers/hyrax/deep_indexing_service.rb#L4
   # https://github.com/samvera/hyrax/blob/v3.4.1/app/indexers/hyrax/basic_metadata_indexer.rb#L7
   Hyrax::BasicMetadataIndexer.stored_fields.delete(:identifier)
+  Hyrax::BasicMetadataIndexer.stored_fields.delete(:date_created)
 
   # Uncomment this block if you want to add custom indexing behavior:
   # def generate_solr_document
