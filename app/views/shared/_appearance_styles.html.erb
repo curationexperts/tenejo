@@ -39,6 +39,10 @@
   color: <%= theme&.preview_accent_text_color %>
   !important;
 }
+#homepage-preview .preview-body a.btn {
+  color: <%= theme&.preview_background_color %>
+  !important;
+}
 
 .preview-footer {
   background-color: <%= theme&.preview_primary_color %>
@@ -57,7 +61,9 @@
   ;
 }
 
-.preview-navbar-header .btn-primary {
+.preview-navbar-header .btn-primary,
+.preview-body .btn-primary,
+.preview {
   background-color: <%= theme&.preview_primary_color %>
   ;
   border-color: <%= theme&.preview_primary_color %>

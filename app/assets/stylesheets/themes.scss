@@ -14,6 +14,13 @@
 .preview-body {
   min-height: 8em;
   padding: 1em;
+  .hero_search h2,
+  .hero_browse a{
+    color: #ffffff !important;
+  }
+  p{
+    margin-bottom: 0;
+  }
 }
 
 .preview-footer {
@@ -30,5 +37,13 @@
   img{
     height: 2em;
     width: auto;
+  }
+}
+
+.preview-hero-image{
+  img{
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
   }
 }
