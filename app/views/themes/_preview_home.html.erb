@@ -18,25 +18,47 @@
           <li>Contact</li>
         </ul>
 
-        <form class="navbar-form navbar-right">
-          <label for="search-field-header">Search</label>
-          <div class="input-group input-group-sm">
-            <input type="text" placeholder="Enter search terms" class="form-control "/>
-            <span class="input-group-btn">
-              <button type="button" id="search-submit" class="btn btn-primary">Go</button>
-            </span>
-          </div>
-
-        </form>
 
 
       </div>
     </div>
 
     <div class="preview-body clearfix">
-      <h1>Heading H1</h1>
-      <p><%= @theme.site_description %></p>
+      <div class="row hero_content row-no-gutters">
+        <div class="<%= theme&.hero_image&.attached? ? "col-xs-12" : "col-xs-12 hero_image_empty" %>" ">
+          <% if theme&.hero_image&.attached? %>
+            <div class="preview-hero-image">
+              <%= image_tag theme&.hero_image  %>
+            </div>
+          <% end %>
+          <div class="hero_search">
+            <div class="col-xs-12">
+              <h2><%= @theme.site_title %></h2>
+              <p><%= @theme.site_description %></p>
+            </div>
+
+            <div class="hero_search_form col-xs-12">
+              <form action="" class="form-horizontal search-form">
+                <label for="" class="control-label"></label>
+                <div class="input-group">
+                  <input type="text" class="q form-control" id="search-field-header" placeholder="<%= t("hyrax.search.form.q.placeholder")%>">
+                  <div class="input-group-btn">
+                    <button class="btn btn-primary"><%= t('hyrax.search.button.html') %></button>
+                  </div>
+                </div>
+              </form>
+              <div class="hero_browse col-xs-12">
+                <hr>
+                <a href="" class="btn btn-success">Browse All items</a>
+                <a href="" class="btn btn-info"><%= t('hyrax.homepage.admin_sets.link') %></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    
+
     <div class="preview-footer clearfix">
       Powered by Tenejo
     </div>
