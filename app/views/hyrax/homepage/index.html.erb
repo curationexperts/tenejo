@@ -2,13 +2,9 @@
 <% theme = Theme.current_theme %>
 
 <div class="row hero_content row-no-gutters">
-  <div class="col-xs-12">
-  
+  <div class="<%= theme&.hero_image&.attached? ? "col-xs-12" : "col-xs-12 hero_image_empty" %>"">
     <% if theme&.hero_image&.attached? %>
       <%= image_tag main_app.rails_blob_path(theme&.hero_image, {only_path: true}), "aria-hidden": "true", "aria-label": application_name, role: "img", class: "homepage-hero" %>
-
-      <% else %>
-        <%= image_tag random_image, alt: "Homepage Hero Image", class:"homepage-hero" %>
     <% end %>
 
     <div class="hero_search col-md-8 col-xs-12">
