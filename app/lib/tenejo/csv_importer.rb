@@ -247,17 +247,23 @@ module Tenejo
       # - existing work, update files - NOT IMPLEMENTED YET
       # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
-      file_sets = pfwork.children.filter { |x| x.is_a? Tenejo::PFFile }.map do |pffile|
-        file_set = FileSet.new
-        file_set.label = File.basename(pffile.file)
-        file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
-        file_set.visibility = pffile.visibility
-        file_set.save!
-        local_path = File.join(pffile.import_path, pffile.file)
-        update_status(pffile, 'in_progress', 'completed') do
-          IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+      batch = Sidekiq::Batch.new
+      batch.description="Process the filesets"
+
+      file_sets = []
+      batch.jobs do
+        pfwork.children.filter { |x| x.is_a? Tenejo::PFFile }.inject(file_sets) do |m, pffile|
+          file_set = FileSet.new
+          file_set.label = File.basename(pffile.file)
+          file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
+          file_set.visibility = pffile.visibility
+          file_set.save!
+          local_path = File.join(pffile.import_path, pffile.file)
+          update_status(pffile, 'in_progress', 'completed') do
+            IngestLocalFileJob.perform_later(file_set, local_path, @job.user)
+          end
+          m<< file_set
         end
-        file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
       # That's probably ok in this context
