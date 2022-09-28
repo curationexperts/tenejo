@@ -64,7 +64,7 @@ module Tenejo
 
     def ensure_thumbnails(node)
       return unless node.class == Tenejo::PFWork
-      work = Work.where(identifier_ssi: node.identifier.first)&.last
+      work = Work.where(identifier_ssi: node.identifier)&.last
       unless work
         @logger.error "CSV Importer couldn't find Work with primary_id #{node&.identifier} to attach thumbnail"
         return
