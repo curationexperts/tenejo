@@ -53,6 +53,7 @@ Hyrax::Actors::FileSetActor.class_eval do
     else
       IngestJob.perform_now(wrapper!(file: file, relation: relation))
     end
+    file_set.reload.update_index
   end
 
   def update_content(file, relation = :original_file)
