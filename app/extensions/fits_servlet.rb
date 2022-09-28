@@ -5,6 +5,6 @@ Hydra::FileCharacterization::Characterizers::FitsServlet.class_eval do
   protected
 
   def command
-    "curl -s -k -F datafile=@'#{filename}' #{ENV['FITS_SERVLET_URL']}/examine"
+    format(%[curl -s -k -F datafile=@- #{ENV['FITS_SERVLET_URL']}/examine < %s], Shellwords.escape(filename))
   end
 end
