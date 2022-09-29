@@ -7,7 +7,7 @@
             <%= image_tag theme&.logo  %>
           </div>
         <% end %>
-        <div class="preview-site-title"><%= @theme.site_title %></div>
+        <div class="preview-site-title"><%= @theme.preview_site_title %></div>
       </div>
 
       <div class="preview-navbar-header clearfix">
@@ -33,8 +33,8 @@
           <% end %>
           <div class="hero_search">
             <div class="col-xs-12">
-              <h2><%= @theme.site_title %></h2>
-              <p><%= @theme.site_description %></p>
+              <h2><%= @theme.preview_hero_title %></h2>
+              <p><%= @theme.preview_hero_description %></p>
             </div>
 
             <div class="hero_search_form col-xs-12">
@@ -60,7 +60,7 @@
     
 
     <div class="preview-footer clearfix">
-      Powered by Tenejo
+       <%= image_tag 'pwdByTenejo-default@2x.png', height: "41px", style: "margin: 1rem 0" %>
     </div>
   </div>
 </div>

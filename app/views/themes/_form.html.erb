@@ -17,89 +17,105 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="form-group">
-          <%= form.label :site_title %>
-          <%= form.text_field :preview_site_title, class: 'form-control' %>
+          <label for="theme_site_title" class="control-lable required">Respository Title <span class="label label-info required-tag">required</span></label>
+          <%= form.text_field :preview_site_title, class: 'form-control', required: true %>
           <%= form.hidden_field :site_title %>
         </div>
-        <div class="form-group">
-          <%= form.label :site_description %>
-          <%= form.text_field :preview_site_description, class: 'form-control' %>
-          <%= form.hidden_field :site_description %>
+
+        <hr>
+          <div class="form-group">
+            <%= form.label :hero_title %>
+            <%= form.text_field :preview_hero_title, class: 'form-control' %>
+            <%= form.hidden_field :hero_title %>
+          </div>
+          <div class="form-group">
+            <%= form.label :hero_description %>
+            <%= form.text_field :preview_hero_description, class: 'form-control' %>
+            <%= form.hidden_field :hero_description %>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <hr/>
-  <div class="field">
-    <h4>Images</h4>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <%= form.label 'Change Logo' %>
-          <%= form.file_field :logo %>
-        </div>
-        <div class="form-group">
-          <%= form.label 'Add Hero Image' %>
-          <%= form.file_field :hero_image %>
+    <hr/>
+    <div class="field">
+      <h4>Images</h4>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <%= form.label 'Change Logo' %>
+            <%= form.file_field :logo %>
+            <span class="help-block">Upload a logo image to add to your global navigation bar.
+              <ul class="help-block">
+                <li>Remove extra whitespace around the logo.</li>
+                <li>.jpg, .png, or .gif file only</li>
+                <li>This image max height is 30 px tall.</li>
+              </ul>
+            </span>
+
+
+          </div>
+          <div class="form-group">
+            <%= form.label 'Add Hero Image' %>
+            <%= form.file_field :hero_image %>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <hr/>
-  <div class="field ">
-    <h4>Colors</h4>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <%= form.label :primary_color %>
-          <%= form.color_field :preview_primary_color, class: 'form-control' %>
-          <%= form.hidden_field :primary_color %>
-        </div>
-        <div class="form-group">
-          <%= form.label :accent_color %>
-          <%= form.color_field :preview_accent_color, class: 'form-control' %>
-          <%= form.hidden_field :accent_color %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="field form-group">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <%= form.label :primary_text_color %>
-          <%= form.color_field :preview_primary_text_color, class: 'form-control' %>
-          <%= form.hidden_field :primary_text_color %>
-        </div>
-
-        <div class="form-group">
-          <%= form.label :accent_text_color %>
-          <%= form.color_field :preview_accent_text_color, class: 'form-control' %>
-          <%= form.hidden_field :accent_text_color %>
-        </div>
-
-        <div class="form-group">
-          <%= form.label :background_color %>
-          <%= form.color_field :preview_background_color, class: 'form-control' %>
-          <%= form.hidden_field :background_color %>
+    <hr/>
+    <div class="field ">
+      <h4>Colors</h4>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <%= form.label :primary_color %>
+            <%= form.color_field :preview_primary_color, class: 'form-control' %>
+            <%= form.hidden_field :primary_color %>
+          </div>
+          <div class="form-group">
+            <%= form.label :accent_color %>
+            <%= form.color_field :preview_accent_color, class: 'form-control' %>
+            <%= form.hidden_field :accent_color %>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <hr/>
-  <div class="actions">
-    <%= form.submit 'Preview Changes', name: 'save', class: 'btn btn-primary btn-block' %>
+    <div class="field form-group">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <%= form.label :primary_text_color %>
+            <%= form.color_field :preview_primary_text_color, class: 'form-control' %>
+            <%= form.hidden_field :primary_text_color %>
+          </div>
 
-    <%= button_tag(name: 'apply', class: 'btn btn-success btn-block', value: 'true') do %>
-      <span class="fa fa-tint" aria-hidden="true"></span>
-      Apply Changes
-    <% end %>
+          <div class="form-group">
+            <%= form.label :accent_text_color %>
+            <%= form.color_field :preview_accent_text_color, class: 'form-control' %>
+            <%= form.hidden_field :accent_text_color %>
+          </div>
 
-    <%= button_tag(name: 'reset', class: 'btn btn-default btn-block', value: 'true') do %>
-      <span class="fa fa-refresh" aria-hidden="true"></span>
-      Reset to Defaults
-    <% end %>
-  </div>
-<% end %>
+          <div class="form-group">
+            <%= form.label :background_color %>
+            <%= form.color_field :preview_background_color, class: 'form-control' %>
+            <%= form.hidden_field :background_color %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr/>
+    <div class="actions">
+      <%= form.submit 'Preview Changes', name: 'save', class: 'btn btn-primary btn-block' %>
+
+      <%= button_tag(name: 'apply', class: 'btn btn-success btn-block', value: 'true') do %>
+        <span class="fa fa-tint" aria-hidden="true"></span>
+        Apply Changes
+      <% end %>
+
+      <%= button_tag(name: 'reset', class: 'btn btn-default btn-block', value: 'true') do %>
+        <span class="fa fa-refresh" aria-hidden="true"></span>
+        Reset to Defaults
+      <% end %>
+    </div>
+  <% end %>

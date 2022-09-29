@@ -7,7 +7,7 @@
             <%= image_tag theme&.logo  %>
           </div>
         <% end %>
-        <div class="preview-site-title"><%= @theme.site_title %></div>
+        <div class="preview-site-title"><%= @theme.preview_site_title %></div>
       </div>
 
       <div class="preview-navbar-header clearfix">
@@ -73,7 +73,7 @@
       </div>
     </div>
     <div class="preview-footer clearfix">
-      Powered by Tenejo
+       <%= image_tag 'pwdByTenejo-default@2x.png', height: "41px", style: "margin: 1rem 0" %>
     </div>
   </div>
 </div>
