@@ -5,7 +5,8 @@ RSpec.describe Theme, type: :model do
   it 'initializes with default values', :aggregate_failures do
     theme = described_class.new
     expect(theme.site_title).to eq Theme::DEFAULTS[:site_title]
-    expect(theme.site_description).to eq Theme::DEFAULTS[:site_description]
+    expect(theme.hero_title).to eq Theme::DEFAULTS[:hero_title]
+    expect(theme.hero_description).to eq Theme::DEFAULTS[:hero_description]
     expect(theme.primary_color).to eq Theme::DEFAULTS[:primary_color]
     expect(theme.accent_color).to eq Theme::DEFAULTS[:accent_color]
     expect(theme.primary_text_color).to eq Theme::DEFAULTS[:primary_text_color]
@@ -16,7 +17,8 @@ RSpec.describe Theme, type: :model do
   it 'does not overwrite explicit intiialization values', :aggregate_failures do
     theme = described_class.new(primary_color: '#ABCDEF')
     expect(theme.site_title).to eq Theme::DEFAULTS[:site_title]
-    expect(theme.site_description).to eq Theme::DEFAULTS[:site_description]
+    expect(theme.hero_title).to eq Theme::DEFAULTS[:hero_title]
+    expect(theme.hero_description).to eq Theme::DEFAULTS[:hero_description]
     expect(theme.primary_color).to eq '#ABCDEF'
   end
 
