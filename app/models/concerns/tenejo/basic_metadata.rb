@@ -19,6 +19,15 @@ module Tenejo
 
       property :import_url, predicate: ::RDF::URI.new('http://scholarsphere.psu.edu/ns#importUrl'), multiple: false
       property :resource_type, predicate: ::RDF::Vocab::DC.type
+      property :resource_format, predicate: ::RDF::Vocab::DC.format do |index|
+        index.as :stored_searchable, :facetable
+      end
+      property :extent, predicate: ::RDF::Vocab::DC.extent do |index|
+        index.as :stored_searchable, :facetable
+      end
+      property :genre, predicate: ::RDF::Vocab::BF2.genreForm do |index|
+        index.as :stored_searchable, :facetable
+      end
       property :creator, predicate: ::RDF::Vocab::DC11.creator
       property :contributor, predicate: ::RDF::Vocab::DC11.contributor
       property :description, predicate: ::RDF::Vocab::DC11.description
@@ -33,13 +42,31 @@ module Tenejo
       property :rights_statement, predicate: ::RDF::Vocab::EDM.rights
       property :access_right, predicate: ::RDF::Vocab::DC.accessRights
       property :publisher, predicate: ::RDF::Vocab::DC11.publisher
-      property :date_created, predicate: ::RDF::Vocab::DC.created
       property :subject, predicate: ::RDF::Vocab::DC11.subject
       property :language, predicate: ::RDF::Vocab::DC11.language
       property :based_near, predicate: ::RDF::Vocab::FOAF.based_near, class_name: Hyrax::ControlledVocabularies::Location
       property :related_url, predicate: ::RDF::RDFS.seeAlso
       property :bibliographic_citation, predicate: ::RDF::Vocab::DC.bibliographicCitation
       property :source, predicate: ::RDF::Vocab::DC.source
+
+      property :date_created, predicate: ::RDF::Vocab::DC.created, multiple: false do |index|
+        index.as :stored_sortable
+      end
+      property :date_normalized, predicate: ::RDF::Vocab::DC11.date, multiple: false do |index|
+        index.as :stored_sortable
+      end
+      property :date_copyrighted, predicate: ::RDF::Vocab::DC.dateCopyrighted, multiple: false do |index|
+        index.as :stored_sortable
+      end
+      property :date_issued, predicate: ::RDF::Vocab::DC.issued, multiple: false do |index|
+        index.as :stored_sortable
+      end
+      property :date_accepted, predicate: ::RDF::Vocab::DC.dateAccepted, multiple: false do |index|
+        index.as :stored_sortable
+      end
+      # NOTE core_metdadata contains the following two date properties
+      # property :date_uploaded # date of ingest
+      # property :date_modified # date of last user modification - metadata or attachments
 
       id_blank = proc { |attributes| attributes[:id].blank? }
 

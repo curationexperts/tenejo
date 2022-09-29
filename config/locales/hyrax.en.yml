@@ -12,6 +12,8 @@ en:
           language_sim: Language
           publisher_sim: Publisher
           subject_sim: Subject
+          resource_format_sim: Format
+          genre_sim: Genre or Form
         index:
           based_near_tesim: Location
           contributor_tesim: Contributor
@@ -29,6 +31,8 @@ en:
           publisher_tesim: Publisher
           rights_statement_tesim: Rights Statement
           subject_tesim: Subject
+          resource_format_sim: Format
+          genre_sim: Genre or Form
         show:
           based_near_tesim: Location
           contributor_tesim: Contributor
@@ -47,6 +51,8 @@ en:
           rights_statement_tesim: Rights Statement
           subject_tesim: Subject
           title_tesim: Title
+          resource_format_sim: Format
+          genre_sim: Genre or Form
   hyrax:
     account_name: My Institution Account Id
     dashboard:
