@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 module Tenejo
-  LICENSES = YAML.safe_load(File.open(Rails.root.join("config/authorities/licenses.yml")))
-
   class LicenseValidator < ActiveModel::Validator
     def validate(record)
       licenses = Array.wrap(record.license).select(&:present?)
@@ -203,6 +201,7 @@ module Tenejo
     end
 
     def self.unpack(row, lineno, import_root)
+      return [invalid_file(row, lineno)] if row[:files].blank?
       cp = row.dup
       index = 1
       packed = row[:files].include?("|~|")
@@ -215,6 +214,10 @@ module Tenejo
         PFFile.new(cp, lineno, import_root)
       end
       files
+    end
+
+    def self.invalid_file(row, lineno)
+      PFFile.new(row, lineno, '')
     end
 
     def initialize(row = {}, lineno = 0, import_root = true, strict_paths = true)

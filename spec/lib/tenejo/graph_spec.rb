@@ -1,32 +1,32 @@
 # frozen_string_literal: true
 require 'rails_helper'
-RSpec.describe Tenejo::Graph do
+RSpec.describe Tenejo::Graph, :aggregate_failures do
   context "when empty" do
-    let(:g) { described_class.new }
+    let(:graph) { described_class.new }
     it "can serialize to json" do
-      expect(g.to_json).not_to be_nil
-      expect(JSON.parse(g.to_json)).not_to be_nil
-      expect(JSON.parse(g.to_json).class).to eq Hash
+      expect(graph.to_json).not_to be_nil
+      expect(JSON.parse(graph.to_json)).not_to be_nil
+      expect(JSON.parse(graph.to_json).class).to eq Hash
     end
   end
 
   context "having loaded a file" do
-    let(:g) {
+    let(:graph) {
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with(/tiff/).and_return(true)
       allow(File).to receive(:exist?).with(/png/).and_return(true)
       Tenejo::Preflight.process_csv(File.open("./spec/fixtures/csv/nesting_test.csv"))
     }
-    let(:flat) { g.flatten }
+    let(:flat) { graph.flatten }
 
-    let(:j) { Job.create!(user: FactoryBot.create(:user), graph: g) }
+    let(:j) { Job.create!(user: FactoryBot.create(:user), graph: graph) }
 
     it "finds all the files" do
       expect(j.graph.files.count).to eq 17
     end
 
     it "empties out the detached files list after attaching them" do
-      expect(g.detached_files).to be_empty
+      expect(graph.detached_files).to be_empty
     end
 
     it "is able to reify after reload" do
