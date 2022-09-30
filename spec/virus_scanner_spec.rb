@@ -11,6 +11,19 @@ RSpec.describe Tenejo::VirusScanner do
       expect(scanner.infected?).to be false
     end
   end
+  context "with strange file" do
+    let(:filename) { "tmp/foobar, ' baz.txt" }
+    before do
+      FileUtils.touch(filename)
+    end
+    after do
+      FileUtils.rm(filename)
+    end
+    let(:scanner) { described_class.new(filename, executable) }
+    it "does not freak out about quotes and commas" do
+      expect(scanner.infected?).to be false
+    end
+  end
   context "with nonexistent file" do
     let(:scanner) { described_class.new('nofile', executable) }
     it "raises" do
