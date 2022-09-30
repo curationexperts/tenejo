@@ -16,8 +16,17 @@ RSpec.describe Hydra::FileCharacterization::Characterizers::FitsServlet do
       FileUtils.rm filename
     end
     it 'can handle paths with quotes' do
-      dirname="la 'fool,"
+      dirname = "la 'fool,"
       filename = "ee'this', terrible, 'filename.txt"
+      FileUtils.mkdir dirname
+      FileUtils.touch filename
+      system(described_class.new(filename).send(:command), exception: true)
+      FileUtils.rm filename
+      FileUtils.rmdir dirname
+    end
+    it 'can handle this in particular' do
+      dirname = "foo/"
+      filename = "Bussey Master's Thesis.pdf"
       FileUtils.mkdir dirname
       FileUtils.touch filename
       system(described_class.new(filename).send(:command), exception: true)
