@@ -178,26 +178,26 @@ module Tenejo
   end
 
   class PFFile < PreFlightObj
-    ALL_FIELDS = [:status, :parent, :file, :files, :resource_type, :visibility, :identifier].freeze
+    ALL_FIELDS = [:status, :parent, :file, :files, :resource_type, :visibility, :identifier, :import_path].freeze
     REQUIRED_FIELDS = [:parent, :file, :identifier].freeze
     attr_accessor(*ALL_FIELDS)
-    attr_reader :import_path
     validates_presence_of(*REQUIRED_FIELDS)
     validates_with Tenejo::ResourceTypeValidator
     validates_each :file, allow_blank: true, allow_nil: true do |rec, att, val|
-      rec.errors.add(att, "< #{val} > cannot be found at '#{rec.import_path}'") unless PFFile.exist?(rec, val)
+      rec.errors.add(att, "< #{val} > cannot be found at '#{rec.import_path}'") unless rec.file_exist?
     end
 
     def attributes
-      a = ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
-      a[:import_path] = nil
-      a
+      ALL_FIELDS.each_with_object(super) { |x, m| m[x.to_sym] = nil; }
     end
 
-    attr_writer :import_path
+    def file_exist?
+      return true if url?
+      File.exist?(File.join(import_path, file))
+    end
 
-    def self.exist?(rec, val)
-      File.exist?(File.join(rec.import_path, val))
+    def url?
+      file&.match(%r{^https?://}i) || false
     end
 
     def self.unpack(row, lineno, import_root)
@@ -221,16 +221,16 @@ module Tenejo
     end
 
     def initialize(row = {}, lineno = 0, import_root = true, strict_paths = true)
-      file_name = row.to_h.delete(:files)
-      row[:file] = relative_path(file_name, import_root, strict_paths)
+      @file = row.to_h.delete(:files)
       @import_path = import_root
+      row[:file] = relative_path(strict_paths)
       super row, lineno
     end
 
-    def relative_path(file_name, import_root, strict_paths)
-      return file_name if strict_paths
-      base_name = File.basename(file_name)
-      Dir.chdir(import_root) do
+    def relative_path(strict_paths = true)
+      return file if strict_paths || url? || file.nil?
+      base_name = File.basename(file)
+      Dir.chdir(import_path) do
         Dir.glob(File.join('**', base_name)).first || "**/#{base_name}"
       end
     end

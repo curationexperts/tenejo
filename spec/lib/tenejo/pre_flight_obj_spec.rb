@@ -17,6 +17,13 @@ RSpec.describe Tenejo::PreFlightObj, :aggregate_failures do
       expect(rec.errors[:file].join).to include 'missing.tiff'
     end
 
+    it "allows links to file over http(S)" do
+      rec.file = 'https://eaxmple.com/downloads/sample_file.tiff'
+      expect(rec.valid?).not_to eq true
+      expect(rec.warnings[:file]).to be_empty
+      expect(rec.errors[:file]).to be_empty
+    end
+
     it "restricts resource type" do
       rec.resource_type = ["Book", "foo"]
       expect(rec.valid?).to eq false # there are other errors in the example
@@ -40,24 +47,41 @@ RSpec.describe Tenejo::PreFlightObj, :aggregate_failures do
     end
 
     context "path checking" do
+      let(:rec) { described_class.new(row, 1, 'spec/fixtures/images') }
       context "when strict" do
         it "returns the original file_name" do
-          file_name = rec.relative_path('relative/path/to/file.ext', "./spec/fixtures/images", true)
+          rec.file = 'relative/path/to/file.ext'
+          file_name = rec.relative_path(true)
+          expect(file_name).to eq 'relative/path/to/file.ext'
+        end
+        it "is the default behavior" do
+          rec.file = 'relative/path/to/file.ext'
+          file_name = rec.relative_path
           expect(file_name).to eq 'relative/path/to/file.ext'
         end
       end
       context "when not strict" do
         it "returns the relative path if the file exists" do
-          file_name = rec.relative_path('Joker1-Recto.tiff', "./spec/fixtures/images", false)
+          rec.file = 'Joker1-Recto.tiff'
+          file_name = rec.relative_path(false)
           expect(file_name).to eq 'structure_test/jokers/Joker1-Recto.tiff'
         end
         it "ignores any relative paths" do
-          file_name = rec.relative_path('ignore_this_path/Joker1-Recto.tiff', "./spec/fixtures/images", false)
+          rec.file = 'ignore_this_path/Joker1-Recto.tiff'
+          file_name = rec.relative_path(false)
           expect(file_name).to eq 'structure_test/jokers/Joker1-Recto.tiff'
         end
         it "returns a placeholder value when file does not exist" do
-          file_name = rec.relative_path('relative/path/to/file.ext', "./spec/fixtures/images", false)
+          rec.file = 'relative/path/to/file.ext'
+          file_name = rec.relative_path(false)
           expect(file_name).to eq '**/file.ext'
+        end
+      end
+      context "does not apply" do
+        it "for http(s) file links" do
+          rec.file = 'https://eaxmple.com/downloads/sample_file.tiff'
+          file_name = rec.relative_path(false)
+          expect(file_name).to eq 'https://eaxmple.com/downloads/sample_file.tiff'
         end
       end
     end
