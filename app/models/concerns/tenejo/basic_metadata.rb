@@ -10,7 +10,9 @@ module Tenejo
       property :identifier, predicate: ::RDF::Vocab::DC11.identifier, multiple: false do |index|
         index.as :stored_sortable
       end
-      property :other_identifiers, predicate: ::RDF::Vocab::DC.identifier
+      property :other_identifiers, predicate: ::RDF::Vocab::DC.identifier do |index|
+        index.as :symbol
+      end
       property :alternative_title, predicate: ::RDF::Vocab::DC.alternative
 
       property :label, predicate: ActiveFedora::RDF::Fcrepo::Model.downloadFilename, multiple: false

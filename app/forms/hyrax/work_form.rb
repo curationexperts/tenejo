@@ -7,7 +7,7 @@ module Hyrax
                   :keyword, :subject, :resource_type, :resource_format, :genre, :extent,
                   :license, :rights_statement, :access_right, :rights_notes, :publisher,
                   :date_normalized, :date_created, :date_copyrighted, :date_issued, :date_accepted,
-                  :language, :identifier, :based_near, :related_url,
+                  :language, :identifier, :based_near, :related_url, :other_identifiers,
                   :representative_id, :thumbnail_id, :rendering_ids, :files,
                   :visibility_during_embargo, :embargo_release_date, :visibility_after_embargo,
                   :visibility_during_lease, :lease_expiration_date, :visibility_after_lease,
