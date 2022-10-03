@@ -38,11 +38,11 @@ module ApplicationHelper
       status_classes = 'status-completed'
     when 'In Progress'
       status_classes = 'status-in-progress'
-    when 'Unknown'
+    when 'Unknown', 'Expired'
       status_classes = 'status-unknown'
     else
       status_classes = 'status-unrecognized'
-      status_text = 'Unk'
+      status_text = '-?-'
     end
     tag.span(status_text, class: 'job-status badge rounded-pill ' + status_classes)
   end

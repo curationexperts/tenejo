@@ -93,11 +93,11 @@ module Tenejo
         member.status = start_state
         # rubocop:disable Rails/SkipsModelValidations
         @job.update_attribute(:graph, @job.graph) # forces AR to write the graph column, regardless of what it thinks
-        yield
+        yield if block_given?
         member.status = end_state
         # rubocop:disable Rails/SkipsModelValidations
         @job.update_attribute(:graph, @job.graph)
-      else
+      elsif block_given?
         yield # still need to call the block if the member doesn't exist in the graph somehow. this seems like a bug related to test setup
       end
     end
@@ -248,16 +248,21 @@ module Tenejo
       # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
       file_sets = pfwork.children.filter { |x| x.is_a? Tenejo::PFFile }.map do |pffile|
-        file_set = FileSet.new
-        file_set.label = File.basename(pffile.file)
-        file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
-        file_set.visibility = pffile.visibility
-        file_set.save!
-        local_path = File.join(pffile.import_path, pffile.file)
-        update_status(pffile, 'in_progress', 'completed') do
-          IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+        if pffile.url?
+          update_status(pffile, 'in_progress', 'expired')
+          :url
+        else
+          file_set = FileSet.new
+          file_set.label = File.basename(pffile.file)
+          file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
+          file_set.visibility = pffile.visibility
+          file_set.save!
+          local_path = File.join(pffile.import_path, pffile.file)
+          update_status(pffile, 'in_progress', 'completed') do
+            IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
+          end
+          file_set
         end
-        file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
       # That's probably ok in this context
@@ -266,7 +271,8 @@ module Tenejo
       #       Hyrax.publisher.publish('file.set.attached', file_set: file_set, user: user)
       #       Hyrax.publisher.publish('object.metadata.updated', object: file_set, user: user)
       #     end"
-      return if file_sets.empty?
+      file_sets&.delete(:url)
+      return if file_sets.blank?
       work.ordered_members.concat(file_sets)
       work.thumbnail ||= file_sets.first
       work.representative ||= file_sets.first

@@ -170,10 +170,6 @@ RSpec.describe Tenejo::Preflight do
     let(:diamonds) { graph.root.children[1] }
     let(:clubs) { graph.root.children[2] }
     let(:spades) { graph.root.children[3] }
-    before do
-      # Ignore file existence validations for these tests
-      allow(Tenejo::PFFile).to receive(:exist?).and_return(true)
-    end
     context "when explicit in the CSV" do
       example "for single files", :aggregate_failures do
         ace_of_spades = spades.children[0]
