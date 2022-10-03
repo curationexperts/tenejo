@@ -12,7 +12,9 @@ RSpec.describe 'hyrax/base/attribute_rows', type: :view do
                      resource_type_tesim: ['Map'],
                      resource_format_tesim: ['polar projection'],
                      genre_tesim: ['satellite imagery', 'false color'],
-                     extent_tesim: ['24 x 38 inches', '2 sheets'])
+                     extent_tesim: ['24 x 38 inches', '2 sheets'],
+                     identifier_ssi: 'TEST-000-1',
+                     other_identifiers_ssim: ['DOI:this', 'ARK:that', 'HDL:the-other-one'])
   end
   let(:ability) { double }
   let(:presenter) { Hyrax::WorkPresenter.new(solr_document, ability) }
@@ -31,5 +33,11 @@ RSpec.describe 'hyrax/base/attribute_rows', type: :view do
     expect(rendered).to have_selector('.attribute-resource_format', text: 'polar projection')
     expect(rendered).to have_selector('.attribute-genre', text: 'false color')
     expect(rendered).to have_selector('.attribute-extent', text: '2 sheets')
+  end
+
+  it 'displays identifiers', :aggregate_failures do
+    render 'hyrax/base/attribute_rows', presenter: presenter
+    expect(rendered).to have_selector('.attribute-identifier', text: 'TEST-000-1')
+    expect(rendered).to have_selector('.attribute-other_identifiers', text: 'HDL:the-other-one')
   end
 end
