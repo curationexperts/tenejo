@@ -115,13 +115,13 @@ RSpec.describe Tenejo::CsvExporter do
 
       expect(rows[0]['object_type']).to eq 'Work'
       expect(rows[0]['identifier']).to eq 'WRK001'
-      expect(rows[0]['file_url']).to be_blank
+      expect(rows[0]['files']).to be_blank
       expect(rows[1]['object_type']).to eq 'File'
       expect(rows[1]['identifier']).to eq 'FIL001'
-      expect(rows[1]['file_url']).to eq 'http://localhost:3000/downloads/placeholder'
+      expect(rows[1]['files']).to eq 'http://localhost:3000/downloads/placeholder'
       expect(rows[2]['object_type']).to eq 'File'
       expect(rows[2]['identifier']).to eq 'auto-generated'
-      expect(rows[2]['file_url']).to eq 'http://localhost:3000/downloads/auto-generated'
+      expect(rows[2]['files']).to eq 'http://localhost:3000/downloads/auto-generated'
     end
 
     it 'counts object types', :aggregate_failures do

@@ -93,12 +93,20 @@ module Tenejo
         member.status = start_state
         # rubocop:disable Rails/SkipsModelValidations
         @job.update_attribute(:graph, @job.graph) # forces AR to write the graph column, regardless of what it thinks
-        yield if block_given?
-        member.status = end_state
+        begin
+          yield if block_given?
+          member.status = end_state
+        rescue
+          member.status = 'errored'
+        end
         # rubocop:disable Rails/SkipsModelValidations
         @job.update_attribute(:graph, @job.graph)
       elsif block_given?
-        yield # still need to call the block if the member doesn't exist in the graph somehow. this seems like a bug related to test setup
+        begin
+          yield # still need to call the block if the member doesn't exist in the graph somehow. this seems like a bug related to test setup
+        rescue
+          @logger.error "CSV Importer couldn't update status for < #{item.identifier} >"
+        end
       end
     end
 
@@ -244,25 +252,28 @@ module Tenejo
     def create_or_update_files(work, pfwork)
       # Cases
       # - new work, new files
+      # - existing work, add files
       # - existing work, update files - NOT IMPLEMENTED YET
-      # - existing work, add files - NOT IMPLEMENTED YET
       # - existing work, delete files - NOT SUPPORTED
       file_sets = pfwork.children.filter { |x| x.is_a? Tenejo::PFFile }.map do |pffile|
-        if pffile.url?
-          update_status(pffile, 'in_progress', 'expired')
-          :url
-        else
-          file_set = FileSet.new
-          file_set.label = File.basename(pffile.file)
-          file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
+        file_set = FileSet.new
+        update_status(pffile, 'in_progress', 'completed') do
+          # file_set.title = pffile.try(:title) ? [pffile.title] : [file_set.label]
           file_set.visibility = pffile.visibility
           file_set.save!
-          local_path = File.join(pffile.import_path, pffile.file)
-          update_status(pffile, 'in_progress', 'completed') do
+          if pffile.url?
+            file_set.depositor = @job.user.user_key
+            file_set.import_url = pffile.file
+            file_set.label = pffile.label
+            op = Hyrax::Operation.create!
+            ImportUrlJob.perform_now(file_set, op)
+          else
+            file_set.label = File.basename(pffile.file)
+            local_path = File.join(pffile.import_path, pffile.file)
             IngestLocalFileJob.perform_now(file_set, local_path, @job.user)
           end
-          file_set
         end
+        file_set
       end
       # NOTE: this code does not invoke the :after_fileset_create callback which generates notifications
       # That's probably ok in this context
@@ -271,7 +282,7 @@ module Tenejo
       #       Hyrax.publisher.publish('file.set.attached', file_set: file_set, user: user)
       #       Hyrax.publisher.publish('object.metadata.updated', object: file_set, user: user)
       #     end"
-      file_sets&.delete(:url)
+
       return if file_sets.blank?
       work.ordered_members.concat(file_sets)
       work.thumbnail ||= file_sets.first
