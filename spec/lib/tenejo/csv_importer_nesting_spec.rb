@@ -17,6 +17,8 @@ RSpec.describe Tenejo::CsvImporter do
     csv = fixture_file_upload("./spec/fixtures/csv/nesting_test_trimmed.csv")
     preflight = Preflight.create!(user: job_owner, manifest: csv)
     import_job = Import.create!(user: job_owner, graph: Tenejo::Preflight.process_csv(preflight.manifest.download, './spec/fixtures/images/structure_test'), parent_job: preflight)
+    error_work = import_job.graph.root.children[1]
+    error_work.title = nil
     @csv_import = described_class.new(import_job)
     RSpec::Mocks.with_temporary_scope do
       # Stub file creation - test this separately in an import with fewer elements
@@ -39,6 +41,13 @@ RSpec.describe Tenejo::CsvImporter do
     expect(@csv_import.preflight_warnings).to eq ["The column \'Comment\' is unknown and will be ignored"]
   end
 
+  it 'sets error status', :aggregate_failures do
+    import_job = @csv_import.instance_variable_get(:@job)
+    error_work = import_job.graph.root.children[1]
+    expect(error_work.identifier).to eq 'PROBLEM-WORK'
+    expect(error_work.status).to eq 'errored'
+  end
+
   it 'builds relationships', :aggregate_failures do
     parent = Collection.where(identifier_ssi: 'EPHEM').first
     child = Collection.where(identifier_ssi: 'CARDS').first
@@ -58,20 +67,20 @@ RSpec.describe Tenejo::CsvImporter do
 
     job = @csv_import.instance_variable_get(:@job)
     root_children = job.graph.root.children
-    expect(root_children.map(&:identifier)).to eq ['ORPH-0001', 'EPHEM']
-    expect(root_children.map(&:status)).to eq ['completed', 'completed']
+    expect(root_children.map(&:identifier)).to eq ['ORPH-0001', 'PROBLEM-WORK', 'EPHEM']
+    expect(root_children.map(&:status)).to eq ['completed', 'errored', 'completed']
 
-    nested_work = job.graph.root.children[1].children[0].children[0].children[0].children[0]
+    nested_work = job.graph.root.children[2].children[0].children[0].children[0].children[0]
     expect(nested_work.title).to eq ['Ace of Hearts']
     expect(nested_work.class).to eq Tenejo::PFWork
     expect(nested_work.status).to eq 'completed'
 
-    attached_file = job.graph.root.children[1].children[0].children[0].children[1].children[1]
+    attached_file = job.graph.root.children[2].children[0].children[0].children[1].children[1]
     expect(attached_file.class).to eq Tenejo::PFFile
     expect(attached_file.file).to eq '/jokers/Joker1-Verso.tiff'
     expect(attached_file.status).to eq 'completed'
 
-    cards = job.graph.root.children[1].children[0].children[0].children
+    cards = job.graph.root.children[2].children[0].children[0].children
     expect(cards.map(&:title)).to eq [['Hearts'], ['Jokers']]
     expect(cards.map(&:status)).to eq ['completed', 'completed']
   end

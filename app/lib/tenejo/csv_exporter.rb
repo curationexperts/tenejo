@@ -6,7 +6,7 @@ require 'csv'
 module Tenejo
   class CsvExporter
     EXCLUDE_FROM_EXPORT = [:date_modified, :label, :arkivo_checksum, :state].freeze
-    HEADER_ROW = (([:identifier, :error, :object_type, :visibility, :parent, :title, :file_url] \
+    HEADER_ROW = (([:identifier, :error, :object_type, :visibility, :parent, :title, :files] \
                   + Tenejo::CsvImporter.collection_attributes_to_copy.keys \
                   + Tenejo::CsvImporter.work_attributes_to_copy.keys).uniq \
                   - EXCLUDE_FROM_EXPORT).freeze
@@ -87,7 +87,7 @@ module Tenejo
       row = CSV::Row.new(HEADER_ROW, values)
       row[:parent] = parent_id
       row[:identifier] = obj.identifier || obj.id
-      row[:file_url] = download_url(obj)
+      row[:files] = download_url(obj)
       row[:object_type] = obj.class.to_s.gsub('FileSet', 'File')
       @object_type_counts[row[:object_type]] = @object_type_counts[row[:object_type]] + 1
       row

@@ -178,7 +178,7 @@ module Tenejo
   end
 
   class PFFile < PreFlightObj
-    ALL_FIELDS = [:status, :parent, :file, :files, :resource_type, :visibility, :identifier, :import_path].freeze
+    ALL_FIELDS = [:status, :parent, :label, :file, :files, :resource_type, :visibility, :identifier, :import_path].freeze
     REQUIRED_FIELDS = [:parent, :file, :identifier].freeze
     attr_accessor(*ALL_FIELDS)
     validates_presence_of(*REQUIRED_FIELDS)
@@ -222,6 +222,7 @@ module Tenejo
 
     def initialize(row = {}, lineno = 0, import_root = true, strict_paths = true)
       @file = row.to_h.delete(:files)
+      @label = row[:title]
       @import_path = import_root
       row[:file] = relative_path(strict_paths)
       super row, lineno
