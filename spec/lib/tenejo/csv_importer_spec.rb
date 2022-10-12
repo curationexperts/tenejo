@@ -19,7 +19,7 @@ RSpec.describe Tenejo::CsvImporter do
     # rubocop:disable RSpec/MessageSpies
     it "creates no objects" do
       csv_import = described_class.new(import_job)
-      expect(csv_import.preflight_errors).to eq ["No data was detected"]
+      expect(import_job.graph.fatal_errors).to eq ["No data was detected"]
       expect(csv_import).not_to receive(:create_or_update_collection)
       expect(csv_import).not_to receive(:create_or_update_work)
       csv_import.import
@@ -33,11 +33,11 @@ RSpec.describe Tenejo::CsvImporter do
     let(:csv) { fixture_file_upload("./spec/fixtures/csv/fancy.csv") }
     # rubocop:disable RSpec/MessageSpies
     it "returns warnings" do
-      csv_import = described_class.new(import_job)
+      _csv_import = described_class.new(import_job)
       expect(import_job.status).to eq 'submitted'
-      expect(csv_import.preflight_errors).to eq []
-      expect(csv_import.invalid_rows).to include a_hash_including('lineno' => 11)
-      expect(csv_import.preflight_warnings)
+      expect(import_job.graph.fatal_errors).to eq []
+      expect(import_job.graph.invalids).to include a_hash_including('lineno' => 11)
+      expect(import_job.graph.warnings)
         .to contain_exactly(
               "The column \'Comment\' is unknown and will be ignored",
               "Row 2: Resource Type \'Photos\' is not recognized and will be omitted.",

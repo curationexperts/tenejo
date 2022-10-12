@@ -35,8 +35,8 @@ RSpec.describe Tenejo::CsvImporter do
       @csv_import.import
 
       # make all the tests fail if we've somehow broken the test setup
-      expect(@csv_import.preflight_errors).to be_empty
-      expect(@csv_import.preflight_warnings).to be_empty
+      expect(import_job.graph.fatal_errors).to be_empty
+      expect(import_job.graph.warnings).to be_empty
     end
   end
 

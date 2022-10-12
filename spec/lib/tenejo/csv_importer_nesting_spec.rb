@@ -36,9 +36,10 @@ RSpec.describe Tenejo::CsvImporter do
   end
 
   it 'runs without errors', :aggregate_failures do
-    expect(@csv_import.preflight_errors).to be_empty
-    expect(@csv_import.invalid_rows).to be_empty
-    expect(@csv_import.preflight_warnings).to eq ["The column \'Comment\' is unknown and will be ignored"]
+    import_graph = @csv_import.instance_variable_get(:@job).graph
+    expect(import_graph.fatal_errors).to be_empty
+    expect(import_graph.invalids).to be_empty
+    expect(import_graph.warnings).to eq ["The column \'Comment\' is unknown and will be ignored"]
   end
 
   it 'sets error status', :aggregate_failures do

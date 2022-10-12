@@ -7,29 +7,13 @@ module Tenejo
       @job = import_job
       @depositor = import_job.user.user_key
       @logger = Rails.logger
-      if preflight_errors.present?
+      if @job.graph&.fatal_errors.present?
         @job.status = :errored
         @job.completed_at = Time.current
       else
         @job.status = :submitted
       end
       @job.save
-    end
-
-    def csv_import_file_root
-      File.join(Hyrax.config.upload_path.call, 'ftp')
-    end
-
-    def preflight_errors
-      @job.graph&.fatal_errors
-    end
-
-    def preflight_warnings
-      @job.graph.warnings
-    end
-
-    def invalid_rows
-      @job.graph.invalids
     end
 
     def import
