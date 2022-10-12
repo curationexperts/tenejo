@@ -7,14 +7,16 @@
           <%= BRANCH %>
         </div>
       <% end %>
-      <% unless production_host? %>
-        <%# Display detailed git information in dev, test, and non-production environments %>
-        <div class="version">
-          ENV: <%= Rails.env %>
-          <br>SHA: <%= GIT_SHA %>
-          <br>Branch: <%= BRANCH %>
-          <br>Updated: <%= LAST_DEPLOYED %>
-        </div>
+      <% if Flipflop.footer_version?%>
+        <% unless production_host? %>
+          <%# Display detailed git information in dev, test, and non-production environments %>
+          <div class="version">
+            ENV: <%= Rails.env %>
+            <br>SHA: <%= GIT_SHA %>
+            <br>Branch: <%= BRANCH %>
+            <br>Updated: <%= LAST_DEPLOYED %>
+          </div>
+        <% end %>
       <% end %>
     </div>
     <div class="navbar-right">
