@@ -10,7 +10,7 @@ module Tenejo
     end
 
     def infected?
-      system(format("%s --no-summary --quiet %s >/dev/null 2>&1", @executable, Shellwords.escape(file)))
+      system(format("%s --no-summary --quiet --fdpass %s >/dev/null 2>&1", @executable, Shellwords.escape(file)))
       case $CHILD_STATUS.exitstatus
       when 0 # no vir
         false
