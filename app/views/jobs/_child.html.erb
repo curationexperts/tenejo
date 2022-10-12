@@ -18,7 +18,7 @@
         <% end %>
       </td>
       <td class="item_status">
-        <%= status_span_generator(node.status) %>
+        <%= status_span_generator(node.status, node.messages.join("\n")) %>
       </td>
       <td class="identifier">
         <%= node.identifier %>

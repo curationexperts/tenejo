@@ -27,7 +27,7 @@ module ApplicationHelper
     users.all.collect { |u| [u.user_key, u.display_name] }
   end
 
-  def status_span_generator(status)
+  def status_span_generator(status, description = nil)
     status_text = status.to_s.titleize
     case status_text
     when 'Submitted'
@@ -44,7 +44,7 @@ module ApplicationHelper
       status_classes = 'status-unrecognized'
       status_text = '-?-'
     end
-    tag.span(status_text, class: 'job-status badge rounded-pill ' + status_classes)
+    tag.span(status_text, class: 'job-status badge rounded-pill ' + status_classes, title: description)
   end
 
   def collection_permission_template_form_for(form:)

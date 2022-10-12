@@ -65,7 +65,7 @@ module Tenejo
   class PreFlightObj
     include ActiveModel::Validations
     include ActiveModel::Serializers::JSON
-    attr_accessor :lineno, :children, :visibility, :type, :status
+    attr_accessor :lineno, :children, :visibility, :type, :status, :messages
 
     def warnings
       @warnings ||= Hash.new { |h, k| h[k] = [] }
@@ -110,7 +110,7 @@ module Tenejo
     end
 
     def attributes
-      { lineno: nil, children: [], visibility: nil, warnings: [], type: nil, status: 'not_started' }
+      { lineno: nil, children: [], visibility: nil, warnings: [], type: nil, status: 'not_started', messages: [] }
     end
 
     def initialize(row = {}, lineno = 0, type: self.class.name)
@@ -121,6 +121,7 @@ module Tenejo
         set_attribute(field_name, value, lineno)
       end
       @children = []
+      @messages = []
       @lineno = lineno
       @visibility = transform_visibility
     end
