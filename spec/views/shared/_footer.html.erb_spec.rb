@@ -6,7 +6,6 @@ RSpec.describe "shared/_footer", type: :view do
     test_strategy = Flipflop::FeatureSet.current.test!
     test_strategy.switch!(:footer_version, true)
   end
-  
   context "on prod-like servers" do
     # Assumes that prod-like servers have an environment name separated by a dash in the hostname\
     # See FooterHelper for details
