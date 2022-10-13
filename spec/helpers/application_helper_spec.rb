@@ -19,5 +19,9 @@ describe ApplicationHelper do
     example "accepts symbols" do
       expect(helper.status_span_generator(:in_progress)).to include "In Progress"
     end
+
+    example "provides hover text" do
+      expect(helper.status_span_generator(:errored, 'something bad happened here')).to include 'title="something bad'
+    end
   end
 end

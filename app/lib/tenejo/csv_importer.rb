@@ -72,26 +72,22 @@ module Tenejo
     end
 
     def update_status(item, start_state, end_state)
-      member = search_members(item.class, item.identifier)
-      if member
-        member.status = start_state
-        # rubocop:disable Rails/SkipsModelValidations
-        @job.update_attribute(:graph, @job.graph) # forces AR to write the graph column, regardless of what it thinks
-        begin
-          yield if block_given?
-          member.status = end_state
-        rescue
-          member.status = 'errored'
-        end
-        # rubocop:disable Rails/SkipsModelValidations
-        @job.update_attribute(:graph, @job.graph)
-      elsif block_given?
-        begin
-          yield # still need to call the block if the member doesn't exist in the graph somehow. this seems like a bug related to test setup
-        rescue
-          @logger.error "CSV Importer couldn't update status for < #{item.identifier} >"
-        end
+      member = search_members(item.class, item.identifier) || PreFlightObj.new
+      member.status = start_state
+      # rubocop:disable Rails/SkipsModelValidations
+      @job.update_attribute(:graph, @job.graph) # forces AR to write the graph column, regardless of what it thinks
+      begin
+        yield if block_given?
+        member.status = end_state
+      rescue => e
+        @logger.error "CSV Importer couldn't update status for < #{item.identifier} >"
+        @logger.error e.message
+        @logger.error e.backtrace.join("\n")
+        member.messages << e.message
+        member.status = 'errored'
       end
+      # rubocop:disable Rails/SkipsModelValidations
+      @job.update_attribute(:graph, @job.graph)
     end
 
     def create_or_update_collection(pfcollection)
