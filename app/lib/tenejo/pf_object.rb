@@ -118,7 +118,7 @@ module Tenejo
       @type = type
       row.delete(:object_type)
       row.each do |field_name, value|
-        set_attribute(field_name, value, lineno)
+        set_attribute(field_name, value)
       end
       @children = []
       @messages = []
@@ -126,7 +126,7 @@ module Tenejo
       @visibility = transform_visibility
     end
 
-    def set_attribute(field_name, value, _lineno)
+    def set_attribute(field_name, value)
       setter = "#{field_name}="
       return if value.nil?
       list = value.split("|~|")
@@ -201,7 +201,7 @@ module Tenejo
       file&.match(%r{^https?://}i) || false
     end
 
-    def self.unpack(row, lineno, import_root)
+    def self.unpack(row, lineno, import_path)
       return [invalid_file(row, lineno)] if row[:files].blank?
       cp = row.dup
       index = 1
@@ -212,7 +212,7 @@ module Tenejo
         cp[:files] = f
         cp[:identifier] = "#{base_id}.#{index}" if packed
         index += 1
-        PFFile.new(cp, lineno, import_root)
+        PFFile.new(cp, lineno, import_path)
       end
       files
     end
@@ -221,10 +221,10 @@ module Tenejo
       PFFile.new(row, lineno, '')
     end
 
-    def initialize(row = {}, lineno = 0, import_root = true, strict_paths = true)
-      @file = row.to_h.delete(:files)
+    def initialize(row = {}, lineno = 0, import_path = '.', strict_paths = true)
+      @file = row[:files]
       @label = row[:title]
-      @import_path = import_root
+      @import_path = import_path
       row[:file] = relative_path(strict_paths)
       super row, lineno
     end
