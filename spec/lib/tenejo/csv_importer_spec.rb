@@ -2,6 +2,7 @@
 require 'csv'
 require 'rails_helper'
 require 'active_fedora/cleaner'
+require 'tenejo/pf_object'
 
 RSpec.describe Tenejo::CsvImporter do
   let(:job_owner) { FactoryBot.create(:user) }
@@ -262,6 +263,35 @@ RSpec.describe Tenejo::CsvImporter do
           expect(Rails.logger).to have_received(:error).with(/ImNotHere/)
         end
       end
+    end
+  end
+
+  context '.create_or_update_files' do
+    let(:csv_import) { described_class.new(import_job) }
+    let(:import_job) { Import.new(user: job_owner, parent_job: nil, graph: test_graph) }
+    let(:test_graph) {
+      graph = Tenejo::Graph.new
+      pf_work.children << pf_file
+      graph.root.children << pf_work
+      graph
+    }
+    let(:work) { Work.new(identifier: "TEST-URL-9999", title: ['Importer test WORK'], rights_statement: ['In Copyright']) }
+    let(:pf_work) { Tenejo::PFWork.new({ identifier: work.identifier, title: 'Importer test work', rights_statement: 'In Copyright' }, -1, '.', Tenejo::Graph.new) }
+    let(:pf_file) { Tenejo::PFFile.new({ parent: work.identifier, files: 'https://eaxmple.com/downloads/sample_file.tiff', visibility: 'open' }, 1, 'spec/fixtures/images/uploads') }
+
+    # Stub work persistence
+    before {
+      allow(work).to receive(:save).and_return(true)
+      allow(work).to receive(:save!).and_return(work)
+    }
+
+    it 'reports download failures' do
+      # Fake a download error - e.g. we can't retrieve the file
+      allow(BrowseEverything::Retriever).to receive(:can_retrieve?).and_return(false)
+      expect { csv_import.create_or_update_files(work, pf_work) }.not_to raise_error
+      post_import_graph = csv_import.instance_variable_get(:@job).graph
+      messages = post_import_graph.root.children.first.children.first.messages.join("\n")
+      expect(messages).to include 'Expired URL'
     end
   end
 
