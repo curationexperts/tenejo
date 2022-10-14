@@ -246,7 +246,8 @@ module Tenejo
             file_set.import_url = pffile.file
             file_set.label = pffile.label
             op = Hyrax::Operation.create!
-            ImportUrlJob.perform_now(file_set, op)
+            success = ImportUrlJob.perform_now(file_set, op)
+            raise URI::InvalidURIError, file_set.errors.full_messages.join("\n") unless success
           else
             file_set.label = File.basename(pffile.file)
             local_path = File.join(pffile.import_path, pffile.file)

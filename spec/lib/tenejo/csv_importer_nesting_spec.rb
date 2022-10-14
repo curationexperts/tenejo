@@ -88,7 +88,10 @@ RSpec.describe Tenejo::CsvImporter do
 
   it 'sets file import status', :aggregate_failures do
     job = @csv_import.instance_variable_get(:@job)
-    expect(job.graph.files[0].status).to eq "completed"
+    expect(job.graph.files[0].file).to eq "http://"
+    expect(job.graph.files[0].status).to eq "errored"
+    expect(job.graph.files[1].file).to eq "/jokers/Joker1-Recto.tiff"
+    expect(job.graph.files[1].status).to eq "completed"
   end
 
   it 'sets work-level visibility', :aggregate_failures do
