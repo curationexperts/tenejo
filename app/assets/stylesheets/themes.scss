@@ -47,3 +47,31 @@
     object-fit: cover;
   }
 }
+.preview-favicon-image{
+  border: 1px solid rgb(210,220,224);
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  border-radius: .25rem;
+  overflow:hidden;
+  padding: .5rem 0;
+  &--block{
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    align-content: center;
+  }
+  &--wrapper{
+    height: 16px;
+    width:16px; 
+    margin: 0 auto;
+  }
+  img{
+    background-position: 50%;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    display: block;
+  }
+}
