@@ -13,6 +13,9 @@ require_relative 'support/controller_macros'
 require 'capybara/rails'
 require 'noid/rails/rspec'
 
+# default to running background jobs in test mode
+require "sidekiq/testing"
+
 # use this in specs to avoid actually using a working virus scanner during tests (very slow)
 Hyrax.config.virus_scanner = Hyrax::VirusScanner
 
