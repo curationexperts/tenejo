@@ -22,13 +22,15 @@ class Theme < ApplicationRecord
 
   has_one_attached :logo
   has_one_attached :hero_image
-  after_initialize :merge_defaults, :ensure_logo, :ensure_hero_image, :reset_preview_to_defaults
+  has_one_attached :favicon_image
+  after_initialize :merge_defaults, :ensure_logo, :ensure_hero_image, :ensure_favicon_image, :reset_preview_to_defaults
 
   def self.current_theme
     @current_theme ||= Theme.find_or_create_by(id: 1) do |theme|
       theme.merge_defaults
       theme.ensure_logo
       theme.ensure_hero_image
+      theme.ensure_favicon_image
       theme.save
     end
   end
@@ -38,8 +40,10 @@ class Theme < ApplicationRecord
     reset_preview_to_defaults
     logo.purge
     hero_image.purge
+    favicon_image.purge
     ensure_logo
     ensure_hero_image
+    ensure_favicon_image
     save if persisted?
   end
 
@@ -88,6 +92,17 @@ class Theme < ApplicationRecord
       filename: 'default_hero.jpg',
 
       content_type: 'image/jpg'
+    )
+    save if persisted?
+  end
+
+  def ensure_favicon_image
+    return if favicon_image.attached?
+    favicon_image.attach(
+      io: File.open('app/assets/images/default_favicon.ico'),
+      filename: 'default_favicon.ico',
+
+      content_type: 'image/x-icon'
     )
     save if persisted?
   end
