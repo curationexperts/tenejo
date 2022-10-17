@@ -22,24 +22,8 @@
     <div class="navbar-right">
       <div class="navbar-text text-right">
         <div class="version">
-          Hyrax Version:
-          <%= if(HYRAX_VERSION.present? && HYRAX_VERSION != 'Unknown') &&
-            (HYRAX_BRANCH_REVISION.blank? || HYRAX_BRANCH_REVISION == 'Unknown')
-                link_to(HYRAX_VERSION,
-                        "https://github.com/samvera/hyrax/tree/v#{HYRAX_VERSION}",
-                        class: "footer-link")
-              else
-                HYRAX_VERSION
-              end %>
-          <br><%= "Hyrax Branch: #{HYRAX_BRANCH}" if HYRAX_BRANCH.present? %>
-          <br><%= "Hyrax Revision: " if HYRAX_BRANCH_REVISION.present? %>
-          <%= if HYRAX_BRANCH_REVISION.present? && HYRAX_BRANCH_REVISION != 'Unknown'
-                link_to(HYRAX_BRANCH_REVISION,
-                        "https://github.com/samvera/hyrax/tree/#{HYRAX_BRANCH_REVISION}",
-                        class: "footer-link")
-              elsif HYRAX_BRANCH_REVISION.present?
-                HYRAX_BRANCH_REVISION
-              end %>
+          Tenejo Version:
+          <%= BRANCH %>
         </div>
       </div>
     </div>
