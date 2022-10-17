@@ -2,11 +2,6 @@
   <div class="container-fluid">
     <div class="navbar-text text-left">
       <%= image_tag 'pwdByTenejo-default@2x.png', height: "41px" %>
-      <% if production_host? %>
-        <div class="version">
-          <%= BRANCH %>
-        </div>
-      <% end %>
       <% if Flipflop.footer_version?%>
         <% unless production_host? %>
           <%# Display detailed git information in dev, test, and non-production environments %>
