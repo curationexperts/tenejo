@@ -9,7 +9,7 @@ ruby '2.7.4'
 gem 'bcrypt_pbkdf'
 gem 'ed25519'
 gem 'rails', '~> 5.2'
-gem 'sidekiq', '~> 6.4'
+gem 'sidekiq', '~> 7.1'
 # Use Puma as the app server
 gem 'dotenv-rails', '~> 2.2.1'
 gem 'okcomputer'
